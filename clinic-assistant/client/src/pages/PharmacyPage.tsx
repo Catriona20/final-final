@@ -254,6 +254,7 @@ export const PharmacyPage: React.FC<PharmacyPageProps> = ({
     setIsSubmitting(true);
     try {
       const res = await clinicApi.addPharmacyItem({
+        clinicId: currentClinicId,
         name: newBatchName,
         genericName: newGenericName || newBatchName,
         category: newCategory,
@@ -269,6 +270,11 @@ export const PharmacyPage: React.FC<PharmacyPageProps> = ({
       if (res.success) {
         addToast('success', 'Batch Added', `Batch ${newBatchNumber} of ${newBatchName} added to inventory.`);
         setIsAddBatchModalOpen(false);
+        setSelectedCategory('All');
+        setLocalSearch('');
+        setNewBatchName('');
+        setNewGenericName('');
+        setNewBatchNumber('');
         fetchPharmacyData();
       } else {
         addToast('error', 'Failed', res.message || 'Failed to add batch.');

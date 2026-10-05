@@ -22,11 +22,15 @@ import {
   ShieldCheck,
   CheckCircle2,
   Inbox,
+  Check,
+  X,
+  Sparkles,
 } from 'lucide-react-native';
 import { PALETTE, TYPOGRAPHY, SHADOWS } from '../../constants/theme';
 import { useThemeStore } from '../../store/useThemeStore';
 import { useDoctorAuthStore } from '../../store/useDoctorAuthStore';
 import { notificationApi, DoctorNotificationItem } from '../../api/notificationApi';
+import { apiClient } from '../../api/apiClient';
 import { getDoctorSocket } from '../../api/socketApi';
 
 export const DoctorNotificationsScreen: React.FC<{ navigation: any }> = ({ navigation }) => {
@@ -38,6 +42,26 @@ export const DoctorNotificationsScreen: React.FC<{ navigation: any }> = ({ navig
   const [selectedFilter, setSelectedFilter] = useState<'All' | 'Appointments' | 'Queue Updates' | 'Emergency' | 'System'>('All');
   const [isLoading, setIsLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [proposalActions, setProposalActions] = useState<Record<string, 'ACCEPTED' | 'DECLINED'>>({});
+  const [processingProposalId, setProcessingProposalId] = useState<string | null>(null);
+
+  const handleDoctorConsent = async (proposalId: string, notifId: string, consent: 'ACCEPT' | 'DECLINE') => {
+    if (!doctor?.id || !proposalId) return;
+    setProcessingProposalId(proposalId);
+    try {
+      await apiClient.post('/queue/load-balance/doctor-consent', {
+        proposalId,
+        doctorId: doctor.id,
+        consent,
+      });
+      setProposalActions((prev) => ({ ...prev, [proposalId]: consent === 'ACCEPT' ? 'ACCEPTED' : 'DECLINED' }));
+      handleMarkAsRead(notifId);
+    } catch (err: any) {
+      console.warn('Doctor consent error:', err);
+    } finally {
+      setProcessingProposalId(null);
+    }
+  };
 
   const fetchNotifications = async () => {
     if (!doctor?.id) return;
@@ -225,6 +249,170 @@ export const DoctorNotificationsScreen: React.FC<{ navigation: any }> = ({ navig
         >
           {filteredNotifications.map((notif) => {
             const isRead = notif.read || notif.is_read;
+            const isLoadBalanceProposal =
+              notif.type === 'load_balance_proposal' ||
+              (notif.action_data?.proposalId &&
+                (notif.title.toLowerCase().includes('load balancing') ||
+                  notif.title.toLowerCase().includes('transfer request')));
+
+            if (isLoadBalanceProposal) {
+              const proposalId = notif.action_data?.proposalId;
+              const patientName = notif.action_data?.patientName || 'Patient';
+              const procedureName = notif.action_data?.procedureName || 'General OPD';
+              const sourceDoc = notif.action_data?.sourceDoctorName || 'Colleague Doctor';
+              const currentWaitCount = notif.action_data?.targetQueueCount ?? 0;
+              const proposedWaitCount = notif.action_data?.proposedQueueCount ?? (currentWaitCount + 1);
+              const status = proposalActions[proposalId] || notif.action_data?.doctorConsent || notif.action_data?.status || 'PENDING';
+              const isProcessing = processingProposalId === proposalId;
+
+              return (
+                <View
+                  key={notif.id}
+                  style={[
+                    styles.notifCard,
+                    {
+                      backgroundColor: isDark ? '#0A2540' : '#F0FDF4',
+                      borderColor: '#10B981',
+                    },
+                    SHADOWS.light,
+                  ]}
+                >
+                  <View style={styles.cardHeader}>
+                    <View style={styles.categoryBadgeRow}>
+                      <View style={[styles.iconCircle, { backgroundColor: '#DCFCE7' }]}>
+                        <Sparkles size={18} color="#10B981" />
+                      </View>
+                      <View>
+                        <Text style={[styles.notifCategory, { color: '#059669', fontWeight: '700' }]}>
+                          QUEUE LOAD BALANCING OFFER
+                        </Text>
+                        <Text style={[styles.notifTime, { color: colors.secondaryText }]}>
+                          {notif.timestamp || 'Just now'}
+                        </Text>
+                      </View>
+                    </View>
+                    {!isRead && <View style={styles.unreadDot} />}
+                  </View>
+
+                  <Text style={[styles.notifTitle, { color: colors.text, marginTop: 8 }]}>
+                    Transfer Request: {patientName} ({procedureName})
+                  </Text>
+                  <Text style={[styles.notifMessage, { color: colors.secondaryText, marginTop: 4 }]}>
+                    Dr. {sourceDoc}'s queue is heavily loaded. Would you accept transferring {patientName} to your queue?
+                  </Text>
+
+                  {/* QUEUE COMPARISON BOX */}
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      backgroundColor: isDark ? '#0F172A' : '#FFFFFF',
+                      padding: 10,
+                      borderRadius: 10,
+                      marginTop: 10,
+                      borderWidth: 1,
+                      borderColor: colors.border,
+                    }}
+                  >
+                    <View>
+                      <Text style={{ fontSize: 11, color: colors.secondaryText }}>Your Current Queue</Text>
+                      <Text style={{ fontSize: 15, fontWeight: '700', color: colors.text }}>{currentWaitCount} waiting</Text>
+                    </View>
+                    <Text style={{ fontSize: 18, color: '#10B981', fontWeight: 'bold' }}>→</Text>
+                    <View style={{ alignItems: 'flex-end' }}>
+                      <Text style={{ fontSize: 11, color: '#059669', fontWeight: '600' }}>If Accepted</Text>
+                      <Text style={{ fontSize: 15, fontWeight: '700', color: '#10B981' }}>{proposedWaitCount} waiting</Text>
+                    </View>
+                  </View>
+
+                  {/* ACTION CONTROLS */}
+                  {status === 'ACCEPTED' ? (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 6,
+                        backgroundColor: '#DCFCE7',
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                        borderRadius: 8,
+                        marginTop: 12,
+                      }}
+                    >
+                      <Check size={14} color="#16A34A" />
+                      <Text style={{ fontSize: 12, fontWeight: '700', color: '#16A34A' }}>
+                        Accepted — Awaiting Patient Consent / In Queue
+                      </Text>
+                    </View>
+                  ) : status === 'DECLINED' ? (
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 6,
+                        backgroundColor: colors.cardSubtle,
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                        borderRadius: 8,
+                        marginTop: 12,
+                      }}
+                    >
+                      <X size={14} color={colors.secondaryText} />
+                      <Text style={{ fontSize: 12, fontWeight: '600', color: colors.secondaryText }}>
+                        Proposal Declined — Patient Stays With Original Doctor
+                      </Text>
+                    </View>
+                  ) : (
+                    <View style={{ flexDirection: 'row', gap: 10, marginTop: 12 }}>
+                      <TouchableOpacity
+                        style={{
+                          flex: 1,
+                          backgroundColor: '#10B981',
+                          paddingVertical: 10,
+                          borderRadius: 10,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: 6,
+                        }}
+                        onPress={() => handleDoctorConsent(proposalId, notif.id, 'ACCEPT')}
+                        disabled={isProcessing}
+                        activeOpacity={0.85}
+                      >
+                        {isProcessing ? (
+                          <ActivityIndicator size="small" color="#FFFFFF" />
+                        ) : (
+                          <>
+                            <Check size={16} color="#FFFFFF" />
+                            <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 13 }}>Accept Patient</Text>
+                          </>
+                        )}
+                      </TouchableOpacity>
+
+                      <TouchableOpacity
+                        style={{
+                          flex: 1,
+                          backgroundColor: colors.card,
+                          borderWidth: 1,
+                          borderColor: colors.border,
+                          paddingVertical: 10,
+                          borderRadius: 10,
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                        onPress={() => handleDoctorConsent(proposalId, notif.id, 'DECLINE')}
+                        disabled={isProcessing}
+                        activeOpacity={0.85}
+                      >
+                        <Text style={{ color: colors.secondaryText, fontWeight: '600', fontSize: 13 }}>Decline</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </View>
+              );
+            }
+
             return (
               <TouchableOpacity
                 key={notif.id}

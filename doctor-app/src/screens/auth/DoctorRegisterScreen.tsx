@@ -38,21 +38,17 @@ interface DoctorRegisterScreenProps {
 
 export const DoctorRegisterScreen: React.FC<DoctorRegisterScreenProps> = ({ navigation }) => {
   const { colors, isDark } = useThemeStore();
-  const { register, sendOtp, verifyOtp, isLoading, error, clearError } = useDoctorAuthStore();
+  const { register, isLoading, error, clearError } = useDoctorAuthStore();
 
   // Multi-step Registration Wizard
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
 
-  // Step 1: Basic Info & OTP
+  // Step 1: Basic Info & Credentials
   const [name, setName] = useState('Dr. Arun Kumar');
   const [email, setEmail] = useState('dr.arun.demo@medlink.test');
   const [phone, setPhone] = useState('+91 98765 43210');
   const [password, setPassword] = useState('Doctor@123');
   const [confirmPassword, setConfirmPassword] = useState('Doctor@123');
-  const [otpCode, setOtpCode] = useState('123456');
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
-  const [cooldown, setCooldown] = useState(0);
 
   // Step 2: Professional Details
   const [regNumber, setRegNumber] = useState('TN-DENT-88219');
@@ -96,32 +92,7 @@ export const DoctorRegisterScreen: React.FC<DoctorRegisterScreenProps> = ({ navi
     fetchClinics();
   }, []);
 
-  useEffect(() => {
-    let timer: any;
-    if (cooldown > 0) {
-      timer = setInterval(() => setCooldown((c) => c - 1), 1000);
-    }
-    return () => clearInterval(timer);
-  }, [cooldown]);
-
-  const handleSendOtp = async () => {
-    if (!email.trim() && !phone.trim()) {
-      setLocalMsg('Please enter your email and phone number.');
-      return;
-    }
-    clearError();
-    setLocalMsg(null);
-    try {
-      const res = await sendOtp(email.trim() || phone.trim(), !email.includes('@'));
-      setOtpSent(true);
-      setCooldown(60);
-      setLocalMsg(res.message || 'OTP verification code sent.');
-    } catch (e: any) {
-      setLocalMsg(e.message || 'Failed to send OTP.');
-    }
-  };
-
-  const handleVerifyOtpAndNext = async () => {
+  const handleStep1Next = () => {
     clearError();
     setLocalMsg(null);
 
@@ -135,18 +106,7 @@ export const DoctorRegisterScreen: React.FC<DoctorRegisterScreenProps> = ({ navi
       return;
     }
 
-    if (!otpCode || otpCode.length < 6) {
-      setLocalMsg('Please enter the 6-digit OTP code.');
-      return;
-    }
-
-    const isVerified = await verifyOtp(email.trim() || phone.trim(), otpCode.trim());
-    if (isVerified) {
-      setOtpVerified(true);
-      setCurrentStep(2);
-    } else {
-      setLocalMsg('Invalid OTP. Please check your verification code.');
-    }
+    setCurrentStep(2);
   };
 
   const handleStep2Next = () => {
@@ -230,14 +190,14 @@ export const DoctorRegisterScreen: React.FC<DoctorRegisterScreenProps> = ({ navi
             <Text style={[styles.stepSubTitle, { color: colors.primary }]}>STEP {currentStep} OF 3</Text>
             <Text style={[styles.title, { color: colors.text }]}>
               {currentStep === 1
-                ? 'Account & Mobile OTP'
+                ? 'Account Credentials'
                 : currentStep === 2
                 ? 'Professional Credentials'
                 : 'Upload Medical Evidence'}
             </Text>
             <Text style={[styles.subtitle, { color: colors.secondaryText }]}>
               {currentStep === 1
-                ? 'Verify your identity and phone number to start practitioner credentialing.'
+                ? 'Create your doctor login credentials to start practitioner credentialing.'
                 : currentStep === 2
                 ? 'Enter your State Medical Council registration and qualification details.'
                 : 'Upload your official license and degree certificates for risk review.'}
@@ -331,46 +291,12 @@ export const DoctorRegisterScreen: React.FC<DoctorRegisterScreenProps> = ({ navi
                 </View>
               </View>
 
-              {/* OTP SECTION */}
-              <View style={styles.otpBox}>
-                <View style={styles.otpHeader}>
-                  <Text style={[styles.label, { color: colors.text, marginBottom: 0 }]}>Phone / Email OTP</Text>
-                  <TouchableOpacity
-                    onPress={handleSendOtp}
-                    disabled={cooldown > 0}
-                    style={styles.sendOtpBtn}
-                  >
-                    <Text
-                      style={[
-                        styles.sendOtpBtnText,
-                        { color: cooldown > 0 ? colors.secondaryText : colors.primary },
-                      ]}
-                    >
-                      {cooldown > 0 ? `Resend in ${cooldown}s` : otpSent ? 'Resend OTP' : 'Send OTP'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-
-                <View style={[styles.inputBox, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
-                  <KeyRound size={18} color={colors.secondaryText} />
-                  <TextInput
-                    style={[styles.input, { color: colors.text, letterSpacing: 3, fontWeight: '700' }]}
-                    placeholder="Enter 6-digit OTP"
-                    placeholderTextColor={colors.secondaryText}
-                    value={otpCode}
-                    onChangeText={setOtpCode}
-                    keyboardType="number-pad"
-                    maxLength={6}
-                  />
-                </View>
-              </View>
-
               <TouchableOpacity
-                onPress={handleVerifyOtpAndNext}
+                onPress={handleStep1Next}
                 style={[styles.nextBtn, { backgroundColor: colors.primary }]}
                 activeOpacity={0.85}
               >
-                <Text style={styles.nextBtnText}>Verify OTP & Continue</Text>
+                <Text style={styles.nextBtnText}>Continue to Professional Credentials</Text>
               </TouchableOpacity>
             </View>
           )}

@@ -1,8 +1,24 @@
-import { memoryDb } from '../database/db';
+import { memoryDb, saveStateToFile } from '../database/db';
 import { AppointmentModel, AppointmentEntity, DoctorModel, WalkInModel, WalkInEntity, resolveCanonicalClinicId, resolveCanonicalDoctorId } from '../database/models';
 import { emitToPatient, emitToAppointment, emitToDoctor, emitToClinic, emitBroadcast } from './socketService';
 import { notificationService } from './notificationService';
 import { timeService } from './timeService';
+
+/**
+ * Converts a time string (e.g., '07:00 PM', '19:00', '09:30 AM') to total minutes since midnight.
+ */
+export function timeToMinutes(timeStr?: string): number {
+  if (!timeStr) return 0;
+  const clean = timeStr.trim();
+  const isPM = clean.toUpperCase().includes('PM');
+  const isAM = clean.toUpperCase().includes('AM');
+  const parts = clean.replace(/[^\d:]/g, '').split(':');
+  let hours = parseInt(parts[0], 10) || 0;
+  const minutes = parseInt(parts[1], 10) || 0;
+  if (isPM && hours < 12) hours += 12;
+  if (isAM && hours === 12) hours = 0;
+  return hours * 60 + minutes;
+}
 
 export interface UnifiedQueueItem {
   id: string;
@@ -178,8 +194,11 @@ export const queueManager = {
             continue;
           }
         }
-        if (doctorId && w.doctor_id && w.doctor_id !== doctorId) {
-          continue;
+        if (canonicalDoctorId) {
+          const wDocCanonical = resolveCanonicalDoctorId(w.doctor_id);
+          if (wDocCanonical !== canonicalDoctorId && w.doctor_id !== doctorId) {
+            continue;
+          }
         }
 
         // Deduplicate: Enforce ONE active queue entry per walkInId
@@ -404,6 +423,197 @@ export const queueManager = {
   },
 
   /**
+   * Identifies the next eligible patient in chronological order to receive an earlier-slot offer.
+   * Strict eligibility rules:
+   * 1. Active appointment (Booked, Waiting, Checked In)
+   * 2. Same clinic (strict clinic isolation, no cross-clinic offers)
+   * 3. Same doctor (canonical doctor ID match)
+   * 4. Scheduled on the same date as the freed slot
+   * 5. Scheduled strictly AFTER the freed slot (candidate time > freed slot time)
+   * 6. Next eligible patient in chronological order (earliest scheduled time among candidates)
+   * 7. Not the cancelled/no-show appointment itself
+   * 8. Not the same patient who cancelled/no-showed
+   * 9. Not already cancelled, no-show, in consultation, or completed
+   * 10. Not already having a pending earlier-slot offer
+   * 11. Procedure / Department compatibility where required
+   * 12. Preferred-doctor constraints respected
+   */
+  findNextEligiblePatientForEarlierSlot(
+    freedApt: AppointmentEntity,
+    freedSlotTime: string,
+    freedDate: string
+  ): AppointmentEntity | null {
+    const freedMinutes = timeToMinutes(freedSlotTime);
+    const normFreedDate = timeService.normalizeDateString(freedDate);
+    const canonicalClinicId = resolveCanonicalClinicId(freedApt.clinic_id);
+    const canonicalDoctorId = resolveCanonicalDoctorId(freedApt.doctor_id);
+
+    const candidates: { apt: AppointmentEntity; minutes: number }[] = [];
+
+    for (const candidate of memoryDb.appointments.values()) {
+      // 1. Not the freed appointment itself
+      if (candidate.id === freedApt.id) continue;
+
+      // 2. Not the patient who cancelled/no-showed
+      if (candidate.patient_id === freedApt.patient_id) continue;
+
+      // 3. Must be active status
+      const candStatus = (candidate.status || candidate.appointmentStatus || '').toUpperCase().replace(/[\s_-]+/g, '_');
+      const activeStatuses = ['BOOKED', 'WAITING', 'CHECKED_IN', 'CHECKEDIN'];
+      if (!activeStatuses.includes(candStatus)) continue;
+
+      // 4. Must be on the same date
+      const candDate = candidate.date || candidate.appointmentDate || '';
+      if (timeService.normalizeDateString(candDate) !== normFreedDate) continue;
+
+      // 5. Must match clinic (strict clinic isolation)
+      if (resolveCanonicalClinicId(candidate.clinic_id) !== canonicalClinicId) continue;
+
+      // 6. Must match doctor
+      if (resolveCanonicalDoctorId(candidate.doctor_id) !== canonicalDoctorId) continue;
+
+      // 7. Must be scheduled AFTER the freed slot
+      const candTime = candidate.time || candidate.slotStartTime || '';
+      const candMinutes = timeToMinutes(candTime);
+      if (candMinutes <= freedMinutes) continue;
+
+      // 8. Must not already have an active pending earlier-slot offer
+      if (
+        candidate.earlier_slot_offered &&
+        ['PENDING', 'OFFERED'].includes(candidate.earlier_slot_offered.status)
+      ) {
+        continue;
+      }
+
+      // 9. Procedure / Department compatibility where required
+      const freedDept = (freedApt.department || freedApt.doctor_specialization || '').toLowerCase().trim();
+      const candDept = (candidate.department || candidate.doctor_specialization || '').toLowerCase().trim();
+      if (freedDept && candDept && freedDept !== candDept) {
+        continue;
+      }
+      if (freedApt.procedure_id && candidate.procedure_id && freedApt.procedure_id !== candidate.procedure_id) {
+        continue;
+      }
+
+      // 10. Respect preferred doctor constraints:
+      // If crossing doctors, candidate must match preferred doctor.
+      // If staying with same doctor as scheduled appointment, doctor continuity is inherently satisfied.
+      if (resolveCanonicalDoctorId(candidate.doctor_id) !== canonicalDoctorId) {
+        const patient = memoryDb.patients.get(candidate.patient_id);
+        if (patient?.preferred_doctor) {
+          const pref = patient.preferred_doctor.toLowerCase().trim();
+          const freedDocName = (freedApt.doctor_name || '').toLowerCase().trim();
+          if (!freedDocName.includes(pref) && !pref.includes(freedDocName)) {
+            continue;
+          }
+        }
+      }
+
+      candidates.push({ apt: candidate, minutes: candMinutes });
+    }
+
+    if (candidates.length === 0) return null;
+
+    // Sort chronologically ascending by scheduled appointment time (earliest scheduled after the freed slot)
+    candidates.sort((a, b) => a.minutes - b.minutes);
+
+    return candidates[0].apt;
+  },
+
+  /**
+   * Generates and dispatches an earlier-slot offer to the next eligible patient without moving them automatically.
+   */
+  async offerReleasedSlotToNextEligiblePatient(
+    freedApt: AppointmentEntity,
+    freedSlotTime: string,
+    freedDate: string
+  ): Promise<AppointmentEntity | null> {
+    const eligibleCandidate = this.findNextEligiblePatientForEarlierSlot(freedApt, freedSlotTime, freedDate);
+    if (!eligibleCandidate) {
+      return null;
+    }
+
+    const freedMinutes = timeToMinutes(freedSlotTime);
+    const candTime = eligibleCandidate.time || eligibleCandidate.slotStartTime || '';
+    const candMinutes = timeToMinutes(candTime);
+    const diffMinutes = Math.max(0, candMinutes - freedMinutes);
+    const timeDiffStr =
+      diffMinutes >= 60
+        ? `${(diffMinutes / 60).toFixed(1).replace('.0', '')} hours earlier`
+        : `${diffMinutes} mins earlier`;
+    const estWait = `Save ~${diffMinutes} mins`;
+
+    const offer = {
+      appointmentId: eligibleCandidate.id,
+      clinicId: eligibleCandidate.clinic_id,
+      clinicName: eligibleCandidate.clinic_name || freedApt.clinic_name,
+      doctorId: eligibleCandidate.doctor_id,
+      doctorName: eligibleCandidate.doctor_name || freedApt.doctor_name,
+      originalDate: eligibleCandidate.date || eligibleCandidate.appointmentDate,
+      originalTime: candTime,
+      newDate: freedDate,
+      newTime: freedSlotTime,
+      timeDifference: timeDiffStr,
+      estimatedWait: estWait,
+      offeredAt: timeService.getCurrentClinicDate().toISOString(),
+      status: 'PENDING' as const,
+    };
+
+    // 1. Persist offer to candidate appointment atomically (without moving patient!)
+    eligibleCandidate.earlier_slot_offered = offer;
+    await AppointmentModel.update(eligibleCandidate.id, {
+      earlier_slot_offered: offer,
+    });
+    memoryDb.appointments.set(eligibleCandidate.id, eligibleCandidate);
+    saveStateToFile();
+
+    // 2. Emit Socket.IO events to Patient
+    const socketPayload = {
+      appointmentId: eligibleCandidate.id,
+      clinicId: offer.clinicId,
+      clinicName: offer.clinicName,
+      doctorId: offer.doctorId,
+      doctorName: offer.doctorName,
+      originalDate: offer.originalDate,
+      originalTime: offer.originalTime,
+      newDate: freedDate,
+      newTime: freedSlotTime,
+      timeDifference: timeDiffStr,
+      estimatedWait: estWait,
+      status: 'OFFERED',
+    };
+
+    emitToPatient(eligibleCandidate.patient_id, 'slot:earlier_available', socketPayload);
+    emitToPatient(eligibleCandidate.patient_id, 'earlier_slot:offered', socketPayload);
+
+    // 3. Send in-app notification using centralized notificationService
+    await notificationService.sendNotification({
+      patientId: eligibleCandidate.patient_id,
+      recipientType: 'PATIENT',
+      appointmentId: eligibleCandidate.id,
+      clinicId: eligibleCandidate.clinic_id,
+      doctorId: eligibleCandidate.doctor_id,
+      title: 'Earlier Appointment Slot Available! ⚡',
+      message: `An earlier slot at ${freedSlotTime} is open at ${offer.clinicName} with ${offer.doctorName}. Current appointment: ${offer.originalTime}. Tap to accept or keep current slot.`,
+      category: 'Appointments',
+      type: 'appointment',
+      actionData: {
+        appointmentId: eligibleCandidate.id,
+        clinicName: offer.clinicName,
+        doctorName: offer.doctorName,
+        currentDate: offer.originalDate,
+        currentTime: offer.originalTime,
+        offeredDate: freedDate,
+        offeredTime: freedSlotTime,
+        timeDifference: timeDiffStr,
+        status: 'OFFERED',
+      },
+    });
+
+    return eligibleCandidate;
+  },
+
+  /**
    * Handles a Patient No-Show: updates appointment, frees slot, reorders queue, and triggers earlier slot logic.
    * STRICT: No-show is ONLY allowed if appointment date is today (or past) AND slot + grace period (10 min) has passed.
    */
@@ -471,50 +681,8 @@ export const queueManager = {
       }
     }
 
-    // Find eligible candidate for earlier slot offer (must be today, after freed slot)
-    let eligibleCandidate: AppointmentEntity | undefined;
-    for (const candidate of memoryDb.appointments.values()) {
-      if (
-        candidate.id !== appointmentId &&
-        candidate.doctor_id === apt.doctor_id &&
-        ['Booked', 'BOOKED', 'Waiting', 'WAITING'].includes(candidate.status) &&
-        timeService.normalizeDateString(candidate.date) === timeService.normalizeDateString(freedDate)
-      ) {
-        eligibleCandidate = candidate;
-        break;
-      }
-    }
-
-    if (eligibleCandidate) {
-      eligibleCandidate.earlier_slot_offered = {
-        newDate: freedDate,
-        newTime: freedSlotTime,
-        timeDifference: 'Earlier today',
-        estimatedWait: 'Save ~45 mins',
-      };
-      memoryDb.appointments.set(eligibleCandidate.id, eligibleCandidate);
-
-      // Emit real-time earlier slot notification
-      emitToPatient(eligibleCandidate.patient_id, 'slot:earlier_available', {
-        appointmentId: eligibleCandidate.id,
-        newDate: freedDate,
-        newTime: freedSlotTime,
-        doctorName: eligibleCandidate.doctor_name,
-      });
-
-      await notificationService.sendNotification({
-        patientId: eligibleCandidate.patient_id,
-        title: 'Earlier Appointment Slot Available! ⚡',
-        message: `An earlier slot at ${freedSlotTime} is open with ${eligibleCandidate.doctor_name}. Tap to accept or keep current slot.`,
-        category: 'Appointments',
-        type: 'appointment',
-        actionData: {
-          appointmentId: eligibleCandidate.id,
-          offeredDate: freedDate,
-          offeredTime: freedSlotTime,
-        },
-      });
-    }
+    // Find eligible candidate for earlier slot offer and dispatch offer & notification
+    const eligibleCandidate = await this.offerReleasedSlotToNextEligiblePatient(apt, freedSlotTime, freedDate);
 
     const noShowPayload = {
       appointmentId: apt.id,
@@ -545,7 +713,7 @@ export const queueManager = {
     return {
       success: true,
       appointment: apt,
-      affectedPatient: eligibleCandidate,
+      affectedPatient: eligibleCandidate || undefined,
       offeredSlot: freedSlotTime,
       message: `Appointment marked as No-Show. Waiting queue updated.`,
     };
@@ -623,50 +791,8 @@ export const queueManager = {
       }
     }
 
-    // 3. Find eligible candidate for earlier slot offer (if same doctor & date)
-    let eligibleCandidate: AppointmentEntity | undefined;
-    for (const candidate of memoryDb.appointments.values()) {
-      const candDate = candidate.date || candidate.appointmentDate || '';
-      if (
-        candidate.id !== appointmentId &&
-        resolveCanonicalDoctorId(candidate.doctor_id) === canonicalDoctorId &&
-        ['Booked', 'BOOKED', 'Waiting', 'WAITING'].includes(candidate.status) &&
-        timeService.normalizeDateString(candDate) === timeService.normalizeDateString(freedDate)
-      ) {
-        eligibleCandidate = candidate;
-        break;
-      }
-    }
-
-    if (eligibleCandidate && freedSlotTime && freedDate) {
-      eligibleCandidate.earlier_slot_offered = {
-        newDate: freedDate,
-        newTime: freedSlotTime,
-        timeDifference: 'Earlier today',
-        estimatedWait: 'Save ~45 mins',
-      };
-      memoryDb.appointments.set(eligibleCandidate.id, eligibleCandidate);
-
-      emitToPatient(eligibleCandidate.patient_id, 'slot:earlier_available', {
-        appointmentId: eligibleCandidate.id,
-        newDate: freedDate,
-        newTime: freedSlotTime,
-        doctorName: eligibleCandidate.doctor_name,
-      });
-
-      await notificationService.sendNotification({
-        patientId: eligibleCandidate.patient_id,
-        title: 'Earlier Appointment Slot Available! ⚡',
-        message: `An earlier slot at ${freedSlotTime} is open with ${eligibleCandidate.doctor_name}. Tap to accept or keep current slot.`,
-        category: 'Appointments',
-        type: 'appointment',
-        actionData: {
-          appointmentId: eligibleCandidate.id,
-          offeredDate: freedDate,
-          offeredTime: freedSlotTime,
-        },
-      });
-    }
+    // 3. Find eligible candidate for earlier slot offer and dispatch offer & notification
+    const eligibleCandidate = await this.offerReleasedSlotToNextEligiblePatient(apt, freedSlotTime, freedDate);
 
     // 4. Construct comprehensive cancellation event payload
     const tokenNumber =

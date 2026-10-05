@@ -26,6 +26,10 @@ export interface PatientEntity {
   clinic_name?: string;
   staff_id?: string;
   initials?: string;
+  email_verified?: boolean;
+  phone_verified?: boolean;
+  account_status?: 'PENDING' | 'ACTIVE' | 'SUSPENDED' | 'REJECTED';
+  is_active?: boolean;
   created_at?: string;
   updated_at?: string;
 }
@@ -92,11 +96,25 @@ export interface ClinicEntity {
   consultation_fee: string;
   google_place_id?: string;
   departments?: string[];
+  email?: string;
+  clinic_number?: number | string;
+  registration_number?: string;
+  locality?: string;
+  city?: string;
+  state?: string;
+  postal_code?: string;
+  clinic_type?: string;
+  status?: 'PENDING_REVIEW' | 'ACTIVE' | 'REJECTED' | 'SUSPENDED';
+  verification_status?: 'PENDING_REVIEW' | 'ACTIVE' | 'REJECTED' | 'SUSPENDED';
+  email_verified?: boolean;
+  phone_verified?: boolean;
   created_at?: string;
+  updated_at?: string;
 }
 
 export type DoctorVerificationStatus =
   | 'PENDING'
+  | 'PENDING_REVIEW'
   | 'REGISTERED'
   | 'DOCUMENTS_SUBMITTED'
   | 'DOCUMENTS_PENDING'
@@ -225,6 +243,9 @@ export interface DoctorEntity {
   clinic_affiliations?: string[];
   procedures?: string[];
   schedule?: Record<string, { start: string; end: string; slot_duration: number; is_off: boolean }>;
+  email_verified?: boolean;
+  phone_verified?: boolean;
+  account_status?: 'PENDING_REVIEW' | 'ACTIVE' | 'REJECTED' | 'SUSPENDED';
   created_at?: string;
   updated_at?: string;
 }
@@ -264,6 +285,9 @@ export interface AppointmentEntity {
   cancellationReason?: string;
   noShowAt?: string;
   duration: string;
+  procedure_id?: string;
+  procedure_name?: string;
+  procedure?: string;
   status:
     | 'Booked'
     | 'BOOKED'
@@ -302,7 +326,18 @@ export interface AppointmentEntity {
     newTime: string;
     timeDifference: string;
     estimatedWait: string;
+    status?: 'PENDING' | 'OFFERED' | 'ACCEPTED' | 'DECLINED';
+    clinicId?: string;
+    clinicName?: string;
+    doctorId?: string;
+    doctorName?: string;
+    originalDate?: string;
+    originalTime?: string;
+    offeredAt?: string;
+    acceptedAt?: string;
+    declinedAt?: string;
   };
+  transfer_history?: any[];
   created_at?: string;
   updated_at?: string;
 }
@@ -324,6 +359,7 @@ export interface NotificationEntity {
   category: string;
   type: string;
   action_data?: any;
+  actionData?: any;
   created_at?: string;
 }
 
@@ -466,6 +502,10 @@ export const PatientModel = {
     const newPatient: PatientEntity = {
       ...data,
       id,
+      email_verified: data.email_verified ?? false,
+      phone_verified: data.phone_verified ?? false,
+      account_status: data.account_status ?? 'PENDING',
+      is_active: data.is_active ?? (data.account_status === 'ACTIVE'),
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     };
@@ -621,6 +661,11 @@ export const CLINIC_ALIAS_MAP: Record<string, string> = {
   'clinic-18': 'c-demo-besant-18',
   'clinic-19': 'c-demo-avadi-18',
   'clinic-20': 'c-demo-royapuram-20',
+  'c-moon-dental-villivakkam-2773': 'c-moon-dental-villivakkam-2773',
+  'clinic-2773': 'c-moon-dental-villivakkam-2773',
+  '2773': 'c-moon-dental-villivakkam-2773',
+  'c-2773': 'c-moon-dental-villivakkam-2773',
+  'moon dental clinic villivakkam': 'c-moon-dental-villivakkam-2773',
 };
 
 export function resolveCanonicalClinicId(clinicIdOrAlias: string): string {
@@ -630,8 +675,12 @@ export function resolveCanonicalClinicId(clinicIdOrAlias: string): string {
 }
 
 export const ClinicModel = {
-  async getAll(): Promise<ClinicEntity[]> {
-    return Array.from(memoryDb.clinics.values());
+  async getAll(includeUnapproved = false): Promise<ClinicEntity[]> {
+    const list = Array.from(memoryDb.clinics.values());
+    if (includeUnapproved) {
+      return list;
+    }
+    return list.filter((c) => c.status !== 'PENDING_REVIEW' && c.status !== 'REJECTED');
   },
 
   async getById(id: string): Promise<ClinicEntity | null> {
@@ -642,16 +691,89 @@ export const ClinicModel = {
     return memoryDb.clinics.get(canonicalId) || null;
   },
 
-  async create(clinic: ClinicEntity): Promise<ClinicEntity> {
-    const norm = clinic.name.toLowerCase().trim();
-    for (const [id, existing] of memoryDb.clinics.entries()) {
-      if (existing.name.toLowerCase().trim() === norm && id !== clinic.id) {
-        memoryDb.clinics.delete(id);
+  async findByEmail(email: string): Promise<ClinicEntity | null> {
+    if (!email) return null;
+    const clean = email.toLowerCase().trim();
+    for (const clinic of memoryDb.clinics.values()) {
+      if (clinic.email && clinic.email.toLowerCase().trim() === clean) {
+        return clinic;
       }
     }
+    return null;
+  },
+
+  async findByPhone(phone: string): Promise<ClinicEntity | null> {
+    if (!phone) return null;
+    const clean = phone.replace(/[^0-9]/g, '');
+    for (const clinic of memoryDb.clinics.values()) {
+      if (clinic.phone && clinic.phone.replace(/[^0-9]/g, '').endsWith(clean.slice(-10))) {
+        return clinic;
+      }
+    }
+    return null;
+  },
+
+  async getPendingVerifications(): Promise<ClinicEntity[]> {
+    const list: ClinicEntity[] = [];
+    for (const clinic of memoryDb.clinics.values()) {
+      if (clinic.status === 'PENDING_REVIEW' || clinic.verification_status === 'PENDING_REVIEW') {
+        list.push(clinic);
+      }
+    }
+    return list;
+  },
+
+  async updateVerificationStatus(
+    id: string,
+    status: 'ACTIVE' | 'REJECTED' | 'SUSPENDED' | 'PENDING_REVIEW',
+    rejectionReason?: string
+  ): Promise<ClinicEntity | null> {
+    const clinic = await this.getById(id);
+    if (!clinic) return null;
+
+    clinic.status = status;
+    clinic.verification_status = status;
+    clinic.is_open = status === 'ACTIVE';
+    clinic.updated_at = new Date().toISOString();
+
     memoryDb.clinics.set(clinic.id, clinic);
     saveStateToFile();
     return clinic;
+  },
+
+  async update(id: string, updates: Partial<ClinicEntity>): Promise<ClinicEntity | null> {
+    const clinic = await this.getById(id);
+    if (!clinic) return null;
+
+    const updated = {
+      ...clinic,
+      ...updates,
+      updated_at: new Date().toISOString(),
+    };
+    memoryDb.clinics.set(clinic.id, updated);
+    saveStateToFile();
+    return updated;
+  },
+
+  async create(clinic: ClinicEntity): Promise<ClinicEntity> {
+    const norm = clinic.name.toLowerCase().trim();
+    const normAddr = (clinic.address || '').toLowerCase().trim();
+    for (const [id, existing] of memoryDb.clinics.entries()) {
+      const existingAddr = (existing.address || '').toLowerCase().trim();
+      if (existing.name.toLowerCase().trim() === norm && existingAddr === normAddr && id !== clinic.id) {
+        memoryDb.clinics.delete(id);
+      }
+    }
+    const newClinic: ClinicEntity = {
+      ...clinic,
+      status: clinic.status || 'ACTIVE',
+      verification_status: clinic.verification_status || 'ACTIVE',
+      created_at: clinic.created_at || new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    };
+    memoryDb.clinics.set(clinic.id, newClinic);
+    saveStateToFile();
+    return newClinic;
   },
 };
 
@@ -682,7 +804,20 @@ export const DoctorModel = {
         return doc;
       }
     }
+    const direct = memoryDb.doctors.get(clean);
+    if (direct) return direct;
+    const canonicalId = resolveCanonicalDoctorId(clean);
+    if (canonicalId && canonicalId !== clean) {
+      const canonicalDoc = memoryDb.doctors.get(canonicalId);
+      if (canonicalDoc) return canonicalDoc;
+    }
     const demoAliasMap: Record<string, string> = {
+      'dr.alagu@moondental.test': 'doc-alagu-vimalesh-2773',
+      'dr.alagu.vimalesh@moondental.test': 'doc-alagu-vimalesh-2773',
+      'dr.jeffrey@moondental.test': 'doc-alagu-vimalesh-2773',
+      'dr.jeffrey.vimalesh@moondental.test': 'doc-alagu-vimalesh-2773',
+      'dr.merlin@moondental.test': 'doc-merlin-rajan-2773',
+      'dr.merlin.rajan@moondental.test': 'doc-merlin-rajan-2773',
       'doctor01@demo.medlink.test': 'doc-demo-arun-01',
       'dr.arun@medlink.health': 'doc-demo-arun-01',
       'arun.kumar@medlink.health': 'doc-demo-arun-01',
@@ -760,8 +895,11 @@ export const DoctorModel = {
       rating: data.rating || 5.0,
       reviews_count: data.reviews_count || 0,
       status: data.status || 'AVAILABLE',
-      verification_status: data.verification_status || 'REGISTERED',
+      verification_status: data.verification_status || 'PENDING_REVIEW',
+      account_status: data.account_status || (data.verification_status === 'VERIFIED' || data.verification_status === 'ACTIVE' ? 'ACTIVE' : 'PENDING_REVIEW'),
       is_verified: data.verification_status === 'VERIFIED' || data.verification_status === 'ACTIVE',
+      email_verified: data.email_verified ?? false,
+      phone_verified: data.phone_verified ?? false,
       available_days: data.available_days || ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
       wait_time: data.wait_time || '10 min',
       is_available_today: true,
@@ -1119,8 +1257,27 @@ export const NotificationModel = {
 
   async getByPatientId(patientId: string): Promise<NotificationEntity[]> {
     const list: NotificationEntity[] = [];
+    const targetSet = new Set<string>();
+    targetSet.add(patientId);
+
+    if (memoryDb.patients?.getAliases) {
+      const aliasMap = memoryDb.patients.getAliases();
+      const canonical = aliasMap.get(patientId.toLowerCase()) || patientId;
+      targetSet.add(canonical);
+      for (const [alias, canId] of aliasMap.entries()) {
+        if (canId === canonical || canId === patientId) {
+          targetSet.add(alias);
+        }
+      }
+    }
+
     for (const n of memoryDb.notifications.values()) {
-      if (n.patient_id === patientId || (n.recipient_type === 'PATIENT' && n.recipient_id === patientId)) {
+      const matchPatientId =
+        (n.patient_id && targetSet.has(n.patient_id)) ||
+        ((n as any).patientId && targetSet.has((n as any).patientId));
+      const matchRecipient =
+        n.recipient_type === 'PATIENT' && n.recipient_id && targetSet.has(n.recipient_id);
+      if (matchPatientId || matchRecipient) {
         list.push(n);
       }
     }
@@ -1129,8 +1286,15 @@ export const NotificationModel = {
 
   async getByDoctorId(doctorId: string): Promise<NotificationEntity[]> {
     const list: NotificationEntity[] = [];
+    const canonical = resolveCanonicalDoctorId(doctorId);
     for (const n of memoryDb.notifications.values()) {
-      if (n.doctor_id === doctorId || (n.recipient_type === 'DOCTOR' && n.recipient_id === doctorId)) {
+      const docId = n.doctor_id ? resolveCanonicalDoctorId(n.doctor_id) : '';
+      const recId = (n.recipient_type === 'DOCTOR' && n.recipient_id) ? resolveCanonicalDoctorId(n.recipient_id) : '';
+      if (
+        n.doctor_id === doctorId ||
+        docId === canonical ||
+        (n.recipient_type === 'DOCTOR' && (n.recipient_id === doctorId || recId === canonical))
+      ) {
         list.push(n);
       }
     }
@@ -1149,6 +1313,7 @@ export const NotificationModel = {
 
   async create(data: Omit<NotificationEntity, 'id' | 'created_at'>): Promise<NotificationEntity> {
     const id = `notif-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const actionDataObj = (data as any).actionData || data.action_data || {};
     const newNotif: NotificationEntity = {
       ...data,
       id,
@@ -1159,6 +1324,8 @@ export const NotificationModel = {
       recipient_type: data.recipient_type || (data.patient_id ? 'PATIENT' : data.doctor_id ? 'DOCTOR' : 'CLINIC'),
       read: data.read ?? false,
       is_read: data.read ?? false,
+      action_data: actionDataObj,
+      actionData: actionDataObj,
       created_at: new Date().toISOString(),
     };
     memoryDb.notifications.set(id, newNotif);
@@ -1457,6 +1624,7 @@ export const DoctorVerificationModel = {
     if (!doctor) return null;
 
     doctor.verification_status = status;
+    doctor.account_status = status === 'VERIFIED' || status === 'ACTIVE' ? 'ACTIVE' : (status === 'REJECTED' ? 'REJECTED' : 'PENDING_REVIEW');
     doctor.is_verified = status === 'VERIFIED' || status === 'ACTIVE';
     doctor.verifier_id = verifierId || 'admin-auto-verifier';
     if (status === 'VERIFIED' || status === 'ACTIVE') {
@@ -1712,6 +1880,7 @@ export interface WalkInEntity {
   estimated_wait_minutes?: number;
   registered_at: string;
   created_at?: string;
+  updated_at?: string;
   completed_at?: string;
 }
 
@@ -2056,6 +2225,18 @@ export const DOCTOR_ALIAS_MAP: Record<string, string> = {
   'doc-28': 'doc-demo-sanjay-28',
   'doc-29': 'doc-demo-pooja-29',
   'doc-30': 'doc-demo-vignesh-30',
+  'doc-alagu-vimalesh-2773': 'doc-alagu-vimalesh-2773',
+  'doc-merlin-rajan-2773': 'doc-merlin-rajan-2773',
+  'dr-alagu-vimalesh': 'doc-alagu-vimalesh-2773',
+  'dr-merlin-rajan': 'doc-merlin-rajan-2773',
+  'dr.alagu.vimalesh@moondental.test': 'doc-alagu-vimalesh-2773',
+  'dr.alagu@moondental.test': 'doc-alagu-vimalesh-2773',
+  'dr.jeffrey@moondental.test': 'doc-alagu-vimalesh-2773',
+  'dr.jeffrey.vimalesh@moondental.test': 'doc-alagu-vimalesh-2773',
+  'dr-jeffrey-vimalesh': 'doc-alagu-vimalesh-2773',
+  'dr-jeffrey-vimalesh-2773': 'doc-alagu-vimalesh-2773',
+  'dr.merlin.rajan@moondental.test': 'doc-merlin-rajan-2773',
+  'dr.merlin@moondental.test': 'doc-merlin-rajan-2773',
 };
 
 export function resolveCanonicalDoctorId(id: string): string {
@@ -2395,4 +2576,142 @@ export const AvailabilityRequestModel = {
     return all.length > 0 ? all[0] : null;
   },
 };
+
+// -------------------------------------------------------------
+// LOAD BALANCER PROPOSAL MODEL
+// -------------------------------------------------------------
+export type LoadBalanceConsentStatus = 'PENDING' | 'ACCEPTED' | 'DECLINED';
+export type LoadBalanceProposalStatus = 'PENDING' | 'ACCEPTED' | 'DECLINED' | 'COMMITTED' | 'CANCELLED' | 'EXPIRED';
+
+export interface LoadBalanceProposalEntity {
+  id: string;
+  clinic_id: string;
+  clinic_name: string;
+  source_doctor_id: string;
+  source_doctor_name: string;
+  target_doctor_id: string;
+  target_doctor_name: string;
+  appointment_id?: string;
+  walk_in_id?: string;
+  patient_id: string;
+  patient_name: string;
+  procedure_name?: string;
+  department_name?: string;
+  source_queue_count: number;
+  target_queue_count: number;
+  estimated_wait_minutes?: number;
+  new_estimated_wait_minutes?: number;
+  doctor_consent: LoadBalanceConsentStatus;
+  doctor_consented_at?: string;
+  doctor_decline_reason?: string;
+  patient_consent: LoadBalanceConsentStatus;
+  patient_consented_at?: string;
+  patient_decline_reason?: string;
+  status: LoadBalanceProposalStatus;
+  transferred_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export const LoadBalanceProposalModel = {
+  async getAll(clinicId?: string): Promise<LoadBalanceProposalEntity[]> {
+    const list: LoadBalanceProposalEntity[] = [];
+    const canonicalClinic = clinicId ? resolveCanonicalClinicId(clinicId) : undefined;
+    for (const p of memoryDb.load_balance_proposals.values()) {
+      if (!canonicalClinic || resolveCanonicalClinicId(p.clinic_id) === canonicalClinic) {
+        list.push(p);
+      }
+    }
+    return list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  },
+
+  async getById(id: string): Promise<LoadBalanceProposalEntity | null> {
+    return memoryDb.load_balance_proposals.get(id) || null;
+  },
+
+  async getByDoctorId(doctorId: string): Promise<LoadBalanceProposalEntity[]> {
+    const canonicalDoc = resolveCanonicalDoctorId(doctorId);
+    const list: LoadBalanceProposalEntity[] = [];
+    for (const p of memoryDb.load_balance_proposals.values()) {
+      if (
+        p.target_doctor_id === doctorId ||
+        resolveCanonicalDoctorId(p.target_doctor_id) === canonicalDoc ||
+        p.source_doctor_id === doctorId ||
+        resolveCanonicalDoctorId(p.source_doctor_id) === canonicalDoc
+      ) {
+        list.push(p);
+      }
+    }
+    return list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  },
+
+  async getByPatientId(patientId: string): Promise<LoadBalanceProposalEntity[]> {
+    const list: LoadBalanceProposalEntity[] = [];
+    const targetSet = new Set<string>([patientId]);
+    if (memoryDb.patients?.getAliases) {
+      const aliasMap = memoryDb.patients.getAliases();
+      const canonical = aliasMap.get(patientId.toLowerCase()) || patientId;
+      targetSet.add(canonical);
+      for (const [alias, canId] of aliasMap.entries()) {
+        if (canId === canonical || canId === patientId) {
+          targetSet.add(alias);
+        }
+      }
+    }
+    for (const p of memoryDb.load_balance_proposals.values()) {
+      if (targetSet.has(p.patient_id)) {
+        list.push(p);
+      }
+    }
+    return list.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  },
+
+  async findActiveByPatient(
+    patientId: string,
+    appointmentId?: string,
+    walkInId?: string
+  ): Promise<LoadBalanceProposalEntity | null> {
+    for (const p of memoryDb.load_balance_proposals.values()) {
+      if (p.status === 'PENDING') {
+        if (appointmentId && p.appointment_id === appointmentId) return p;
+        if (walkInId && p.walk_in_id === walkInId) return p;
+        if (p.patient_id === patientId) return p;
+      }
+    }
+    return null;
+  },
+
+  async create(
+    data: Omit<LoadBalanceProposalEntity, 'id' | 'created_at' | 'updated_at'> & { id?: string }
+  ): Promise<LoadBalanceProposalEntity> {
+    const id = data.id || `lbp-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`;
+    const now = new Date().toISOString();
+    const newProposal: LoadBalanceProposalEntity = {
+      ...data,
+      id,
+      doctor_consent: data.doctor_consent || 'PENDING',
+      patient_consent: data.patient_consent || 'PENDING',
+      status: data.status || 'PENDING',
+      created_at: now,
+      updated_at: now,
+    };
+    memoryDb.load_balance_proposals.set(id, newProposal);
+    saveStateToFile();
+    return newProposal;
+  },
+
+  async update(id: string, updates: Partial<LoadBalanceProposalEntity>): Promise<LoadBalanceProposalEntity | null> {
+    const existing = memoryDb.load_balance_proposals.get(id);
+    if (!existing) return null;
+    const updated: LoadBalanceProposalEntity = {
+      ...existing,
+      ...updates,
+      updated_at: new Date().toISOString(),
+    };
+    memoryDb.load_balance_proposals.set(id, updated);
+    saveStateToFile();
+    return updated;
+  },
+};
+
 

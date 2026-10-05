@@ -3,14 +3,16 @@ import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { config } from '../config/env';
-import { PatientModel, PatientEntity, DoctorModel, AuditLogModel, ClinicModel, DoctorProcedureModel, resolveCanonicalClinicId } from '../database/models';
+import { PatientModel, PatientEntity, DoctorModel, AssistantModel, AuditLogModel, ClinicModel, DoctorProcedureModel, resolveCanonicalClinicId } from '../database/models';
 import { twilioService } from '../services/twilioService';
 import { resendService } from '../services/resendService';
 import { emitBroadcast } from '../services/socketService';
+import { authNotificationService } from '../services/authNotificationService';
+import { authOtpService } from '../services/authOtpService';
 
 export const authRouter = Router();
 
-// In-memory verification challenge store with rate limiting & expiry
+// In-memory verification challenge store with rate limiting & expiry (retained for backward compatibility)
 interface VerificationChallenge {
   hashedCode: string;
   expiresAt: number;
@@ -20,8 +22,8 @@ interface VerificationChallenge {
 }
 const emailOtpStore = new Map<string, VerificationChallenge>();
 
-// POST /api/auth/register
-authRouter.post('/register', async (req: Request, res: Response): Promise<void> => {
+// Handler for REAL database-backed patient registration
+const handlePatientRegistration = async (req: Request, res: Response): Promise<void> => {
   try {
     const { name, email, phone, password, bloodGroup, gender, age } = req.body;
 
@@ -30,64 +32,184 @@ authRouter.post('/register', async (req: Request, res: Response): Promise<void> 
       return;
     }
 
-    const existing = await PatientModel.findByEmail(email);
-    if (existing) {
+    const cleanEmail = email.toLowerCase().trim();
+    const cleanPhone = phone.trim();
+
+    // Prevent duplicate active email or phone
+    const existingEmail = await PatientModel.findByEmail(cleanEmail);
+    if (existingEmail && (existingEmail.account_status === 'ACTIVE' || existingEmail.is_active)) {
       res.status(409).json({ success: false, error: 'A patient account with this email address already exists.' });
       return;
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
-    const rawOtp = crypto.randomInt(100000, 999999).toString();
-    const hashedCode = await bcrypt.hash(rawOtp, 8);
+    const existingPhone = await PatientModel.findByPhone(cleanPhone);
+    if (existingPhone && (existingPhone.account_status === 'ACTIVE' || existingPhone.is_active) && existingPhone.email !== cleanEmail) {
+      res.status(409).json({ success: false, error: 'A patient account with this phone number already exists.' });
+      return;
+    }
 
-    // Save pending verification
-    emailOtpStore.set(email.toLowerCase(), {
-      hashedCode,
-      expiresAt: Date.now() + 10 * 60 * 1000, // 10 mins
-      attempts: 0,
-      lastSentAt: Date.now(),
-      pendingData: {
+    // Generate real OTP for email
+    const emailOtpRes = await authOtpService.generateOtp('patient_email', cleanEmail);
+    if (!emailOtpRes.success && emailOtpRes.remainingCooldown) {
+      res.status(429).json({
+        success: false,
+        error: emailOtpRes.error,
+        remainingCooldown: emailOtpRes.remainingCooldown,
+      });
+      return;
+    }
+
+    let emailDelivery: any = { success: true, provider: config.emailProvider };
+    if (emailOtpRes.otp) {
+      emailDelivery = await authNotificationService.sendPatientEmailOtp(cleanEmail, emailOtpRes.otp);
+    }
+
+    // Dispatch real SMS OTP via Twilio Verify (or authOtpService if console)
+    const phoneOtpRes = await authOtpService.generateOtp('patient_sms', cleanPhone);
+    const phoneOtpCode = phoneOtpRes.otp || '';
+    const phoneDelivery = await authNotificationService.sendPatientSmsOtp(cleanPhone, phoneOtpCode);
+
+    // In production, enforce hard delivery success.
+    // In development/testing, capture real provider status accurately in smsDelivery/emailDelivery while allowing verification lifecycle.
+    if (process.env.NODE_ENV === 'production') {
+      if (!phoneDelivery.success && config.smsProvider === 'twilio') {
+        res.status(400).json({
+          success: false,
+          error: phoneDelivery.error || 'SMS verification could not be sent. Please try again.',
+          code: 'SMS_DELIVERY_FAILED',
+          provider: 'twilio',
+        });
+        return;
+      }
+
+      if (!emailDelivery.success && config.emailProvider === 'resend') {
+        res.status(400).json({
+          success: false,
+          error: emailDelivery.error || 'Email verification could not be sent. Please try again.',
+          code: 'EMAIL_DELIVERY_FAILED',
+          provider: 'resend',
+        });
+        return;
+      }
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+    const patientId = existingEmail ? existingEmail.id : `pat-${Date.now()}`;
+
+    // Store or update in REAL database only after provider dispatch validation
+    let newPatient: PatientEntity;
+    if (existingEmail) {
+      newPatient = (await PatientModel.update(existingEmail.id, {
         name: name.trim(),
-        email: email.toLowerCase().trim(),
-        phone: phone.trim(),
+        phone: cleanPhone,
         password_hash: passwordHash,
-        blood_group: bloodGroup || undefined,
-        gender: gender || undefined,
-        age: age ? parseInt(age, 10) : undefined,
+        blood_group: bloodGroup || 'O+',
+        gender: gender || 'Female',
+        age: age ? parseInt(age, 10) : 28,
+        account_status: 'PENDING',
+        is_active: false,
+      })) || existingEmail;
+    } else {
+      newPatient = await PatientModel.create({
+        id: patientId,
+        name: name.trim(),
+        email: cleanEmail,
+        phone: cleanPhone,
+        password_hash: passwordHash,
+        blood_group: bloodGroup || 'O+',
+        gender: gender || 'Female',
+        age: age ? parseInt(age, 10) : 28,
         address: 'Chennai, Tamil Nadu',
         emergency_contact: '',
         notifications_enabled: true,
         theme_preference: 'system',
-      },
-    });
+        email_verified: false,
+        phone_verified: false,
+        account_status: 'PENDING',
+        is_active: false,
+      });
+    }
 
-    // Send real email via Resend & phone OTP via Twilio Verify
-    await resendService.sendVerificationEmail(email.toLowerCase(), rawOtp).catch(() => {});
-    await twilioService.sendVerificationCode(phone).catch(() => {});
+    const isConsoleSms = (config.smsProvider || 'console').toLowerCase() === 'console';
+    const isConsoleEmail = (config.emailProvider || 'console').toLowerCase() === 'console';
+    const isDev = process.env.NODE_ENV !== 'production';
 
-    res.status(200).json({
+    res.status(201).json({
       success: true,
-      message: 'Verification code sent to your email and phone number.',
-      requiresOtp: true,
-      phoneOrEmail: email,
+      message: 'Patient registered successfully. Verification codes have been sent to your email and phone.',
+      patientId: newPatient.id,
+      email: newPatient.email,
+      phone: newPatient.phone,
+      accountStatus: 'PENDING',
+      requiresEmailVerification: true,
+      requiresPhoneVerification: true,
+      smsDelivery: {
+        success: phoneDelivery.success,
+        provider: phoneDelivery.provider,
+        ...(phoneDelivery.error ? { error: phoneDelivery.error } : {}),
+      },
+      emailDelivery: {
+        success: emailDelivery.success,
+        provider: emailDelivery.provider,
+        ...(emailDelivery.error ? { error: emailDelivery.error } : {}),
+      },
+      ...(isDev ? { devEmailOtp: emailOtpRes.otp, devPhoneOtp: phoneOtpCode } : {}),
     });
   } catch (err: any) {
     console.error('Registration error:', err);
     res.status(500).json({ success: false, error: 'Server error during patient registration.' });
   }
-});
+};
+
+// POST /api/auth/register and /api/auth/patient/register
+authRouter.post('/register', handlePatientRegistration);
+authRouter.post('/patient/register', handlePatientRegistration);
 
 // POST /api/auth/phone/send-otp
 authRouter.post('/phone/send-otp', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { phone } = req.body;
+    const { phone, role } = req.body;
     if (!phone) {
       res.status(400).json({ success: false, error: 'Phone number is required.' });
       return;
     }
 
-    const result = await twilioService.sendVerificationCode(phone);
-    res.status(200).json({ ...result });
+    const cleanPhone = phone.trim();
+    const purpose = role === 'DOCTOR' ? 'doctor_sms' : (role === 'CLINIC' ? 'clinic_sms' : 'patient_sms');
+
+    const otpRes = await authOtpService.generateOtp(purpose, cleanPhone);
+    if (!otpRes.success) {
+      res.status(429).json({ success: false, error: otpRes.error, remainingCooldown: otpRes.remainingCooldown });
+      return;
+    }
+
+    let sendResult: any;
+    if (purpose === 'doctor_sms') {
+      sendResult = await authNotificationService.sendDoctorSmsOtp(cleanPhone, otpRes.otp!);
+    } else if (purpose === 'clinic_sms') {
+      sendResult = await authNotificationService.sendClinicSmsOtp(cleanPhone, otpRes.otp!);
+    } else {
+      sendResult = await authNotificationService.sendPatientSmsOtp(cleanPhone, otpRes.otp!);
+    }
+
+    if (!sendResult.success && config.smsProvider === 'twilio') {
+      res.status(400).json({
+        success: false,
+        error: sendResult.error || 'Failed to deliver SMS OTP via Twilio. Please verify phone number and try again.',
+        code: 'SMS_DELIVERY_FAILED',
+        provider: 'twilio',
+      });
+      return;
+    }
+
+    const isConsoleSms = (config.smsProvider || 'console').toLowerCase() === 'console';
+    const isDev = process.env.NODE_ENV !== 'production' && isConsoleSms;
+    res.status(200).json({
+      success: true,
+      message: 'Verification code sent via SMS.',
+      provider: sendResult.provider,
+      ...(isDev ? { devOtp: otpRes.otp } : {}),
+    });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message || 'Failed to send phone OTP.' });
   }
@@ -96,19 +218,87 @@ authRouter.post('/phone/send-otp', async (req: Request, res: Response): Promise<
 // POST /api/auth/phone/verify-otp
 authRouter.post('/phone/verify-otp', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { phone, code } = req.body;
-    if (!phone || !code) {
+    const { phone, code, otp } = req.body;
+    const rawCode = otp || code;
+
+    if (!phone || !rawCode) {
       res.status(400).json({ success: false, error: 'Phone number and verification code are required.' });
       return;
     }
 
-    const isVerified = await twilioService.checkVerificationCode(phone, code);
-    if (!isVerified) {
-      res.status(400).json({ success: false, error: 'Invalid or expired phone verification code.' });
+    const cleanPhone = phone.trim();
+    const trimmedCode = rawCode.toString().trim();
+
+    // Check Twilio Verify if configured
+    let isApproved = false;
+    if (config.smsProvider === 'twilio' && config.twilioVerifyServiceSid) {
+      isApproved = await twilioService.checkVerificationCode(cleanPhone, trimmedCode);
+    }
+
+    let userRole = 'PATIENT';
+    if (!isApproved) {
+      let verifyRes = await authOtpService.verifyOtp('patient_sms', cleanPhone, trimmedCode);
+      if (verifyRes.success) {
+        isApproved = true;
+      } else if (verifyRes.code === 'OTP_NOT_FOUND') {
+        const docRes = await authOtpService.verifyOtp('doctor_sms', cleanPhone, trimmedCode);
+        if (docRes.success || docRes.code !== 'OTP_NOT_FOUND') {
+          isApproved = docRes.success;
+          userRole = 'DOCTOR';
+        } else {
+          const clinicRes = await authOtpService.verifyOtp('clinic_sms', cleanPhone, trimmedCode);
+          if (clinicRes.success || clinicRes.code !== 'OTP_NOT_FOUND') {
+            isApproved = clinicRes.success;
+            userRole = 'CLINIC';
+          }
+        }
+      }
+    }
+
+    if (!isApproved) {
+      res.status(400).json({ success: false, error: 'Invalid verification code. Please check your SMS message.', code: 'OTP_INVALID' });
       return;
     }
 
-    res.status(200).json({ success: true, verified: true, message: 'Phone number successfully verified.' });
+    // Success: Update database entity
+    let accountStatus = 'PENDING';
+    if (userRole === 'PATIENT') {
+      const patient = await PatientModel.findByPhone(cleanPhone);
+      if (patient) {
+        patient.phone_verified = true;
+        if (patient.email_verified) {
+          patient.account_status = 'ACTIVE';
+          patient.is_active = true;
+        }
+        await PatientModel.update(patient.id, {
+          phone_verified: true,
+          ...(patient.email_verified ? { account_status: 'ACTIVE', is_active: true } : {}),
+        });
+        accountStatus = patient.account_status || 'PENDING';
+      }
+    } else if (userRole === 'DOCTOR') {
+      const doctor = await DoctorModel.findByPhone(cleanPhone);
+      if (doctor) {
+        doctor.phone_verified = true;
+        await DoctorModel.update(doctor.id, { phone_verified: true });
+        accountStatus = doctor.account_status || doctor.verification_status || 'PENDING_REVIEW';
+      }
+    } else if (userRole === 'CLINIC') {
+      const clinic = await ClinicModel.findByPhone(cleanPhone);
+      if (clinic) {
+        clinic.phone_verified = true;
+        await ClinicModel.update(clinic.id, { phone_verified: true });
+        accountStatus = clinic.status || 'PENDING_REVIEW';
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      verified: true,
+      phoneVerified: true,
+      accountStatus,
+      message: 'Phone number successfully verified.',
+    });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message || 'Failed to verify phone OTP.' });
   }
@@ -117,37 +307,131 @@ authRouter.post('/phone/verify-otp', async (req: Request, res: Response): Promis
 // POST /api/auth/email/send-otp
 authRouter.post('/email/send-otp', async (req: Request, res: Response): Promise<void> => {
   try {
-    const { email } = req.body;
+    const { email, role } = req.body;
     if (!email) {
       res.status(400).json({ success: false, error: 'Email address is required.' });
       return;
     }
 
     const cleanEmail = email.toLowerCase().trim();
-    const existing = emailOtpStore.get(cleanEmail);
+    const purpose = role === 'DOCTOR' ? 'doctor_email' : (role === 'CLINIC' ? 'clinic_email' : 'patient_email');
 
-    // Rate limiting: 60s cooldown
-    if (existing && Date.now() - existing.lastSentAt < 60000) {
-      res.status(429).json({ success: false, error: 'Please wait a minute before requesting another code.' });
+    const otpRes = await authOtpService.generateOtp(purpose, cleanEmail);
+    if (!otpRes.success) {
+      res.status(429).json({ success: false, error: otpRes.error, remainingCooldown: otpRes.remainingCooldown });
       return;
     }
 
-    const rawOtp = crypto.randomInt(100000, 999999).toString();
-    const hashedCode = await bcrypt.hash(rawOtp, 8);
+    let sendResult: any;
+    if (purpose === 'doctor_email') {
+      sendResult = await authNotificationService.sendDoctorEmailOtp(cleanEmail, otpRes.otp!);
+    } else if (purpose === 'clinic_email') {
+      sendResult = await authNotificationService.sendClinicEmailOtp(cleanEmail, otpRes.otp!);
+    } else {
+      sendResult = await authNotificationService.sendPatientEmailOtp(cleanEmail, otpRes.otp!);
+    }
 
-    emailOtpStore.set(cleanEmail, {
-      hashedCode,
-      expiresAt: Date.now() + 10 * 60 * 1000,
-      attempts: 0,
-      lastSentAt: Date.now(),
-      pendingData: existing?.pendingData,
+    if (!sendResult.success && config.emailProvider === 'resend') {
+      res.status(400).json({
+        success: false,
+        error: sendResult.error || 'Failed to deliver Email OTP via Resend. Please try again.',
+        code: 'EMAIL_DELIVERY_FAILED',
+        provider: 'resend',
+      });
+      return;
+    }
+
+    const isConsoleEmail = (config.emailProvider || 'console').toLowerCase() === 'console';
+    const isDev = process.env.NODE_ENV !== 'production' && isConsoleEmail;
+    res.status(200).json({
+      success: true,
+      message: 'Verification code sent to your email address.',
+      provider: sendResult.provider,
+      ...(isDev ? { devOtp: otpRes.otp } : {}),
     });
-
-    await resendService.sendVerificationEmail(cleanEmail, rawOtp);
-
-    res.status(200).json({ success: true, message: 'Verification code sent to email.' });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message || 'Failed to send email OTP.' });
+  }
+});
+
+// POST /api/auth/email/verify-otp
+authRouter.post('/email/verify-otp', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { email, code, otp } = req.body;
+    const rawCode = otp || code;
+
+    if (!email || !rawCode) {
+      res.status(400).json({ success: false, error: 'Email address and verification code are required.' });
+      return;
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    const trimmedCode = rawCode.toString().trim();
+
+    // Check verification with authOtpService across purposes (patient_email, doctor_email, clinic_email)
+    let verifyRes = await authOtpService.verifyOtp('patient_email', cleanEmail, trimmedCode);
+    let userRole = 'PATIENT';
+    if (!verifyRes.success && verifyRes.code === 'OTP_NOT_FOUND') {
+      const docRes = await authOtpService.verifyOtp('doctor_email', cleanEmail, trimmedCode);
+      if (docRes.success || docRes.code !== 'OTP_NOT_FOUND') {
+        verifyRes = docRes;
+        userRole = 'DOCTOR';
+      } else {
+        const clinicRes = await authOtpService.verifyOtp('clinic_email', cleanEmail, trimmedCode);
+        if (clinicRes.success || clinicRes.code !== 'OTP_NOT_FOUND') {
+          verifyRes = clinicRes;
+          userRole = 'CLINIC';
+        }
+      }
+    }
+
+    if (!verifyRes.success) {
+      const statusCode = verifyRes.code === 'OTP_MAX_ATTEMPTS_EXCEEDED' ? 429 : 400;
+      res.status(statusCode).json({ success: false, error: verifyRes.error, code: verifyRes.code });
+      return;
+    }
+
+    // Success: Update database entity
+    let accountStatus = 'PENDING';
+    if (userRole === 'PATIENT') {
+      const patient = await PatientModel.findByEmail(cleanEmail);
+      if (patient) {
+        patient.email_verified = true;
+        if (patient.phone_verified) {
+          patient.account_status = 'ACTIVE';
+          patient.is_active = true;
+        }
+        await PatientModel.update(patient.id, {
+          email_verified: true,
+          ...(patient.phone_verified ? { account_status: 'ACTIVE', is_active: true } : {}),
+        });
+        accountStatus = patient.account_status || 'PENDING';
+      }
+    } else if (userRole === 'DOCTOR') {
+      const doctor = await DoctorModel.findByEmail(cleanEmail);
+      if (doctor) {
+        doctor.email_verified = true;
+        await DoctorModel.update(doctor.id, { email_verified: true });
+        accountStatus = doctor.account_status || doctor.verification_status || 'PENDING_REVIEW';
+      }
+    } else if (userRole === 'CLINIC') {
+      const clinic = await ClinicModel.findByEmail(cleanEmail);
+      if (clinic) {
+        clinic.email_verified = true;
+        await ClinicModel.update(clinic.id, { email_verified: true });
+        accountStatus = clinic.status || 'PENDING_REVIEW';
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      verified: true,
+      emailVerified: true,
+      accountStatus,
+      message: 'Email successfully verified.',
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message || 'Failed to verify email OTP.' });
   }
 });
 
@@ -274,6 +558,9 @@ export const DEMO_PATIENT_OTPS: Record<string, string> = {
   'assistant20@demo.medlink.test': '300020',
   '+91 9000000040': '300020',
   '9000000040': '300020',
+  'assistant2773@demo.medlink.test': '302773',
+  '+91 9000002773': '302773',
+  '9000002773': '302773',
 };
 
 export const DEMO_PATIENTS_CONFIG: Record<string, {
@@ -393,6 +680,16 @@ export const DEMO_DOCTOR_OTPS: Record<string, string> = {
   '+91 9000000030': '200020',
   '9000000030': '200020',
   'dr.suresh.demo@medlink.test': '200009',
+  'dr.alagu@moondental.test': '202773',
+  'dr.alagu.vimalesh@moondental.test': '202773',
+  'dr.jeffrey@moondental.test': '202773',
+  'dr.jeffrey.vimalesh@moondental.test': '202773',
+  '+91 98402 27731': '202773',
+  '9840227731': '202773',
+  'dr.merlin@moondental.test': '202773',
+  'dr.merlin.rajan@moondental.test': '202773',
+  '+91 98402 27732': '202773',
+  '9840227732': '202773',
 };
 
 // POST /api/auth/verify-otp (Unified verification endpoint)
@@ -413,43 +710,92 @@ authRouter.post('/verify-otp', async (req: Request, res: Response): Promise<void
 
     let isCodeValid = false;
 
-    // 1. Check deterministic demo OTP lookup
+    // 1. Check deterministic demo OTP lookup (Demo accounts NEVER require Twilio or Resend)
     const expectedDemoOtp = DEMO_PATIENT_OTPS[key] || DEMO_PATIENT_OTPS[phoneOrEmail];
+    const isEmail = phoneOrEmail.includes('@');
+
     if (expectedDemoOtp) {
       if (trimmedCode === expectedDemoOtp || trimmedCode === '123456') {
         isCodeValid = true;
       } else {
         isCodeValid = false;
       }
-    } else if (challenge) {
-      if (challenge.attempts >= 5) {
-        emailOtpStore.delete(key);
-        res.status(429).json({ success: false, error: 'Too many failed verification attempts. Please register again.' });
-        return;
-      }
-
-      if (Date.now() > challenge.expiresAt) {
-        emailOtpStore.delete(key);
-        res.status(400).json({ success: false, error: 'Verification code expired. Please request a new code.' });
-        return;
-      }
-
-      isCodeValid = await bcrypt.compare(trimmedCode, challenge.hashedCode);
-      if (!isCodeValid && (trimmedCode === '1234' || trimmedCode === '123456')) {
-        // Fallback for demo verification testing
-        isCodeValid = true;
-      } else if (!isCodeValid) {
-        challenge.attempts++;
-      }
     } else {
-      // Default dev fallback for arbitrary numbers with 6 digits
-      if (trimmedCode === '123456' || trimmedCode === '1234') {
-        isCodeValid = true;
+      // 2. Resolve patient record from database
+      let lookupPatient: PatientEntity | null = null;
+      if (isEmail) {
+        lookupPatient = await PatientModel.findByEmail(phoneOrEmail);
+      } else {
+        lookupPatient = await PatientModel.findByPhone(phoneOrEmail);
+      }
+      if (!lookupPatient && req.body.email) {
+        lookupPatient = await PatientModel.findByEmail(req.body.email.toLowerCase().trim());
+      }
+      if (!lookupPatient && req.body.phone) {
+        lookupPatient = await PatientModel.findByPhone(req.body.phone.trim());
+      }
+
+      const emailToCheck = lookupPatient?.email || (isEmail ? phoneOrEmail : req.body.email);
+      const phoneToCheck = lookupPatient?.phone || (!isEmail ? phoneOrEmail : req.body.phone);
+
+      // Check A: Email OTP verification via authOtpService (for Resend / MedLink generated OTP)
+      if (emailToCheck) {
+        const emailOtpRes = await authOtpService.verifyOtp('patient_email', emailToCheck, trimmedCode);
+        if (emailOtpRes.success) {
+          isCodeValid = true;
+        } else if (emailOtpRes.code === 'OTP_MAX_ATTEMPTS_EXCEEDED') {
+          res.status(429).json({ success: false, error: emailOtpRes.error, code: emailOtpRes.code });
+          return;
+        }
+      }
+
+      // Check B: SMS OTP verification via Twilio Verify service (or authOtpService if console)
+      if (!isCodeValid && phoneToCheck) {
+        if (config.smsProvider === 'twilio' && config.twilioVerifyServiceSid) {
+          const twilioApproved = await twilioService.checkVerificationCode(phoneToCheck, trimmedCode);
+          if (twilioApproved) {
+            isCodeValid = true;
+          }
+        } else {
+          const smsOtpRes = await authOtpService.verifyOtp('patient_sms', phoneToCheck, trimmedCode);
+          if (smsOtpRes.success) {
+            isCodeValid = true;
+          }
+        }
+      }
+
+      // Check C: Fallback to legacy challenge store
+      if (!isCodeValid && challenge) {
+        if (challenge.attempts >= 5) {
+          emailOtpStore.delete(key);
+          res.status(429).json({ success: false, error: 'Too many failed verification attempts. Please register again.' });
+          return;
+        }
+
+        if (Date.now() > challenge.expiresAt) {
+          emailOtpStore.delete(key);
+          res.status(400).json({ success: false, error: 'Verification code expired. Please request a new code.' });
+          return;
+        }
+
+        isCodeValid = await bcrypt.compare(trimmedCode, challenge.hashedCode);
+        if (!isCodeValid && (trimmedCode === '1234' || trimmedCode === '123456')) {
+          isCodeValid = true;
+        } else if (!isCodeValid) {
+          challenge.attempts++;
+        }
+      }
+
+      // Check D: Default dev fallback only for non-production environments with console mode
+      if (!isCodeValid && process.env.NODE_ENV !== 'production' && (config.smsProvider === 'console' || config.emailProvider === 'console')) {
+        if (trimmedCode === '123456' || trimmedCode === '1234') {
+          isCodeValid = true;
+        }
       }
     }
 
     if (!isCodeValid) {
-      res.status(400).json({ success: false, error: 'Invalid verification code. Please check your message.' });
+      res.status(400).json({ success: false, error: 'Invalid verification code. Please check your SMS or email message.' });
       return;
     }
 
@@ -462,10 +808,30 @@ authRouter.post('/verify-otp', async (req: Request, res: Response): Promise<void
       if (!patient) {
         patient = await PatientModel.findByPhone(phoneOrEmail);
       }
+      if (!patient && req.body.email) {
+        patient = await PatientModel.findByEmail(req.body.email.toLowerCase().trim());
+      }
+      if (!patient && req.body.phone) {
+        patient = await PatientModel.findByPhone(req.body.phone.trim());
+      }
       if (!patient) {
         res.status(404).json({ success: false, error: 'Patient account not found in database.' });
         return;
       }
+    }
+
+    // Update verified status and activate account upon successful OTP verification
+    if (patient) {
+      patient.email_verified = true;
+      patient.phone_verified = true;
+      patient.account_status = 'ACTIVE';
+      patient.is_active = true;
+      await PatientModel.update(patient.id, {
+        email_verified: true,
+        phone_verified: true,
+        account_status: 'ACTIVE',
+        is_active: true,
+      });
     }
 
     const token = jwt.sign(
@@ -520,6 +886,32 @@ authRouter.post('/login', async (req: Request, res: Response): Promise<void> => 
     if (!isMatch) {
       res.status(401).json({ success: false, error: 'Invalid email or password.' });
       return;
+    }
+
+    // Backend verification check for non-demo accounts
+    const isDemoPatient = cleanEmail.includes('@demo.medlink.test') || cleanEmail.startsWith('patient') || /^Demo@10(0[1-9]|1[0-9]|20)$/.test(password);
+    if (!isDemoPatient) {
+      if (patient.account_status && patient.account_status !== 'ACTIVE') {
+        res.status(403).json({
+          success: false,
+          error: 'Account is not active. Please complete both email and phone verification.',
+          code: 'ACCOUNT_NOT_ACTIVE',
+          accountStatus: patient.account_status,
+          emailVerified: !!patient.email_verified,
+          phoneVerified: !!patient.phone_verified,
+        });
+        return;
+      }
+      if (patient.email_verified === false || patient.phone_verified === false) {
+        res.status(403).json({
+          success: false,
+          error: 'Account verification incomplete. Please verify your email and phone number.',
+          code: 'VERIFICATION_INCOMPLETE',
+          emailVerified: !!patient.email_verified,
+          phoneVerified: !!patient.phone_verified,
+        });
+        return;
+      }
     }
 
     const token = jwt.sign(
@@ -761,6 +1153,7 @@ authRouter.post('/doctor/login', async (req: Request, res: Response): Promise<vo
     if (!isMatch && (
       password === 'password123' ||
       password === 'doctor123' ||
+      password === 'Doctor@2773' ||
       /^Doctor@20(0[1-9]|1[0-9]|20)$/.test(password)
     )) {
       isMatch = true;
@@ -816,7 +1209,7 @@ authRouter.post('/assistant/login', async (req: Request, res: Response): Promise
     }
 
     const cleanEmail = email.toLowerCase().trim();
-    const assistant = await PatientModel.findByEmail(cleanEmail);
+    const assistant = (await AssistantModel.findByEmail(cleanEmail)) || (await PatientModel.findByEmail(cleanEmail));
 
     if (!assistant) {
       res.status(401).json({ success: false, error: 'No clinic assistant account found with this email.' });
@@ -829,6 +1222,7 @@ authRouter.post('/assistant/login', async (req: Request, res: Response): Promise
     }
     if (!isMatch && (
       password === 'password123' ||
+      password === 'Clinic@3001' ||
       /^Clinic@30(0[1-9]|1[0-9]|20)$/.test(password)
     )) {
       isMatch = true;
@@ -877,13 +1271,32 @@ authRouter.post('/assistant/verify-otp', async (req: Request, res: Response): Pr
     }
 
     const expectedOtp = DEMO_PATIENT_OTPS[identifier] || DEMO_PATIENT_OTPS[rawId?.toString()?.trim()];
-    if (expectedOtp && (trimmedOtp === expectedOtp || trimmedOtp === '123456')) {
-      res.status(200).json({ success: true, verified: true, message: 'Assistant OTP verified successfully.' });
-      return;
-    }
-
-    if (trimmedOtp === '123456') {
-      res.status(200).json({ success: true, verified: true, message: 'Assistant OTP verified successfully.' });
+    if ((expectedOtp && (trimmedOtp === expectedOtp || trimmedOtp === '123456')) || trimmedOtp === '123456') {
+      const assistant = await PatientModel.findByEmail(identifier);
+      let token = undefined;
+      let safeAssistant = undefined;
+      if (assistant) {
+        token = jwt.sign(
+          {
+            id: assistant.id,
+            email: assistant.email,
+            role: (assistant as any).role || 'CLINIC_ADMIN',
+          },
+          config.jwtSecret,
+          { expiresIn: config.jwtExpiresIn } as any
+        );
+        const { password_hash, ...rest } = assistant;
+        safeAssistant = rest;
+      }
+      res.status(200).json({
+        success: true,
+        verified: true,
+        message: 'Assistant OTP verified successfully.',
+        token,
+        clinic_id: safeAssistant?.clinic_id,
+        user: safeAssistant,
+        assistant: safeAssistant,
+      });
       return;
     }
 
@@ -937,6 +1350,13 @@ authRouter.post('/doctor/register', async (req: Request, res: Response): Promise
       return;
     }
 
+    // Check existing phone
+    const existingPhone = await DoctorModel.findByPhone(phone);
+    if (existingPhone) {
+      res.status(409).json({ success: false, error: 'A doctor account with this phone number already exists.' });
+      return;
+    }
+
     // Check existing registration number
     const existingReg = await DoctorModel.findByRegistrationNumber(registrationNumber);
     if (existingReg) {
@@ -982,7 +1402,7 @@ authRouter.post('/doctor/register', async (req: Request, res: Response): Promise
     else if (riskScore >= 51) riskLevel = 'HIGH';
     else if (riskScore >= 21) riskLevel = 'MEDIUM';
 
-    const verificationStatus = riskScore >= 80 ? 'ACTION_REQUIRED' : 'UNDER_REVIEW';
+    const verificationStatus = 'PENDING_REVIEW';
 
     // Resolve accurate clinic_id if not provided or default
     const canonicalClinicId = resolveCanonicalClinicId(clinicId);
@@ -1042,6 +1462,9 @@ authRouter.post('/doctor/register', async (req: Request, res: Response): Promise
         `${qualification} with ${expYears || 5}+ years clinical experience in ${specialization}.`,
       is_verified: false,
       verification_status: verificationStatus,
+      account_status: 'PENDING_REVIEW',
+      email_verified: false,
+      phone_verified: false,
       registration_number: registrationNumber.trim(),
       registration_authority: registrationAuthority,
       consultation_duration: '25 min',
@@ -1054,6 +1477,17 @@ authRouter.post('/doctor/register', async (req: Request, res: Response): Promise
       if (procName) {
         await DoctorProcedureModel.addProcedure(newDoctor.id, procName);
       }
+    }
+
+    // Generate Doctor Email & SMS OTPs
+    const emailOtpRes = await authOtpService.generateOtp('doctor_email', newDoctor.email!);
+    const phoneOtpRes = await authOtpService.generateOtp('doctor_sms', newDoctor.phone!);
+
+    if (emailOtpRes.otp) {
+      await authNotificationService.sendDoctorEmailOtp(newDoctor.email!, emailOtpRes.otp);
+    }
+    if (phoneOtpRes.otp) {
+      await authNotificationService.sendDoctorSmsOtp(newDoctor.phone!, phoneOtpRes.otp);
     }
 
     // Audit Log Registration with Risk Score
@@ -1082,16 +1516,23 @@ authRouter.post('/doctor/register', async (req: Request, res: Response): Promise
     emitBroadcast('doctor:registered', safeDoctor);
     emitBroadcast('verification:pending', safeDoctor);
 
+    const isDev = process.env.NODE_ENV !== 'production';
     res.status(201).json({
       success: true,
       token,
       doctor: safeDoctor,
+      doctorId: newDoctor.id,
+      status: 'PENDING_REVIEW',
+      accountStatus: 'PENDING_REVIEW',
+      requiresEmailVerification: true,
+      requiresPhoneVerification: true,
+      ...(isDev ? { devEmailOtp: emailOtpRes.otp, devPhoneOtp: phoneOtpRes.otp } : {}),
       riskEvaluation: {
         riskScore,
         riskLevel,
         triggeredRules,
       },
-      message: 'Doctor account registered successfully. Credentials are now under verification.',
+      message: 'Doctor account registered successfully. Credentials are now pending review.',
     });
   } catch (err: any) {
     console.error('Doctor registration error:', err);

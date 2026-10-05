@@ -129,11 +129,21 @@ class ClientSocketService {
         this.notify('availability_request:cleared', data);
       });
 
+      this.socket.on('queue:load_balance_proposal_updated', (data: any) => {
+        this.notify('queue:load_balance_proposal_updated', data);
+      });
+
       this.socket.on('disconnect', () => {
         console.log('📡 Disconnected from WebSocket Gateway');
       });
     } catch (err) {
       console.warn('WebSocket connection error:', err);
+    }
+  }
+
+  identifyPatient(patientId: string): void {
+    if (patientId) {
+      this.connect(patientId);
     }
   }
 

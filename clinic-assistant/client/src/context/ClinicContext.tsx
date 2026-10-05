@@ -63,6 +63,7 @@ const DEMO_CLINIC_MAP: Record<string, { clinicId: string; name: string; clinicNa
   'assistant18@demo.medlink.test': { clinicId: 'c-demo-besant-18', name: 'Pooja M', clinicName: 'Besant Nagar Coastal Health Care', staffId: 'STAFF-BNC-18', initials: 'PM' },
   'assistant19@demo.medlink.test': { clinicId: 'c-demo-avadi-18', name: 'Manoj S', clinicName: 'Avadi Central Care Hospital', staffId: 'STAFF-ACC-19', initials: 'MS' },
   'assistant20@demo.medlink.test': { clinicId: 'c-demo-royapuram-20', name: 'Kavitha R', clinicName: 'Royapuram Community Health Clinic', staffId: 'STAFF-RCH-20', initials: 'KR' },
+  'assistant2773@demo.medlink.test': { clinicId: 'c-moon-dental-villivakkam-2773', name: 'Moon Dental Assistant', clinicName: 'Moon Dental Clinic', staffId: 'STAFF-MDC-2773', initials: 'MD' },
 };
 
 interface ClinicContextType {
@@ -188,6 +189,7 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     { id: 'c-demo-besant-18', name: 'Besant Nagar Coastal Health Care', address: '15 5th Avenue, Besant Nagar, Chennai', phone: '+91 44 2491 0018', category: 'Ophthalmology', departments: ['Ophthalmology'] },
     { id: 'c-demo-avadi-18', name: 'Avadi Central Care Hospital', address: '28 CTH Road, Avadi, Chennai', phone: '+91 44 2448 0019', category: 'Neurology', departments: ['Neurology'] },
     { id: 'c-demo-royapuram-20', name: 'Royapuram Community Health Clinic', address: '64 Mannarsamy Koil St, Royapuram, Chennai', phone: '+91 44 2595 0020', category: 'General Medicine', departments: ['General Medicine'] },
+    { id: 'c-moon-dental-villivakkam-2773', name: 'Moon Dental Clinic', address: '28/15, Sannathi Street, Villivakkam, Chennai, Tamil Nadu 600082', phone: '+91 44 2617 2773', category: 'Dentistry', departments: ['Dentistry'] },
   ]);
 
   const [activeClinicId, setActiveClinicIdState] = useState<string>(() => {
@@ -373,24 +375,34 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const loginAssistant = async (email: string, pass: string) => {
     try {
       const res = await clinicApi.loginAssistant(email, pass);
-      return res;
-    } catch (err: any) {
-      return { success: false, error: err.message || 'Login failed' };
-    }
-  };
-
-  const verifyAssistantOtp = async (email: string, otp: string, demoMeta?: any) => {
-    try {
-      const res = await clinicApi.verifyAssistantOtp(email, otp);
-      if (res.success || res.verified) {
+      if (res.success) {
         const token = res.token || `jwt_ast_${Date.now()}`;
         const cleanEmail = email.toLowerCase().trim();
-        const demoInfo = demoMeta || DEMO_CLINIC_MAP[cleanEmail];
+        const demoInfo = DEMO_CLINIC_MAP[cleanEmail];
 
-        const targetClinicId = demoInfo?.clinicId || (assistantUser?.clinic_id || assistantUser?.clinicId || 'c-demo-moon-01');
-        const assistantName = demoInfo?.name || assistantUser?.name || 'Sheryl Thomas';
-        const staffId = demoInfo?.staffId || assistantUser?.id || 'STAFF-MDC-01';
-        const initials = demoInfo?.initials || (assistantName.split(' ').map((p: string) => p[0]).join('').slice(0, 2).toUpperCase() || 'ST');
+        const targetClinicId =
+          res.user?.clinic_id ||
+          res.user?.clinicId ||
+          demoInfo?.clinicId ||
+          'c-demo-moon-01';
+        const assistantName =
+          res.user?.name ||
+          demoInfo?.name ||
+          'Sheryl Thomas';
+        const staffId =
+          res.user?.staff_id ||
+          res.user?.id ||
+          demoInfo?.staffId ||
+          'STAFF-MDC-01';
+        const initials =
+          demoInfo?.initials ||
+          res.user?.initials ||
+          (assistantName
+            .split(' ')
+            .map((p: string) => p[0])
+            .join('')
+            .slice(0, 2)
+            .toUpperCase() || 'ST');
 
         const newOperator: OperatorProfile = {
           name: assistantName,
@@ -424,12 +436,17 @@ export const ClinicProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         addToast('success', 'Authentication Successful', `Welcome back, ${assistantName}.`);
         await refreshData();
-        return { success: true, token };
+        return { success: true, token, user: userData };
       }
-      return { success: false, error: res.error || 'Invalid OTP code' };
+      return { success: false, error: res.error || 'Invalid credentials' };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Verification error' };
+      return { success: false, error: err.message || 'Login failed' };
     }
+  };
+
+  const verifyAssistantOtp = async (email: string, _otp: string, _demoMeta?: any) => {
+    // Deprecated: OTP is no longer required for clinic assistants. Direct password authentication.
+    return { success: true };
   };
 
   const logoutAssistant = useCallback(() => {

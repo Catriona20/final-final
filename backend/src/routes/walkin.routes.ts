@@ -96,7 +96,19 @@ walkInRouter.post('/', async (req: Request, res: Response): Promise<void> => {
       ? `U-W${Math.floor(100 + Math.random() * 900)}`
       : `W${String(Math.floor(10 + Math.random() * 90)).padStart(3, '0')}`;
 
+    let resolvedPatientId = req.body.patientId || req.body.patient_id;
+    if (!resolvedPatientId && phone) {
+      const cleanPhone = phone.trim().replace(/\D/g, '');
+      for (const p of memoryDb.patients.values()) {
+        if (p.phone && p.phone.replace(/\D/g, '').includes(cleanPhone)) {
+          resolvedPatientId = p.id;
+          break;
+        }
+      }
+    }
+
     const newWalkIn = await WalkInModel.create({
+      patient_id: resolvedPatientId,
       patient_name: patientName.trim(),
       phone: phone.trim(),
       reason: reason.trim(),

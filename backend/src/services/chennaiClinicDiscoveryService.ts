@@ -444,18 +444,36 @@ export const chennaiClinicDiscoveryService = {
         out center 60;
       `;
 
-      const response = await axios.post(
+      const endpoints = [
+        'https://lz4.overpass-api.de/api/interpreter',
         'https://overpass-api.de/api/interpreter',
-        `data=${encodeURIComponent(overpassQuery)}`,
-        {
-          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          timeout: 7000,
-        }
-      );
+      ];
 
-      const elements = response.data?.elements || [];
+      let response: any = null;
+      for (const endpoint of endpoints) {
+        try {
+          response = await axios.post(
+            endpoint,
+            `data=${encodeURIComponent(overpassQuery)}`,
+            {
+              headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'User-Agent': 'MedLink-Healthcare-App/1.0',
+              },
+              timeout: 7000,
+            }
+          );
+          if (response?.data?.elements && response.data.elements.length > 0) {
+            break;
+          }
+        } catch (endpointErr) {
+          // Fall through to next mirror
+        }
+      }
+
+      const elements = response?.data?.elements || [];
       return elements
-        .filter((el: any) => el.tags?.name)
+        .filter((el: any) => el.tags?.name && (el.lat || el.center?.lat) && (el.lon || el.center?.lon))
         .map((el: any) => {
           const lat = el.lat || el.center?.lat;
           const lng = el.lon || el.center?.lon;
@@ -580,9 +598,7 @@ export const chennaiClinicDiscoveryService = {
       { id: 'ext-chennai-psych-02', name: 'Mindful TMS Neurocare Alwarpet', address: '77 CP Ramaswamy Road, Alwarpet, Chennai, Tamil Nadu', latitude: 13.0355, longitude: 80.2540, category: 'Psychiatry', departments: ['Psychiatry'], rating: 4.8, reviews_count: 160, image: CATEGORY_IMAGES['Psychiatry'], doctors_count: 0, open_hours: '10:00 AM – 08:00 PM', phone: '+91 44 4350 2000', is_open: true, opens_at: 'Open Now', is_popular: false, is_nearby: true, wait_time: '10 min wait', consultation_fee: '₹850', source: 'GOOGLE_PLACES', isConnected: false, distanceMeters: 0, travelDurationSeconds: 0, distance: 'Calculating...', travelTime: 'Calculating...' },
     ];
 
-    allExternal.push(...curatedList);
-
-    // 1. Query Geoapify across all 9 Chennai geographic cells in parallel
+    // 1. Primary: Query Geoapify across all 9 Chennai geographic cells in parallel if API key is present
     if (config.geoapifyApiKey) {
       const cellPromises = CHENNAI_DISCOVERY_GRID.map((cell) =>
         this.fetchGeoapifyCell(cell.lat, cell.lng, cell.radiusMeters)
@@ -595,14 +611,22 @@ export const chennaiClinicDiscoveryService = {
       });
     }
 
-    // 2. If Geoapify returns few results, supplement with OpenStreetMap Overpass
+    // 2. Secondary: If Geoapify is unavailable or returns few results (< 25), query OpenStreetMap Overpass
     if (allExternal.length < 25) {
       const osmResults = await this.fetchOverpassChennaiFallback();
-      allExternal.push(...osmResults);
+      if (osmResults && osmResults.length > 0) {
+        allExternal.push(...osmResults);
+      }
     }
 
-    // 3. Deduplicate external places by Place ID, OSM ID, or Name + Coordinate Proximity (< 100m)
-    const deduplicated = this.deduplicateClinics(allExternal);
+    // 3. Deduplicate live external places by Place ID, OSM ID, or Name + Coordinate Proximity (< 250m)
+    let deduplicated = this.deduplicateClinics(allExternal);
+
+    // 4. Offline Fallback: Only if both live external sources fail/return no usable results (< 10), use the 34-item curated fallback
+    if (deduplicated.length < 10) {
+      deduplicated = this.deduplicateClinics([...deduplicated, ...curatedList]);
+    }
+
     globalDiscoveryCache.set(cacheKey, { data: deduplicated, timestamp: Date.now() });
     return deduplicated;
   },
@@ -690,10 +714,11 @@ export const chennaiClinicDiscoveryService = {
     } = options;
 
     const searchTerm = (department || query || '').trim();
+    const cleanSearch = searchTerm.toLowerCase();
+    const isGenericSearch = !cleanSearch || cleanSearch === 'all' || cleanSearch === 'all clinics' || cleanSearch === 'medical clinic' || cleanSearch === 'hospital';
     const normalizedQuery = mapRoutingBackendService.normalizeQuery(searchTerm);
     const normalizedDept = department ? mapRoutingBackendService.normalizeQuery(department).category : '';
-    const targetDept = normalizedDept || normalizedQuery.category || '';
-    const cleanSearch = searchTerm.toLowerCase();
+    const targetDept = normalizedDept || (!isGenericSearch ? normalizedQuery.category : '');
 
     // Determine if this is a specialized department query
     const isSpecialtySearch = Boolean(
@@ -754,7 +779,12 @@ export const chennaiClinicDiscoveryService = {
       // Doctor Procedure Match at this specific clinic
       const doctorProcMatch = Array.from(memoryDb.doctors.values()).some((doc: any) => {
         if (doc && doc.clinic_id === clinic.id) {
-          const docSpecMatches = !isSpecialtySearch || (doc.specialization && doc.specialization.toLowerCase() === targetDept.toLowerCase());
+          const docSpecMatches =
+            !isSpecialtySearch ||
+            (doc.specialization &&
+              (doc.specialization.toLowerCase() === targetDept.toLowerCase() ||
+                (targetDept.toLowerCase() === 'dentistry' && doc.specialization.toLowerCase().includes('dentist')) ||
+                doc.department?.toLowerCase() === targetDept.toLowerCase()));
           const procMatches = doc.procedures?.some(
             (p: string) => p && (p.toLowerCase().includes(cleanSearch) || cleanSearch.includes(p.toLowerCase()))
           );
@@ -780,7 +810,7 @@ export const chennaiClinicDiscoveryService = {
     });
 
     // CRITICAL: If a specialty or department search was conducted, never fall back to returning unrelated clinics
-    const candidates = isSpecialtySearch || targetDept || cleanSearch ? matched : combined;
+    const candidates = isSpecialtySearch || targetDept || (cleanSearch && !isGenericSearch) ? matched : combined;
 
     // 5. Geographic Radius Filtering
     // If radiusKm >= 25, treat as Chennai-wide (no radius cutoff)
@@ -788,7 +818,7 @@ export const chennaiClinicDiscoveryService = {
     const isExplicitNameSearch = cleanSearch && cleanSearch !== 'all' && cleanSearch !== 'all clinics' && cleanSearch !== 'medical clinic' && cleanSearch !== 'hospital';
     const withinRadius = candidates.filter((clinic) => {
       // Platform demo clinics for the matched specialty are ALWAYS preserved to guarantee reachability across Chennai
-      if (clinic.isConnected || clinic.source === 'MEDLINK_DEMO' || clinic.id?.startsWith('c-demo')) {
+      if (clinic.id?.startsWith('c-demo')) {
         return true;
       }
       if (isExplicitNameSearch && clinic.name.toLowerCase().includes(cleanSearch)) {

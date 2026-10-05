@@ -23,43 +23,11 @@ interface DoctorLoginScreenProps {
 
 export const DoctorLoginScreen: React.FC<DoctorLoginScreenProps> = ({ navigation }) => {
   const { colors, isDark } = useThemeStore();
-  const { login, sendOtp, verifyOtp, isLoading, error, clearError } = useDoctorAuthStore();
+  const { login, isLoading, error, clearError } = useDoctorAuthStore();
 
-  const [authMode, setAuthMode] = useState<'PASSWORD' | 'OTP'>('PASSWORD');
   const [emailOrPhone, setEmailOrPhone] = useState('');
   const [password, setPassword] = useState('');
-
-  // OTP Flow States
-  const [otpState, setOtpState] = useState<'IDLE' | 'SENT' | 'VERIFIED'>('IDLE');
-  const [otpCode, setOtpCode] = useState('');
-  const [cooldown, setCooldown] = useState(0);
   const [localMsg, setLocalMsg] = useState<string | null>(null);
-
-  useEffect(() => {
-    let timer: any;
-    if (cooldown > 0) {
-      timer = setInterval(() => setCooldown((c) => c - 1), 1000);
-    }
-    return () => clearInterval(timer);
-  }, [cooldown]);
-
-  const handleSendOtp = async () => {
-    if (!emailOrPhone.trim()) {
-      setLocalMsg('Please enter your registered email or phone number.');
-      return;
-    }
-    clearError();
-    setLocalMsg(null);
-    try {
-      const isPhone = !emailOrPhone.includes('@');
-      const res = await sendOtp(emailOrPhone.trim(), isPhone);
-      setOtpState('SENT');
-      setCooldown(60);
-      setLocalMsg(res.message || 'OTP verification code sent.');
-    } catch (e: any) {
-      setLocalMsg(e.message || 'Failed to send OTP.');
-    }
-  };
 
   const handleLoginSubmit = async () => {
     clearError();
@@ -70,25 +38,12 @@ export const DoctorLoginScreen: React.FC<DoctorLoginScreenProps> = ({ navigation
       return;
     }
 
-    if (authMode === 'PASSWORD') {
-      if (!password) {
-        setLocalMsg('Please enter your account password.');
-        return;
-      }
-      const success = await login({ emailOrPhone: emailOrPhone.trim(), password });
-      if (!success) return;
-    } else {
-      if (!otpCode || otpCode.length < 6) {
-        setLocalMsg('Please enter the 6-digit OTP code.');
-        return;
-      }
-      const isPhone = !emailOrPhone.includes('@');
-      const isVerified = await verifyOtp(emailOrPhone.trim(), otpCode.trim(), isPhone);
-      if (!isVerified) return;
-
-      const success = await login({ emailOrPhone: emailOrPhone.trim(), otp: otpCode.trim(), password: 'password123' });
-      if (!success) return;
+    if (!password) {
+      setLocalMsg('Please enter your account password.');
+      return;
     }
+
+    await login({ emailOrPhone: emailOrPhone.trim(), password });
   };
 
   return (
@@ -116,52 +71,6 @@ export const DoctorLoginScreen: React.FC<DoctorLoginScreenProps> = ({ navigation
             </Text>
           </View>
 
-          {/* AUTH MODE TOGGLE: PASSWORD vs OTP */}
-          <View style={[styles.modeToggleBox, { backgroundColor: colors.cardSubtle }]}>
-            <TouchableOpacity
-              onPress={() => {
-                setAuthMode('PASSWORD');
-                setOtpState('IDLE');
-                setLocalMsg(null);
-              }}
-              style={[
-                styles.modeBtn,
-                authMode === 'PASSWORD' && [styles.modeBtnActive, { backgroundColor: colors.card }],
-              ]}
-              activeOpacity={0.8}
-            >
-              <Text
-                style={[
-                  styles.modeBtnText,
-                  { color: authMode === 'PASSWORD' ? colors.primary : colors.secondaryText },
-                ]}
-              >
-                Password Login
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => {
-                setAuthMode('OTP');
-                setLocalMsg(null);
-              }}
-              style={[
-                styles.modeBtn,
-                authMode === 'OTP' && [styles.modeBtnActive, { backgroundColor: colors.card }],
-              ]}
-              activeOpacity={0.8}
-            >
-              <Text
-                style={[
-                  styles.modeBtnText,
-                  { color: authMode === 'OTP' ? colors.primary : colors.secondaryText },
-                ]}
-              >
-                OTP Verification
-              </Text>
-            </TouchableOpacity>
-          </View>
-
           {/* FORM CONTAINER */}
           <View style={[styles.card, { backgroundColor: colors.card, borderColor: colors.border }, SHADOWS.medium]}>
             {/* IDENTIFIER INPUT */}
@@ -181,59 +90,21 @@ export const DoctorLoginScreen: React.FC<DoctorLoginScreenProps> = ({ navigation
               </View>
             </View>
 
-            {/* PASSWORD INPUT (IF PASSWORD MODE) */}
-            {authMode === 'PASSWORD' && (
-              <View style={styles.inputGroup}>
-                <Text style={[styles.label, { color: colors.text }]}>Doctor Account Password</Text>
-                <View style={[styles.inputBox, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
-                  <Lock size={18} color={colors.secondaryText} />
-                  <TextInput
-                    style={[styles.input, { color: colors.text }]}
-                    placeholder="Enter your confidential password"
-                    placeholderTextColor={colors.secondaryText}
-                    value={password}
-                    onChangeText={setPassword}
-                    secureTextEntry
-                  />
-                </View>
+            {/* PASSWORD INPUT */}
+            <View style={styles.inputGroup}>
+              <Text style={[styles.label, { color: colors.text }]}>Doctor Account Password</Text>
+              <View style={[styles.inputBox, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
+                <Lock size={18} color={colors.secondaryText} />
+                <TextInput
+                  style={[styles.input, { color: colors.text }]}
+                  placeholder="Enter your confidential password"
+                  placeholderTextColor={colors.secondaryText}
+                  value={password}
+                  onChangeText={setPassword}
+                  secureTextEntry
+                />
               </View>
-            )}
-
-            {/* OTP CODE INPUT (IF OTP MODE) */}
-            {authMode === 'OTP' && (
-              <View style={styles.inputGroup}>
-                <View style={styles.otpHeaderRow}>
-                  <Text style={[styles.label, { color: colors.text, marginBottom: 0 }]}>6-Digit OTP Code</Text>
-                  <TouchableOpacity
-                    onPress={handleSendOtp}
-                    disabled={cooldown > 0 || isLoading}
-                    style={styles.sendOtpBtn}
-                  >
-                    <Text
-                      style={[
-                        styles.sendOtpBtnText,
-                        { color: cooldown > 0 ? colors.secondaryText : colors.primary },
-                      ]}
-                    >
-                      {cooldown > 0 ? `Resend in ${cooldown}s` : otpState === 'SENT' ? 'Resend OTP' : 'Send OTP'}
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-
-                <View style={[styles.inputBox, { backgroundColor: colors.inputBg, borderColor: colors.border }]}>
-                  <KeyRound size={18} color={colors.secondaryText} />
-                  <TextInput
-                    style={[styles.input, { color: colors.text, letterSpacing: 3, fontWeight: '700' }]}
-                    placeholder="• • • • • •"
-                    placeholderTextColor={colors.secondaryText}
-                    value={otpCode}
-                    onChangeText={setOtpCode}
-                    keyboardType="number-pad"
-                    maxLength={6}
-                  />
-                </View>
-              </View>
-            )}
+            </View>
 
             {/* ERROR OR STATUS MESSAGES */}
             {(error || localMsg) && (
@@ -260,10 +131,9 @@ export const DoctorLoginScreen: React.FC<DoctorLoginScreenProps> = ({ navigation
 
             {/* DEMO DOCTOR ACCOUNTS QUICK-FILL */}
             <DemoDoctorDrawer
-              onSelect={(demoEmail, demoPass, demoOtp) => {
+              onSelect={(demoEmail, demoPass) => {
                 setEmailOrPhone(demoEmail);
                 setPassword(demoPass);
-                setOtpCode(demoOtp);
                 setLocalMsg(null);
               }}
             />
@@ -313,6 +183,8 @@ const DEMO_DOCTOR_LIST: DemoDoctorItem[] = [
   { name: 'Dr. Shalini Mukerjee', email: 'doctor18@demo.medlink.test', pass: 'Doctor@2018', otp: '200018', role: 'DOCTOR', detail: "Gynecology • GreenLife Women's" },
   { name: 'Dr. Rajesh Sundaram', email: 'doctor19@demo.medlink.test', pass: 'Doctor@2019', otp: '200019', role: 'DOCTOR', detail: 'Gen Med • Apollo Family Care' },
   { name: 'Dr. Ananya Deshmukh', email: 'doctor20@demo.medlink.test', pass: 'Doctor@2020', otp: '200020', role: 'DOCTOR', detail: 'Dentistry • Moon Dental Clinic' },
+  { name: 'Dr. Alagu Vimalesh', email: 'dr.alagu@moondental.test', pass: 'Doctor@2773', otp: '202773', role: 'DOCTOR', detail: 'Conservative Dentistry & Endodontics (RCT) • Moon Dental (Villivakkam - 2773)' },
+  { name: 'Dr. Merlin Rajan', email: 'dr.merlin@moondental.test', pass: 'Doctor@2773', otp: '202773', role: 'DOCTOR', detail: 'Conservative Dentistry & Endodontics • Moon Dental (Villivakkam - 2773)' },
 
   // Patients (patient01-20)
   { name: 'Aarav Sharma', email: 'patient01@demo.medlink.test', pass: 'Demo@1001', otp: '100001', role: 'PATIENT', detail: 'Dentistry • Moon Dental' },
@@ -360,7 +232,7 @@ const DEMO_DOCTOR_LIST: DemoDoctorItem[] = [
 ];
 
 const DemoDoctorDrawer: React.FC<{
-  onSelect: (email: string, pass: string, otp: string) => void;
+  onSelect: (email: string, pass: string) => void;
 }> = ({ onSelect }) => {
   const [expanded, setExpanded] = useState(false);
   const [filterRole, setFilterRole] = useState<'DOCTOR' | 'PATIENT' | 'ASSISTANT'>('DOCTOR');
@@ -399,7 +271,7 @@ const DemoDoctorDrawer: React.FC<{
               <TouchableOpacity
                 key={item.email}
                 style={demoDocStyles.card}
-                onPress={() => onSelect(item.email, item.pass, item.otp)}
+                onPress={() => onSelect(item.email, item.pass)}
                 activeOpacity={0.7}
               >
                 <View style={demoDocStyles.cardLeft}>
@@ -408,7 +280,6 @@ const DemoDoctorDrawer: React.FC<{
                   <Text style={demoDocStyles.email}>{item.email}</Text>
                 </View>
                 <View style={demoDocStyles.cardRight}>
-                  <Text style={demoDocStyles.otp}>OTP: {item.otp}</Text>
                   <Text style={demoDocStyles.fill}>Auto-Fill</Text>
                 </View>
               </TouchableOpacity>

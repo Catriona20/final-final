@@ -70,7 +70,7 @@ interface AppointmentStoreState {
     }
   ) => Promise<void>;
   acceptEarlierSlot: (appointmentId: string) => Promise<void>;
-  declineEarlierSlot: () => Promise<void>;
+  declineEarlierSlot: (appointmentId?: string) => Promise<void>;
   updateAppointmentStatus: (id: string, status: AppointmentStatus) => Promise<void>;
 
   // Continuity helpers
@@ -154,8 +154,26 @@ export const useAppointmentStore = create<AppointmentStoreState>((set, get) => (
         loadedRecords = saved ? JSON.parse(saved) : [];
       }
 
-      // Earlier slot suggestions are populated dynamically via backend Socket.IO events
-      const loadedSuggestion: EarlierSlotSuggestion | null = null;
+      // Earlier slot suggestions are populated dynamically via backend Socket.IO events or loaded appointments
+      let loadedSuggestion: EarlierSlotSuggestion | null = null;
+      const aptWithOffer = loadedAppointments.find(
+        (a: any) =>
+          (a.earlier_slot_offered && a.earlier_slot_offered.status !== 'DECLINED' && a.earlier_slot_offered.status !== 'ACCEPTED') ||
+          (a.earlierSlotOffered && a.earlierSlotOffered.status !== 'DECLINED' && a.earlierSlotOffered.status !== 'ACCEPTED')
+      );
+      if (aptWithOffer) {
+        const offer = (aptWithOffer as any).earlier_slot_offered || (aptWithOffer as any).earlierSlotOffered;
+        const timeDiff =
+          offer.timeDifference ||
+          timeUtils.calculateTimeDifference(aptWithOffer.time, offer.newTime);
+        loadedSuggestion = {
+          appointmentId: aptWithOffer.id,
+          newDate: offer.newDate || timeUtils.getTodayFormatted(),
+          newTime: offer.newTime,
+          timeDifference: timeDiff,
+          estimatedWait: offer.estimatedWait || '3 min',
+        };
+      }
 
       // Connect WebSocket for real-time synchronization
       if (authUser?.id) {
@@ -538,41 +556,95 @@ export const useAppointmentStore = create<AppointmentStoreState>((set, get) => (
 
   acceptEarlierSlot: async (appointmentId: string): Promise<void> => {
     const suggestion = get().earlierSlotSuggestion;
-    if (!suggestion || suggestion.appointmentId !== appointmentId) return;
+    const targetApt = get().appointments.find((a) => a.id === appointmentId);
+    const newTime =
+      suggestion?.newTime ||
+      (targetApt as any)?.earlier_slot_offered?.newTime ||
+      (targetApt as any)?.earlierSlotOffered?.newTime;
+    const newDate =
+      suggestion?.newDate ||
+      (targetApt as any)?.earlier_slot_offered?.newDate ||
+      (targetApt as any)?.earlierSlotOffered?.newDate ||
+      timeUtils.getTodayFormatted();
 
     try {
       await appointmentService.acceptEarlierSlot(appointmentId);
-    } catch (err) {
+    } catch (err: any) {
+      if (
+        err?.response?.status === 409 ||
+        err?.status === 409 ||
+        err?.response?.data?.code === 'SLOT_NO_LONGER_AVAILABLE' ||
+        err?.message?.includes('409')
+      ) {
+        set({ earlierSlotSuggestion: null });
+        await AsyncStorage.removeItem(EARLIER_SLOT_KEY);
+        try {
+          const { useNotificationStore } = await import('./useNotificationStore');
+          useNotificationStore.getState().refreshNotifications();
+        } catch (e) {}
+        throw err;
+      }
       console.warn('Accept earlier slot API error, updating locally:', err);
     }
 
-    const updated = get().appointments.map((apt) => {
-      if (apt.id === appointmentId) {
-        return {
-          ...apt,
-          date: suggestion.newDate,
-          time: suggestion.newTime,
-          estimatedWait: suggestion.estimatedWait,
-        };
-      }
-      return apt;
-    });
+    if (newTime) {
+      const updated = get().appointments.map((apt) => {
+        if (apt.id === appointmentId) {
+          return {
+            ...apt,
+            date: newDate,
+            time: newTime,
+            estimatedWait: suggestion?.estimatedWait || apt.estimatedWait,
+            earlier_slot_offered: undefined,
+            earlierSlotOffered: undefined,
+          };
+        }
+        return apt;
+      });
 
-    set({
-      appointments: updated,
-      earlierSlotSuggestion: null,
-    });
-    await AsyncStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(updated));
+      set({
+        appointments: updated,
+        earlierSlotSuggestion: null,
+      });
+      await AsyncStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(updated));
+    } else {
+      set({ earlierSlotSuggestion: null });
+    }
     await AsyncStorage.removeItem(EARLIER_SLOT_KEY);
+    try {
+      const { useNotificationStore } = await import('./useNotificationStore');
+      useNotificationStore.getState().refreshNotifications();
+    } catch (e) {}
   },
 
-  declineEarlierSlot: async (): Promise<void> => {
+  declineEarlierSlot: async (appointmentId?: string): Promise<void> => {
     const suggestion = get().earlierSlotSuggestion;
-    if (suggestion) {
-      await appointmentService.declineEarlierSlot(suggestion.appointmentId).catch(() => {});
+    const targetId = appointmentId || suggestion?.appointmentId;
+    if (targetId) {
+      await appointmentService.declineEarlierSlot(targetId).catch(() => {});
+      const updated = get().appointments.map((apt) => {
+        if (apt.id === targetId) {
+          return {
+            ...apt,
+            earlier_slot_offered: undefined,
+            earlierSlotOffered: undefined,
+          };
+        }
+        return apt;
+      });
+      set({
+        appointments: updated,
+        earlierSlotSuggestion: null,
+      });
+      await AsyncStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(updated));
+    } else {
+      set({ earlierSlotSuggestion: null });
     }
-    set({ earlierSlotSuggestion: null });
     await AsyncStorage.removeItem(EARLIER_SLOT_KEY);
+    try {
+      const { useNotificationStore } = await import('./useNotificationStore');
+      useNotificationStore.getState().refreshNotifications();
+    } catch (e) {}
   },
 
   updateAppointmentStatus: async (id: string, status: AppointmentStatus): Promise<void> => {

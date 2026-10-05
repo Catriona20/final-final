@@ -5,21 +5,22 @@ export const resendService = {
   /**
    * Dispatches a verification email containing a 6-digit OTP code using Resend.
    */
-  async sendVerificationEmail(email: string, otpCode: string): Promise<boolean> {
+  async sendVerificationEmail(email: string, otpCode: string): Promise<{ success: boolean; id?: string; error?: string }> {
     if (!config.resendApiKey) {
-      console.log(`ℹ️ [Email Simulation] Resend API Key not set. Verification OTP code for ${email} generated.`);
-      return false;
+      const err = 'Resend API key (RESEND_API_KEY) is not configured in environment.';
+      console.warn(`⚠️ [Resend Email] ${err}`);
+      return { success: false, error: err };
     }
 
     try {
-      await axios.post(
+      const response = await axios.post(
         'https://api.resend.com/emails',
         {
           from: config.emailFrom,
           to: [email],
           subject: 'Your MedLink Verification Code',
           html: `
-            <div style="font-family: sans-serif; max-width: 540px; margin: auto; padding: 24px; border: 1px solid #E2E8F0; borderRadius: 12px;">
+            <div style="font-family: sans-serif; max-width: 540px; margin: auto; padding: 24px; border: 1px solid #E2E8F0; border-radius: 12px;">
               <h2 style="color: #0284C7; margin-bottom: 8px;">MedLink Healthcare</h2>
               <p style="color: #475569; font-size: 15px;">Please use the following 6-digit verification code to complete your verification:</p>
               <div style="background: #F0F9FF; padding: 16px; border-radius: 8px; text-align: center; margin: 24px 0;">
@@ -34,13 +35,24 @@ export const resendService = {
             Authorization: `Bearer ${config.resendApiKey}`,
             'Content-Type': 'application/json',
           },
-          timeout: 8000,
+          timeout: 10000,
         }
       );
-      return true;
+      console.log(`✅ [Resend Email] Dispatched verification email to ${email} (ID: ${response.data?.id})`);
+      return { success: true, id: response.data?.id };
     } catch (err: any) {
-      console.warn('Resend email delivery error:', err.response?.data || err.message);
-      return false;
+      const statusCode = err.response?.status;
+      const rawErrorMsg = err.response?.data?.message || err.message || 'Resend email delivery error';
+      console.warn(`⚠️ [Resend Email Error] (${statusCode}): ${rawErrorMsg}`);
+
+      let safeUserError = 'Email verification could not be sent. Please try again.';
+      if (statusCode === 403 || rawErrorMsg.includes('only send testing emails')) {
+        safeUserError = 'Resend trial allows sending only to the registered developer email (sherylkatrina2006@gmail.com). To send to other emails, a domain must be verified in Resend.';
+      } else if (statusCode === 422) {
+        safeUserError = 'Invalid email address format. Please check your email and try again.';
+      }
+
+      return { success: false, error: safeUserError };
     }
   },
 

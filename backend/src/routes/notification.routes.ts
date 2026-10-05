@@ -1,4 +1,6 @@
 import { Router, Request, Response } from 'express';
+import jwt from 'jsonwebtoken';
+import { config } from '../config/env';
 import { NotificationModel, NotificationEntity } from '../database/models';
 
 export const notificationRouter = Router();
@@ -6,10 +8,27 @@ export const notificationRouter = Router();
 // GET /api/notifications
 notificationRouter.get('/', async (req: Request, res: Response): Promise<void> => {
   try {
-    const patientId = req.query.patientId as string;
-    const doctorId = req.query.doctorId as string;
+    let patientId = req.query.patientId as string;
+    let doctorId = req.query.doctorId as string;
     const clinicId = req.query.clinicId as string;
     const category = req.query.category as string;
+
+    // Resolve authenticated identity from Bearer token if not explicitly provided
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        const decoded = jwt.verify(authHeader.split(' ')[1], config.jwtSecret) as any;
+        if (decoded?.id) {
+          if (decoded.role === 'DOCTOR' && !doctorId) {
+            doctorId = decoded.id;
+          } else if (decoded.role !== 'DOCTOR' && !patientId) {
+            patientId = decoded.id;
+          }
+        }
+      } catch (e) {
+        // Ignore invalid token and use query params
+      }
+    }
 
     let notifications: NotificationEntity[] = [];
 
@@ -18,7 +37,26 @@ notificationRouter.get('/', async (req: Request, res: Response): Promise<void> =
     } else if (clinicId) {
       notifications = await NotificationModel.getByClinicId(clinicId);
     } else {
-      notifications = await NotificationModel.getByPatientId(patientId || 'pat-101');
+      const targetPatId = patientId || 'pat-101';
+      notifications = await NotificationModel.getByPatientId(targetPatId);
+
+      // Idempotently ensure active pending load-balance proposal has a delivered notification
+      const { LoadBalanceProposalModel } = await import('../database/models');
+      const { notificationService } = await import('../services/notificationService');
+      const pendingProps = (await LoadBalanceProposalModel.getByPatientId(targetPatId)).filter(
+        (p) => p.status === 'PENDING' && p.patient_consent === 'PENDING'
+      );
+      for (const p of pendingProps) {
+        const hasExistingNotif = notifications.some(
+          (n) => (n.action_data?.proposalId === p.id || (n as any).actionData?.proposalId === p.id)
+        );
+        if (!hasExistingNotif) {
+          const newNotif = await notificationService.notifyPatientLoadBalanceOffer(p as any);
+          if (newNotif) {
+            notifications.unshift(newNotif);
+          }
+        }
+      }
     }
 
     if (category && category !== 'All') {
@@ -27,9 +65,38 @@ notificationRouter.get('/', async (req: Request, res: Response): Promise<void> =
 
     const unreadCount = notifications.filter((n) => !n.read && !n.is_read).length;
 
+    // Enrich proposal-related notifications with live proposal metadata
+    const { LoadBalanceProposalModel } = await import('../database/models');
+    const enrichedNotifications = await Promise.all(
+      notifications.map(async (n) => {
+        const act = { ...(n.action_data || (n as any).actionData || {}) };
+        if (act.proposalId) {
+          const prop = await LoadBalanceProposalModel.getById(act.proposalId);
+          if (prop) {
+            act.patientName = act.patientName || prop.patient_name;
+            act.patientId = act.patientId || prop.patient_id;
+            act.sourceDoctorName = act.sourceDoctorName || prop.source_doctor_name;
+            act.currentDoctorName = act.currentDoctorName || prop.source_doctor_name;
+            act.targetDoctorName = act.targetDoctorName || prop.target_doctor_name;
+            act.proposedDoctorName = act.proposedDoctorName || prop.target_doctor_name;
+            act.patientConsent = prop.patient_consent;
+            act.doctorConsent = prop.doctor_consent;
+            act.status = prop.status;
+            act.reason = act.reason || 'doctor queue load balancing';
+            return {
+              ...n,
+              action_data: act,
+              actionData: act,
+            };
+          }
+        }
+        return n;
+      })
+    );
+
     res.status(200).json({
       success: true,
-      notifications,
+      notifications: enrichedNotifications,
       unreadCount,
     });
   } catch (err: any) {

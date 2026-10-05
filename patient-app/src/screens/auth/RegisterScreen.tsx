@@ -17,7 +17,7 @@ import { AuthStackParamList } from '../../types';
 import { COLORS, SPACING, SHADOWS_COMPAT as SHADOWS } from '../../constants/theme';
 import { useAuthStore } from '../../store/useAuthStore';
 import { isValidEmail, isValidPhone, isValidPassword } from '../../utils/validation';
-import { User, Mail, Phone, Lock, ArrowLeft, ArrowRight, Droplet } from 'lucide-react-native';
+import { User, Mail, Phone, Lock, Eye, EyeOff, ArrowLeft, ArrowRight, Droplet } from 'lucide-react-native';
 
 type RegisterNavProp = StackNavigationProp<AuthStackParamList, 'Register'>;
 
@@ -28,6 +28,8 @@ export const RegisterScreen: React.FC = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [bloodGroup, setBloodGroup] = useState('O+');
+  const [showPassword, setShowPassword] = useState(false);
+  const [focusedField, setFocusedField] = useState<'name' | 'email' | 'phone' | 'bloodGroup' | 'password' | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
 
   const { register, isLoading, error, clearError } = useAuthStore();
@@ -58,20 +60,27 @@ export const RegisterScreen: React.FC = () => {
     }
 
     try {
-      await register({ name, email, phone, password, bloodGroup });
+      const res = await register({ name, email, phone, password, bloodGroup });
       navigation.navigate('OtpVerification', {
-        phoneOrEmail: email,
+        phoneOrEmail: (res?.email || email).trim().toLowerCase(),
         purpose: 'register',
+        patientId: res?.patientId,
+        phone: res?.phone || phone.trim(),
+        email: (res?.email || email).trim().toLowerCase(),
       });
     } catch (err) {
-      // Error handled in store
+      // Error handled and retained in store errorBanner
     }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
-        <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+        >
           <TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}>
             <ArrowLeft size={22} color={COLORS.textPrimary} />
           </TouchableOpacity>
@@ -90,22 +99,24 @@ export const RegisterScreen: React.FC = () => {
           <View style={styles.form}>
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Full Name *</Text>
-              <View style={styles.inputWrapper}>
-                <User size={20} color={COLORS.textMuted} style={styles.inputIcon} />
+              <View style={[styles.inputWrapper, focusedField === 'name' && styles.inputWrapperFocused]}>
+                <User size={20} color={focusedField === 'name' ? COLORS.primary : COLORS.textMuted} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="e.g. Sarah Jenkins"
                   placeholderTextColor={COLORS.textMuted}
                   value={name}
                   onChangeText={setName}
+                  onFocus={() => setFocusedField('name')}
+                  onBlur={() => setFocusedField(null)}
                 />
               </View>
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Email Address *</Text>
-              <View style={styles.inputWrapper}>
-                <Mail size={20} color={COLORS.textMuted} style={styles.inputIcon} />
+              <View style={[styles.inputWrapper, focusedField === 'email' && styles.inputWrapperFocused]}>
+                <Mail size={20} color={focusedField === 'email' ? COLORS.primary : COLORS.textMuted} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="sarah@example.com"
@@ -114,51 +125,70 @@ export const RegisterScreen: React.FC = () => {
                   onChangeText={setEmail}
                   keyboardType="email-address"
                   autoCapitalize="none"
+                  onFocus={() => setFocusedField('email')}
+                  onBlur={() => setFocusedField(null)}
                 />
               </View>
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Phone Number *</Text>
-              <View style={styles.inputWrapper}>
-                <Phone size={20} color={COLORS.textMuted} style={styles.inputIcon} />
+              <View style={[styles.inputWrapper, focusedField === 'phone' && styles.inputWrapperFocused]}>
+                <Phone size={20} color={focusedField === 'phone' ? COLORS.primary : COLORS.textMuted} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="+1 (555) 000-0000"
+                  placeholder="+91 90000 00000"
                   placeholderTextColor={COLORS.textMuted}
                   value={phone}
                   onChangeText={setPhone}
                   keyboardType="phone-pad"
+                  onFocus={() => setFocusedField('phone')}
+                  onBlur={() => setFocusedField(null)}
                 />
               </View>
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Blood Group (Optional)</Text>
-              <View style={styles.inputWrapper}>
-                <Droplet size={20} color={COLORS.textMuted} style={styles.inputIcon} />
+              <View style={[styles.inputWrapper, focusedField === 'bloodGroup' && styles.inputWrapperFocused]}>
+                <Droplet size={20} color={focusedField === 'bloodGroup' ? COLORS.primary : COLORS.textMuted} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="e.g. O+, A+, B-"
                   placeholderTextColor={COLORS.textMuted}
                   value={bloodGroup}
                   onChangeText={setBloodGroup}
+                  onFocus={() => setFocusedField('bloodGroup')}
+                  onBlur={() => setFocusedField(null)}
                 />
               </View>
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>Password *</Text>
-              <View style={styles.inputWrapper}>
-                <Lock size={20} color={COLORS.textMuted} style={styles.inputIcon} />
+              <View style={[styles.inputWrapper, focusedField === 'password' && styles.inputWrapperFocused]}>
+                <Lock size={20} color={focusedField === 'password' ? COLORS.primary : COLORS.textMuted} style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
                   placeholder="At least 6 characters"
                   placeholderTextColor={COLORS.textMuted}
                   value={password}
                   onChangeText={setPassword}
-                  secureTextEntry
+                  secureTextEntry={!showPassword}
+                  onFocus={() => setFocusedField('password')}
+                  onBlur={() => setFocusedField(null)}
                 />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                  style={styles.eyeBtn}
+                >
+                  {showPassword ? (
+                    <EyeOff size={20} color={COLORS.textMuted} />
+                  ) : (
+                    <Eye size={20} color={COLORS.textMuted} />
+                  )}
+                </TouchableOpacity>
               </View>
             </View>
 
@@ -199,6 +229,7 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingHorizontal: SPACING.lg,
     paddingVertical: SPACING.md,
+    paddingBottom: 48,
   },
   backBtn: {
     width: 40,
@@ -258,6 +289,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: SPACING.md,
     height: 52,
   },
+  inputWrapperFocused: {
+    borderColor: COLORS.primary,
+    backgroundColor: COLORS.white,
+  },
   inputIcon: {
     marginRight: SPACING.sm,
   },
@@ -265,6 +300,12 @@ const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     color: COLORS.textPrimary,
+    height: '100%',
+    paddingVertical: 0,
+    ...(Platform.OS === 'web' ? { outlineStyle: 'none' as any } : {}),
+  },
+  eyeBtn: {
+    padding: 4,
   },
   submitBtn: {
     backgroundColor: COLORS.primary,

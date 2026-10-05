@@ -2,6 +2,7 @@ import { NotificationItem, NotificationCategory } from '../types';
 import { apiClient } from './apiClient';
 import { socketService } from './socketService';
 import { MOCK_NOTIFICATIONS } from '../data/mockData';
+import { useAuthStore } from '../store/useAuthStore';
 
 class NotificationService {
   private notifications: NotificationItem[] = [...(MOCK_NOTIFICATIONS || [])];
@@ -10,8 +11,13 @@ class NotificationService {
   constructor() {
     // Listen for real-time notifications via WebSocket
     socketService.subscribe('notification:new', (notif: NotificationItem) => {
-      this.notifications = [notif, ...this.notifications];
+      // Deduplicate by ID
+      this.notifications = [notif, ...this.notifications.filter((n) => n.id !== notif.id)];
       this.notify();
+    });
+
+    socketService.subscribe('queue:load_balance_proposal_updated', () => {
+      this.fetchNotifications();
     });
   }
 
@@ -26,9 +32,13 @@ class NotificationService {
     this.listeners.forEach((l) => l());
   }
 
-  async fetchNotifications(): Promise<NotificationItem[]> {
+  async fetchNotifications(explicitPatientId?: string): Promise<NotificationItem[]> {
     try {
-      const res = await apiClient.get('/notifications');
+      const user = useAuthStore.getState().user;
+      const patientId = explicitPatientId || user?.id;
+      const res = await apiClient.get('/notifications', {
+        params: patientId ? { patientId } : undefined,
+      });
       if (res.data?.notifications) {
         this.notifications = res.data.notifications;
         this.notify();

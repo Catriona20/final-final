@@ -5,13 +5,14 @@ export const locationRouter = Router();
 
 // In-memory cache for reverse-geocoding requests
 const geocodeCache = new Map<string, { data: any; timestamp: number }>();
-const CACHE_TTL = 1000 * 60 * 60; // 1 hour
+const CACHE_TTL = 1000 * 60 * 5; // 5 minutes cache
 
 // GET /api/location/reverse-geocode
 locationRouter.get('/reverse-geocode', async (req: Request, res: Response): Promise<void> => {
   try {
     const lat = parseFloat((req.query.lat || req.query.latitude) as string);
     const lng = parseFloat((req.query.lng || req.query.longitude) as string);
+    const forceRefresh = req.query.refresh === 'true';
 
     if (isNaN(lat) || isNaN(lng)) {
       res.status(400).json({ success: false, error: 'Valid latitude and longitude are required.' });
@@ -20,7 +21,7 @@ locationRouter.get('/reverse-geocode', async (req: Request, res: Response): Prom
 
     const cacheKey = `${lat.toFixed(4)},${lng.toFixed(4)}`;
     const cached = geocodeCache.get(cacheKey);
-    if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    if (!forceRefresh && cached && Date.now() - cached.timestamp < CACHE_TTL) {
       res.status(200).json(cached.data);
       return;
     }

@@ -32,6 +32,16 @@ export const authenticateJwt = async (
       return;
     }
 
+    if (patient.account_status && patient.account_status !== 'ACTIVE') {
+      res.status(403).json({
+        success: false,
+        error: `Access forbidden: Patient account is ${patient.account_status}. Please complete verification to activate account.`,
+        code: 'ACCOUNT_NOT_ACTIVE',
+        status: patient.account_status,
+      });
+      return;
+    }
+
     req.patient = patient;
     next();
   } catch (err: any) {
@@ -46,6 +56,7 @@ export const authenticateJwt = async (
 /**
  * Strict Doctor Role Authentication Middleware
  * Validates JWT has role: 'DOCTOR' and attaches doctor entity to req.doctor
+ * Blocks operational access for doctors that are PENDING_REVIEW, UNDER_REVIEW, or REJECTED
  */
 export const authenticateDoctorJwt = async (
   req: AuthenticatedDoctorRequest,
@@ -73,6 +84,29 @@ export const authenticateDoctorJwt = async (
     const doctor = await DoctorModel.getById(decoded.id);
     if (!doctor) {
       res.status(401).json({ success: false, error: 'Doctor account not found.' });
+      return;
+    }
+
+    // Backend Access Control: Unapproved doctors must NOT receive operational doctor access
+    const isPending =
+      doctor.account_status === 'PENDING_REVIEW' ||
+      doctor.verification_status === 'PENDING_REVIEW' ||
+      doctor.verification_status === 'UNDER_REVIEW' ||
+      doctor.verification_status === 'DOCUMENTS_PENDING';
+    const isRejected = doctor.account_status === 'REJECTED' || doctor.verification_status === 'REJECTED';
+    const isNotActive =
+      !doctor.is_verified &&
+      doctor.verification_status !== 'VERIFIED' &&
+      doctor.verification_status !== 'ACTIVE' &&
+      doctor.account_status !== 'ACTIVE';
+
+    if (isPending || isRejected || isNotActive) {
+      res.status(403).json({
+        success: false,
+        error: `Access forbidden: Doctor account is ${doctor.account_status || doctor.verification_status || 'unapproved'}. Operational doctor access is denied until approved by administrator.`,
+        code: 'DOCTOR_NOT_ACTIVE',
+        status: doctor.account_status || doctor.verification_status,
+      });
       return;
     }
 

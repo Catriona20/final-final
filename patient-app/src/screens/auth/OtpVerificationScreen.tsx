@@ -16,6 +16,7 @@ import { COLORS, SPACING, SHADOWS_COMPAT as SHADOWS } from '../../constants/them
 import { useAuthStore } from '../../store/useAuthStore';
 import { apiClient } from '../../services/apiClient';
 import { ArrowLeft, ShieldCheck } from 'lucide-react-native';
+import { Platform } from 'react-native';
 
 type OtpNavProp = StackNavigationProp<AuthStackParamList, 'OtpVerification'>;
 type OtpRouteProp = RouteProp<AuthStackParamList, 'OtpVerification'>;
@@ -23,9 +24,16 @@ type OtpRouteProp = RouteProp<AuthStackParamList, 'OtpVerification'>;
 export const OtpVerificationScreen: React.FC = () => {
   const navigation = useNavigation<OtpNavProp>();
   const route = useRoute<OtpRouteProp>();
-  const { phoneOrEmail, purpose } = route.params;
+  const routeParams = route.params || ({} as any);
+  const pending = useAuthStore((s) => s.pendingVerification);
+
+  const phoneOrEmail = routeParams.phoneOrEmail || pending?.phoneOrEmail || '';
+  const purpose = routeParams.purpose || pending?.purpose || 'register';
+  const email = routeParams.email || pending?.email;
+  const phone = routeParams.phone || pending?.phone;
 
   const [otp, setOtp] = useState('');
+  const [isInputFocused, setIsInputFocused] = useState(false);
   const [validationError, setValidationError] = useState<string | null>(null);
   const [isResending, setIsResending] = useState(false);
 
@@ -41,7 +49,7 @@ export const OtpVerificationScreen: React.FC = () => {
 
     try {
       if (purpose === 'register') {
-        await verifyOtp(phoneOrEmail, otp.trim());
+        await verifyOtp(phoneOrEmail, otp.trim(), { email, phone });
       } else {
         navigation.navigate('PasswordReset', { token: otp.trim() });
       }
@@ -94,7 +102,7 @@ export const OtpVerificationScreen: React.FC = () => {
         <View style={styles.otpCard}>
           <Text style={styles.label}>Verification Security Code</Text>
           <TextInput
-            style={styles.otpInput}
+            style={[styles.otpInput, isInputFocused && styles.otpInputFocused]}
             value={otp}
             onChangeText={setOtp}
             keyboardType="number-pad"
@@ -102,6 +110,8 @@ export const OtpVerificationScreen: React.FC = () => {
             placeholder="······"
             placeholderTextColor={COLORS.textMuted}
             autoFocus
+            onFocus={() => setIsInputFocused(true)}
+            onBlur={() => setIsInputFocused(false)}
           />
         </View>
 
@@ -223,8 +233,12 @@ const styles = StyleSheet.create({
     width: '85%',
     paddingVertical: 10,
     borderBottomWidth: 2,
-    borderBottomColor: COLORS.primary,
+    borderBottomColor: COLORS.border,
     marginBottom: SPACING.xs,
+    ...(Platform.OS === 'web' ? { outlineStyle: 'none' as any } : {}),
+  },
+  otpInputFocused: {
+    borderBottomColor: COLORS.primary,
   },
   submitBtn: {
     backgroundColor: COLORS.primary,

@@ -21,48 +21,115 @@ export const twilioService = {
   },
 
   /**
-   * Requests Twilio Verify service to dispatch an SMS OTP.
+   * Dispatches a real SMS OTP using Twilio Verify API (primary) or Programmable SMS.
+   * When TWILIO_VERIFY_SERVICE_SID is configured, Twilio Verify handles OTP dispatch and carrier routing.
    */
-  async sendVerificationCode(phone: string): Promise<{ success: boolean; status: string; message: string }> {
+  async sendSmsOtp(
+    phone: string,
+    otpCode: string,
+    purpose: string = 'Verification'
+  ): Promise<{ success: boolean; sid?: string; message?: string; error?: string; code?: number }> {
     const normalized = this.normalizePhoneNumber(phone);
 
-    if (!config.twilioAccountSid || !config.twilioAuthToken || !config.twilioVerifyServiceSid) {
-      console.warn('⚠️ Twilio Verify credentials not configured in environment. Using secure OTP challenge.');
-      return {
-        success: true,
-        status: 'pending_dev_mode',
-        message: 'Twilio not configured in environment. Verification challenge active.',
-      };
+    if (!config.twilioAccountSid || !config.twilioAuthToken || (!config.twilioVerifyServiceSid && !config.twilioPhoneNumber)) {
+      const err = 'Twilio credentials (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_VERIFY_SERVICE_SID) are not configured.';
+      console.warn(`⚠️ [Twilio SMS] ${err}`);
+      return { success: false, error: err };
     }
 
     try {
       const authHeader = 'Basic ' + Buffer.from(`${config.twilioAccountSid}:${config.twilioAuthToken}`).toString('base64');
+
+      // Primary: Twilio Verify Service (Handles regulatory compliance, trial OTP delivery, and auto-carrier routing)
+      if (config.twilioVerifyServiceSid) {
+        const params = new URLSearchParams();
+        params.append('To', normalized);
+        params.append('Channel', 'sms');
+
+        const response = await axios.post(
+          `https://verify.twilio.com/v2/Services/${config.twilioVerifyServiceSid}/Verifications`,
+          params.toString(),
+          {
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+              Authorization: authHeader,
+            },
+            timeout: 10000,
+          }
+        );
+
+        console.log(`✅ [Twilio Verify] Dispatched OTP SMS to ${normalized} (SID: ${response.data.sid}, Status: ${response.data.status})`);
+        return {
+          success: true,
+          sid: response.data.sid,
+          message: 'Verification code sent via Twilio Verify.',
+        };
+      }
+
+      // Secondary fallback: Direct Programmable SMS (if Twilio phone number is provisioned)
       const params = new URLSearchParams();
       params.append('To', normalized);
-      params.append('Channel', 'sms');
+
+      if (config.twilioPhoneNumber.startsWith('MG')) {
+        params.append('MessagingServiceSid', config.twilioPhoneNumber);
+      } else {
+        params.append('From', config.twilioPhoneNumber);
+      }
+
+      params.append('Body', `MedLink ${purpose}: Your verification code is ${otpCode}. Valid for 10 minutes. Do not share this code.`);
 
       const response = await axios.post(
-        `https://verify.twilio.com/v2/Services/${config.twilioVerifyServiceSid}/Verifications`,
+        `https://api.twilio.com/2010-04-01/Accounts/${config.twilioAccountSid}/Messages.json`,
         params.toString(),
         {
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
             Authorization: authHeader,
           },
-          timeout: 8000,
+          timeout: 10000,
         }
       );
 
+      console.log(`✅ [Twilio SMS] Dispatched OTP SMS to ${normalized} (SID: ${response.data.sid}, Status: ${response.data.status})`);
       return {
         success: true,
-        status: response.data.status || 'pending',
-        message: 'Verification code sent via SMS.',
+        sid: response.data.sid,
+        message: 'Verification SMS sent via Twilio.',
       };
     } catch (err: any) {
-      const errorMsg = err.response?.data?.message || err.message || 'Twilio SMS send error';
-      console.error('Twilio Verify send error:', errorMsg);
-      throw new Error(`Failed to send SMS verification: ${errorMsg}`);
+      const errorCode = err.response?.data?.code || err.response?.status;
+      const rawErrorMsg = err.response?.data?.message || err.message || 'Twilio SMS send error';
+      console.warn(`⚠️ [Twilio SMS Error] (${errorCode}): ${rawErrorMsg}`);
+
+      let safeUserError = 'SMS verification could not be sent. Please try again.';
+      if (errorCode === 21608) {
+        safeUserError = 'Twilio trial requires this phone number to be verified.';
+      } else if (errorCode === 21211) {
+        safeUserError = 'Invalid phone number format. Please check your country code and number.';
+      } else if (errorCode === 60200 || errorCode === 60203) {
+        safeUserError = 'Max verification attempts reached for this phone number. Please try again later.';
+      }
+
+      return {
+        success: false,
+        error: safeUserError,
+        code: errorCode,
+      };
     }
+  },
+
+  /**
+   * Requests Twilio Verify service to dispatch an SMS OTP.
+   */
+  async sendVerificationCode(phone: string): Promise<{ success: boolean; status: string; message: string; sid?: string; error?: string }> {
+    const res = await this.sendSmsOtp(phone, '', 'Verification');
+    return {
+      success: res.success,
+      status: res.success ? 'pending' : 'failed',
+      message: res.message || res.error || 'Failed to dispatch verification code.',
+      sid: res.sid,
+      error: res.error,
+    };
   },
 
   /**
@@ -94,7 +161,9 @@ export const twilioService = {
         }
       );
 
-      return response.data.status === 'approved';
+      const isApproved = response.data?.status === 'approved' || response.data?.valid === true;
+      console.log(`ℹ️ [Twilio Verify Check] ${normalized}: status=${response.data?.status}, valid=${response.data?.valid}`);
+      return isApproved;
     } catch (err: any) {
       const errorMsg = err.response?.data?.message || err.message || 'Twilio Verification Check error';
       console.error('Twilio Verify check error:', errorMsg);

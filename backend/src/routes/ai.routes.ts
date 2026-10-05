@@ -107,3 +107,41 @@ aiRouter.post('/patient-summary', async (req: Request, res: Response): Promise<v
     res.status(500).json({ success: false, error: 'Failed to summarize patient history.' });
   }
 });
+
+// POST /api/ai/chat
+// Conversational Healthcare Navigation & MedLink Assistant Endpoint
+aiRouter.post('/chat', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { message, query, conversationHistory, context } = req.body;
+    const userMessage = (message || query || '').toString().trim();
+
+    if (!userMessage) {
+      res.status(400).json({ success: false, error: 'Message payload is required for chat.' });
+      return;
+    }
+
+    const result = await aiService.chat({
+      message: userMessage,
+      conversationHistory: Array.isArray(conversationHistory) ? conversationHistory : [],
+      context: context || {},
+    });
+
+    res.status(200).json({
+      success: !result.error,
+      reply: result.reply,
+      provider: result.providerUsed,
+      intent: result.intent,
+      actionLink: result.actionLink,
+      quickReplies: result.quickReplies,
+      error: result.error,
+    });
+  } catch (err: any) {
+    console.error('AI chat endpoint unhandled error:', err);
+    res.status(500).json({
+      success: false,
+      reply: "I'm having trouble connecting right now. Please try again.",
+      error: 'Failed to process AI chat query.',
+    });
+  }
+});
+

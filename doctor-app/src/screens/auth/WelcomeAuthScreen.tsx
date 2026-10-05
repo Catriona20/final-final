@@ -58,7 +58,7 @@ export const WelcomeAuthScreen: React.FC<WelcomeAuthScreenProps> = ({ navigation
             <View style={styles.optionTextCol}>
               <Text style={[styles.optionTitle, { color: colors.text }]}>Existing Doctor</Text>
               <Text style={[styles.optionDesc, { color: colors.secondaryText }]}>
-                Sign in to your verified doctor account with password or mobile OTP.
+                Sign in to your verified doctor account with your password.
               </Text>
             </View>
 

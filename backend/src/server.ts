@@ -23,6 +23,7 @@ import { walkInRouter } from './routes/walkin.routes';
 import { dashboardRouter } from './routes/dashboard.routes';
 import { pharmacyRouter } from './routes/pharmacy.routes';
 import { availabilityRouter } from './routes/availability.routes';
+import { loadBalancerRouter } from './routes/loadBalancer.routes';
 
 const app = express();
 const server = http.createServer(app);
@@ -106,6 +107,7 @@ app.use('/api/assistant', assistantRouter);
 app.use('/api/ai', aiRouter);
 app.use('/api/pharmacy', pharmacyRouter);
 app.use('/api/availability', availabilityRouter);
+app.use('/api/load-balancer', loadBalancerRouter);
 
 // Global Error Handler
 app.use((err: any, _req: express.Request, res: express.Response, _next: express.NextFunction) => {

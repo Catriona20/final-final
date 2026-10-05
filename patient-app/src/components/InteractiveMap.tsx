@@ -99,6 +99,16 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
         const style = document.createElement('style');
         style.id = 'leaflet-custom-styles';
         style.innerHTML = `
+          .leaflet-container {
+            width: 100% !important;
+            height: 100% !important;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            background: ${isDark ? '#06152F' : '#F8FAFC'} !important;
+          }
           .dark-map-tiles .leaflet-tile {
             filter: brightness(0.6) invert(1) contrast(2.2) hue-rotate(200deg) saturate(0.35);
           }
@@ -152,37 +162,55 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
       const container = document.getElementById(mapContainerId);
       if (!container || !window.L) return;
 
-      if (leafletMapRef.current) {
-        leafletMapRef.current.remove();
-        leafletMapRef.current = null;
+      if (!leafletMapRef.current) {
+        const map = window.L.map(mapContainerId, {
+          center: [centerCoords.latitude, centerCoords.longitude],
+          zoom: 13,
+          zoomControl: false,
+          maxZoom: 19,
+          minZoom: 9,
+        });
+
+        const tileConfig = mapService.getTileConfig(isDark);
+        window.L.tileLayer(tileConfig.tileUrl, {
+          maxZoom: tileConfig.maxZoom,
+          minZoom: tileConfig.minZoom,
+          attribution: tileConfig.attribution,
+          className: isDark ? 'dark-map-tiles' : '',
+        }).addTo(map);
+
+        window.L.control.zoom({ position: 'topright' }).addTo(map);
+
+        leafletMapRef.current = map;
+        setIsLoaded(true);
+
+        if (typeof ResizeObserver !== 'undefined') {
+          const ro = new ResizeObserver(() => {
+            if (leafletMapRef.current) {
+              leafletMapRef.current.invalidateSize();
+            }
+          });
+          ro.observe(container);
+        }
       }
 
-      const map = window.L.map(mapContainerId, {
-        center: [centerCoords.latitude, centerCoords.longitude],
-        zoom: 14,
-        zoomControl: false,
-        maxZoom: 19,
-        minZoom: 9,
-      });
-
-      const tileConfig = mapService.getTileConfig(isDark);
-      const tileLayer = window.L.tileLayer(tileConfig.tileUrl, {
-        maxZoom: tileConfig.maxZoom,
-        minZoom: tileConfig.minZoom,
-        attribution: tileConfig.attribution,
-        className: isDark ? 'dark-map-tiles' : '',
-      }).addTo(map);
-
-      window.L.control.zoom({ position: 'topright' }).addTo(map);
-
-      leafletMapRef.current = map;
-      setIsLoaded(true);
       renderMapContent();
+
+      // Crucial: Invalidate size repeatedly so tiles load across entire container
+      const currentMap = leafletMapRef.current;
+      if (currentMap) {
+        currentMap.invalidateSize();
+        setTimeout(() => currentMap.invalidateSize(), 50);
+        setTimeout(() => currentMap.invalidateSize(), 200);
+        setTimeout(() => currentMap.invalidateSize(), 500);
+      }
     };
 
     const renderMapContent = () => {
       const map = leafletMapRef.current;
       if (!map || !window.L) return;
+
+      map.invalidateSize();
 
       // 1. Clear previous layers & clusters
       markersRef.current.forEach((m) => map.removeLayer(m));
@@ -440,35 +468,31 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
         const bounds = window.L.latLngBounds([start, [midLat, midLng], end]);
         map.fitBounds(bounds, {
-          paddingBottomRight: [50, 260],
-          paddingTopLeft: [50, 50],
+          paddingBottomRight: [30, 220],
+          paddingTopLeft: [30, 30],
           animate: true,
+          maxZoom: 15,
         });
       } else if (selectedClinic && selectedClinic.latitude && selectedClinic.longitude) {
         map.flyTo([selectedClinic.latitude, selectedClinic.longitude], 15, { animate: true, duration: 0.6 });
       } else if (searchedLocation && searchedLocation.latitude && searchedLocation.longitude) {
-        const points = clinics
-          .filter((c) => c.latitude && c.longitude)
-          .slice(0, 8)
-          .map((c) => [c.latitude, c.longitude]);
-        points.push([searchedLocation.latitude, searchedLocation.longitude]);
-        const bounds = window.L.latLngBounds(points);
-        map.fitBounds(bounds, { padding: [60, 60], animate: true });
-      } else if (clinics.length > 0) {
-        const allPoints = clinics
-          .filter((c) => c.latitude && c.longitude)
-          .slice(0, 10)
-          .map((c) => [c.latitude, c.longitude]);
-        allPoints.push([centerCoords.latitude, centerCoords.longitude]);
-        const bounds = window.L.latLngBounds(allPoints);
-        map.fitBounds(bounds, { padding: [50, 50], animate: true });
+        map.setView([searchedLocation.latitude, searchedLocation.longitude], 14, { animate: true });
       } else {
-        map.panTo([centerCoords.latitude, centerCoords.longitude], { animate: true, duration: 0.5 });
+        map.setView([centerCoords.latitude, centerCoords.longitude], 13, { animate: true });
       }
     };
 
     loadLeaflet();
   }, [clinics, selectedClinicId, centerCoords, isDark, showRoute, searchedLocation]);
+
+  useEffect(() => {
+    return () => {
+      if (leafletMapRef.current) {
+        leafletMapRef.current.remove();
+        leafletMapRef.current = null;
+      }
+    };
+  }, []);
 
   if (Platform.OS !== 'web') {
     return (
@@ -483,7 +507,19 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 
   return (
     <View style={styles.container}>
-      <div id={mapContainerId} style={{ width: '100%', height: '100%' }} />
+      <div
+        id={mapContainerId}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          width: '100%',
+          height: '100%',
+          zIndex: 1,
+        }}
+      />
       {!isLoaded && (
         <View style={[styles.loaderOverlay, { backgroundColor: theme.background }]}>
           <ActivityIndicator size="large" color={theme.primary} />
@@ -499,6 +535,8 @@ export const InteractiveMap: React.FC<InteractiveMapProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
+    height: '100%',
     position: 'relative',
   },
   loaderOverlay: {

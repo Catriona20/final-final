@@ -47,30 +47,61 @@ export const clinicApi = {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
       });
-      const data = await res.json();
+      const contentType = res.headers.get('content-type') || '';
+      let data: any = null;
+      if (contentType.includes('application/json')) {
+        try {
+          data = await res.json();
+        } catch {
+          data = null;
+        }
+      }
       if (!res.ok) {
-        return { success: false, error: data.error || 'Invalid credentials' };
+        const errorMsg = data?.error || data?.message || `Authentication failed (HTTP ${res.status}: ${res.statusText || 'Server error'})`;
+        return { success: false, error: errorMsg };
+      }
+      if (!data) {
+        return { success: false, error: `Authentication service returned an unexpected non-JSON response (HTTP ${res.status}).` };
       }
       return { success: true, token: data.token, user: data.assistant || data.user };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Server error during assistant login' };
+      return { success: false, error: err.message || 'Authentication service unreachable.' };
     }
   },
 
-  async verifyAssistantOtp(email: string, otp: string): Promise<{ success: boolean; verified?: boolean; token?: string; error?: string }> {
+  async verifyAssistantOtp(email: string, otp: string): Promise<{ success: boolean; verified?: boolean; token?: string; clinic_id?: string; user?: any; assistant?: any; error?: string }> {
     try {
       const res = await fetch(`${API_BASE}/auth/assistant/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }),
       });
-      const data = await res.json();
-      if (!res.ok) {
-        return { success: false, error: data.error || 'Invalid verification code' };
+      const contentType = res.headers.get('content-type') || '';
+      let data: any = null;
+      if (contentType.includes('application/json')) {
+        try {
+          data = await res.json();
+        } catch {
+          data = null;
+        }
       }
-      return { success: true, verified: true, token: data.token };
+      if (!res.ok) {
+        const errorMsg = data?.error || data?.message || `Verification failed (HTTP ${res.status}: ${res.statusText || 'Server error'})`;
+        return { success: false, error: errorMsg };
+      }
+      if (!data) {
+        return { success: false, error: `Verification service returned an unexpected non-JSON response (HTTP ${res.status}).` };
+      }
+      return {
+        success: true,
+        verified: true,
+        token: data.token,
+        clinic_id: data.clinic_id,
+        user: data.user,
+        assistant: data.assistant,
+      };
     } catch (err: any) {
-      return { success: false, error: err.message || 'Failed to verify OTP' };
+      return { success: false, error: err.message || 'Verification service unreachable.' };
     }
   },
 
@@ -729,5 +760,31 @@ export const clinicApi = {
       return [];
     }
   },
+
+  async getLoadBalanceProposals(clinicId: string): Promise<any[]> {
+    try {
+      const res = await fetch(`${API_BASE}/queue/load-balance/proposals?clinicId=${encodeURIComponent(clinicId)}`);
+      if (!res.ok) return [];
+      const json = await res.json();
+      return json.proposals || [];
+    } catch {
+      return [];
+    }
+  },
+
+  async evaluateLoadBalance(clinicId: string): Promise<{ success: boolean; data?: any; error?: string }> {
+    try {
+      const res = await fetch(`${API_BASE}/queue/load-balance/evaluate`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ clinicId }),
+      });
+      const json = await res.json();
+      return json;
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Failed to trigger load balancing evaluation' };
+    }
+  },
 };
+
 

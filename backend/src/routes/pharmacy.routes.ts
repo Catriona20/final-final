@@ -1,7 +1,8 @@
 import { Router, Request, Response } from 'express';
 import { pharmacyService } from '../services/pharmacyService';
 import { nlpService } from '../services/nlpService';
-import { PharmacyModel, PrescriptionModel } from '../database/models';
+import { PharmacyModel, PrescriptionModel, resolveCanonicalClinicId } from '../database/models';
+import { memoryDb, saveStateToFile } from '../database/db';
 
 const router = Router();
 
@@ -90,8 +91,12 @@ router.post('/inventory', async (req: Request, res: Response): Promise<void> => 
       return;
     }
 
+    const targetClinic = resolveCanonicalClinicId(clinicId || req.body.clinic_id || 'c-demo-moon-01');
+    const computedSku = req.body.sku || `SKU-${(name || '').toUpperCase().replace(/[^A-Z0-9]/g, '')}-${(strength || 'STD').toUpperCase().replace(/[^A-Z0-9]/g, '')}`;
+
     const item = await PharmacyModel.create({
-      clinic_id: clinicId || 'c1',
+      clinic_id: targetClinic,
+      sku: computedSku,
       name,
       generic_name: genericName || name,
       category: category || 'General Medicine',
@@ -346,6 +351,47 @@ router.get('/dispensations', async (req: Request, res: Response): Promise<void> 
     });
   } catch (err: any) {
     res.status(500).json({ success: false, error: err.message || 'Failed to fetch dispensations' });
+  }
+});
+
+// POST /api/pharmacy/restore-stock (Idempotent clinic-scoped pharmacy restore)
+router.post('/restore-stock', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const clinicId = resolveCanonicalClinicId(req.body.clinicId || req.body.clinic_id || 'c-demo-moon-01');
+    if (clinicId === 'c-demo-moon-01') {
+      const canonicalItems = [
+        { id: 'rx-item-dolo-01', clinic_id: 'c-demo-moon-01', sku: 'MED-ATC-N02BE', name: 'Paracetamol 650mg (Dolo)', generic_name: 'Paracetamol', category: 'Analgesics', dosage_form: 'Tablet', strength: '650mg', batch_number: 'BATCH-DOLO-2026A', expiry_date: '2026-11-30', quantity: 50, min_stock_level: 20, reorder_quantity: 100, unit_price: 3.5, created_at: '2026-09-30T12:00:00.000Z', updated_at: new Date().toISOString() },
+        { id: 'rx-item-dolo-02', clinic_id: 'c-demo-moon-01', sku: 'MED-ATC-N02BE', name: 'Paracetamol 650mg (Dolo)', generic_name: 'Paracetamol', category: 'Analgesics', dosage_form: 'Tablet', strength: '650mg', batch_number: 'BATCH-DOLO-2027B', expiry_date: '2027-12-31', quantity: 100, min_stock_level: 20, reorder_quantity: 100, unit_price: 3.5, created_at: '2026-09-30T12:00:00.000Z', updated_at: new Date().toISOString() },
+        { id: 'rx-item-amox-01', clinic_id: 'c-demo-moon-01', sku: 'MED-AMOX-500', name: 'Amoxicillin 500mg', generic_name: 'Amoxicillin', category: 'Antibiotics', dosage_form: 'Capsule', strength: '500mg', batch_number: 'BATCH-AMOX-2027A', expiry_date: '2027-06-30', quantity: 5, min_stock_level: 15, reorder_quantity: 50, unit_price: 8.0, created_at: '2026-09-30T12:00:00.000Z', updated_at: new Date().toISOString() },
+        { id: 'rx-item-amxclv-01', clinic_id: 'c-demo-moon-01', sku: 'MED-ATC-J01CR', name: 'Amoxicillin & Potassium Clavulanate 625 mg', generic_name: 'Amoxicillin + Potassium Clavulanate', category: 'Antibiotics', dosage_form: 'Tablet', strength: '625 mg', batch_number: 'BATCH-AMXCLV-2026A', expiry_date: '2026-11-30', quantity: 50, min_stock_level: 20, reorder_quantity: 100, unit_price: 22.5, created_at: '2026-09-30T12:00:00.000Z', updated_at: new Date().toISOString() },
+        { id: 'rx-item-amxclv-02', clinic_id: 'c-demo-moon-01', sku: 'MED-ATC-J01CR', name: 'Amoxicillin & Potassium Clavulanate 625 mg', generic_name: 'Amoxicillin + Potassium Clavulanate', category: 'Antibiotics', dosage_form: 'Tablet', strength: '625 mg', batch_number: 'BATCH-AMXCLV-2027B', expiry_date: '2027-10-31', quantity: 100, min_stock_level: 20, reorder_quantity: 100, unit_price: 22.5, created_at: '2026-09-30T12:00:00.000Z', updated_at: new Date().toISOString() },
+        { id: 'rx-item-cet-01', clinic_id: 'c-demo-moon-01', sku: 'MED-ATC-R06', name: 'Cetirizine 10mg', generic_name: 'Cetirizine', category: 'Antihistamines', dosage_form: 'Tablet', strength: '10mg', batch_number: 'BATCH-CET-2027A', expiry_date: '2027-09-30', quantity: 60, min_stock_level: 20, reorder_quantity: 50, unit_price: 4.5, created_at: '2026-09-30T12:00:00.000Z', updated_at: new Date().toISOString() },
+      ];
+
+      // Remove only previous demo batches for this clinic
+      const currentKeys = Array.from(memoryDb.pharmacy_inventory.keys());
+      for (const k of currentKeys) {
+        const it = memoryDb.pharmacy_inventory.get(k);
+        if (it && it.clinic_id === 'c-demo-moon-01') {
+          memoryDb.pharmacy_inventory.delete(k);
+        }
+      }
+
+      canonicalItems.forEach((item) => memoryDb.pharmacy_inventory.set(item.id, item));
+      saveStateToFile();
+
+      res.status(200).json({
+        success: true,
+        message: 'Moon Dental Clinic pharmacy stock restored successfully.',
+        itemsCount: canonicalItems.length,
+        items: canonicalItems,
+      });
+      return;
+    }
+
+    res.status(400).json({ success: false, error: `Unsupported clinic for restore: ${clinicId}` });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message || 'Failed to restore pharmacy stock' });
   }
 });
 

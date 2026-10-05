@@ -22,6 +22,7 @@ import {
   Bookmark,
   Check,
   Plus,
+  AlertTriangle,
 } from 'lucide-react-native';
 import { ActiveLocation, SavedLocation } from '../types';
 import { SPACING, RADIUS, SHADOWS, TYPOGRAPHY, getThemeColors } from '../constants/theme';
@@ -39,12 +40,19 @@ interface LocationSelectorModalProps {
 export const LocationSelectorModal: React.FC<LocationSelectorModalProps> = ({ visible, onClose }) => {
   const { isDark } = useThemeStore();
   const theme = getThemeColors(isDark);
-  const { activeLocation, setActiveLocation, savedLocations, addSavedLocation } = useAppStore();
+  const {
+    activeLocation,
+    setActiveLocation,
+    savedLocations,
+    addSavedLocation,
+    requestCurrentGpsLocation,
+  } = useAppStore();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<ActiveLocation[]>(PRESET_LOCATIONS);
   const [isLocating, setIsLocating] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [gpsErrorMessage, setGpsErrorMessage] = useState<string | null>(null);
 
   // Manual entry mode
   const [isManualMode, setIsManualMode] = useState(false);
@@ -57,6 +65,7 @@ export const LocationSelectorModal: React.FC<LocationSelectorModalProps> = ({ vi
 
   useEffect(() => {
     if (visible) {
+      setGpsErrorMessage(null);
       Animated.parallel([
         Animated.spring(translateY, {
           toValue: 0,
@@ -103,31 +112,24 @@ export const LocationSelectorModal: React.FC<LocationSelectorModalProps> = ({ vi
 
   const handleUseCurrentGPS = async () => {
     setIsLocating(true);
+    setGpsErrorMessage(null);
     try {
-      const coords = await locationService.getCurrentLocation();
-      const geocoded = await locationService.reverseGeocode(coords);
-      const newLoc: ActiveLocation = {
-        id: `loc-gps-${Date.now()}`,
-        name: geocoded.name,
-        locality: geocoded.locality,
-        latitude: coords.latitude,
-        longitude: coords.longitude,
-        accuracy: coords.accuracy,
-        timestamp: coords.timestamp || Date.now(),
-        type: 'gps',
-        label: 'Current Location',
-      };
-      setActiveLocation(newLoc);
+      await requestCurrentGpsLocation();
       onClose();
     } catch (e: any) {
-      Alert.alert('GPS Location', 'Could not obtain device coordinates. Using Mylapore default.');
+      const msg = e.message || 'Unable to retrieve live device GPS location. Please check browser permissions or select a location below.';
+      console.warn('GPS Location acquisition notice:', msg);
+      setGpsErrorMessage(msg);
     } finally {
       setIsLocating(false);
     }
   };
 
   const handleSelectLocation = (loc: ActiveLocation) => {
-    setActiveLocation(loc);
+    setActiveLocation({
+      ...loc,
+      displayName: loc.locality || `${loc.name}, Chennai`,
+    });
     onClose();
   };
 
@@ -136,6 +138,7 @@ export const LocationSelectorModal: React.FC<LocationSelectorModalProps> = ({ vi
       id: saved.id,
       name: saved.name,
       locality: saved.locality,
+      displayName: saved.locality || `${saved.name}, Chennai`,
       latitude: saved.latitude,
       longitude: saved.longitude,
       type: 'saved',
@@ -237,10 +240,33 @@ export const LocationSelectorModal: React.FC<LocationSelectorModalProps> = ({ vi
             <View style={{ flex: 1 }}>
               <Text style={[styles.gpsActionTitle, { color: theme.primary }]}>Use Current Location</Text>
               <Text style={[styles.gpsActionSub, { color: theme.textSecondary }]}>
-                Enable device GPS for precise nearby healthcare
+                {isLocating ? 'Obtaining live device coordinates...' : 'Enable device GPS for precise nearby healthcare'}
               </Text>
             </View>
           </TouchableOpacity>
+
+          {/* GPS ERROR / PERMISSION BANNER */}
+          {gpsErrorMessage ? (
+            <View style={[styles.gpsErrorCard, { backgroundColor: isDark ? '#261111' : '#FEF2F2', borderColor: theme.error }]}>
+              <View style={styles.gpsErrorTitleRow}>
+                <AlertTriangle size={15} color={theme.error} />
+                <Text style={[styles.gpsErrorTitle, { color: theme.error }]}>Location Permission / GPS Notice</Text>
+              </View>
+              <Text style={[styles.gpsErrorDesc, { color: theme.textSecondary }]}>{gpsErrorMessage}</Text>
+              <View style={styles.gpsErrorFooter}>
+                <TouchableOpacity
+                  style={[styles.retryGpsBtn, { backgroundColor: theme.error }]}
+                  onPress={handleUseCurrentGPS}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.retryGpsBtnText}>Retry Live GPS</Text>
+                </TouchableOpacity>
+                <Text style={[styles.gpsFallbackHint, { color: theme.textMuted }]}>
+                  Or select a saved/search location below
+                </Text>
+              </View>
+            </View>
+          ) : null}
 
           {/* SEARCH INPUT */}
           <View style={[styles.searchBox, { backgroundColor: theme.backgroundSoft, borderColor: theme.cardBorder }]}>
@@ -650,5 +676,47 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     borderRadius: RADIUS.md,
     alignItems: 'center',
+  },
+  gpsErrorCard: {
+    padding: SPACING.md,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    marginTop: SPACING.sm,
+    gap: 6,
+  },
+  gpsErrorTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  gpsErrorTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  gpsErrorDesc: {
+    fontSize: 12,
+    lineHeight: 17,
+  },
+  gpsErrorFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 6,
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  retryGpsBtn: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: RADIUS.sm,
+  },
+  retryGpsBtnText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+  },
+  gpsFallbackHint: {
+    fontSize: 11,
+    flex: 1,
   },
 });

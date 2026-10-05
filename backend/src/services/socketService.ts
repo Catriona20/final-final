@@ -1,6 +1,7 @@
 import { Server as HttpServer } from 'http';
 import { Server as SocketIOServer, Socket } from 'socket.io';
 import { resolveCanonicalClinicId, resolveCanonicalDoctorId } from '../database/models';
+import { memoryDb } from '../database/db';
 
 let io: SocketIOServer | null = null;
 
@@ -18,8 +19,24 @@ export const initSocketService = (httpServer: HttpServer): SocketIOServer => {
     // Join patient personal room for direct updates
     socket.on('join:patient', (patientId: string) => {
       if (patientId) {
-        socket.join(`patient:${patientId}`);
-        console.log(`👤 Socket ${socket.id} joined room: patient:${patientId}`);
+        const targetSet = new Set<string>();
+        targetSet.add(patientId);
+
+        if (memoryDb.patients?.getAliases) {
+          const aliasMap = memoryDb.patients.getAliases();
+          const canonical = aliasMap.get(patientId.toLowerCase()) || patientId;
+          targetSet.add(canonical);
+          for (const [alias, canId] of aliasMap.entries()) {
+            if (canId === canonical || canId === patientId) {
+              targetSet.add(alias);
+            }
+          }
+        }
+
+        for (const id of targetSet) {
+          socket.join(`patient:${id}`);
+        }
+        console.log(`👤 Socket ${socket.id} joined rooms: ${Array.from(targetSet).map((id) => `patient:${id}`).join(', ')}`);
       }
     });
 
@@ -71,8 +88,24 @@ export const getIO = (): SocketIOServer => {
 };
 
 export const emitToPatient = (patientId: string, event: string, data: any): void => {
-  if (io) {
-    io.to(`patient:${patientId}`).emit(event, data);
+  if (io && patientId) {
+    const targetSet = new Set<string>();
+    targetSet.add(patientId);
+
+    if (memoryDb.patients?.getAliases) {
+      const aliasMap = memoryDb.patients.getAliases();
+      const canonical = aliasMap.get(patientId.toLowerCase()) || patientId;
+      targetSet.add(canonical);
+      for (const [alias, canId] of aliasMap.entries()) {
+        if (canId === canonical || canId === patientId) {
+          targetSet.add(alias);
+        }
+      }
+    }
+
+    for (const id of targetSet) {
+      io.to(`patient:${id}`).emit(event, data);
+    }
   }
 };
 

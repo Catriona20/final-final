@@ -1,6 +1,9 @@
 import dotenv from 'dotenv';
 import path from 'path';
 
+dotenv.config({ path: path.resolve(process.cwd(), '.env') });
+dotenv.config({ path: path.resolve(process.cwd(), 'backend/.env') });
+dotenv.config({ path: path.resolve(__dirname, '../../../.env') });
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 export const config = {
@@ -34,6 +37,10 @@ export const config = {
   // Resend Transactional Email
   resendApiKey: process.env.RESEND_API_KEY || '',
   emailFrom: process.env.EMAIL_FROM || 'MedLink Health <no-reply@medlink.health>',
+
+  // Auth Notification Providers ('console' | 'resend' | 'twilio')
+  emailProvider: (process.env.EMAIL_PROVIDER || (process.env.RESEND_API_KEY ? 'resend' : 'console')).toLowerCase(),
+  smsProvider: (process.env.SMS_PROVIDER || (process.env.TWILIO_ACCOUNT_SID ? 'twilio' : 'console')).toLowerCase(),
 
   frontendUrl: process.env.FRONTEND_URL || '*',
 

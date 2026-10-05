@@ -65,6 +65,7 @@ export interface InMemoryDb {
   doctor_clinic_assignments: Map<string, any>;
   availability_requests: Map<string, any>;
   assistants: AliasedMap<any>;
+  load_balance_proposals: Map<string, any>;
 }
 
 export const memoryDb: InMemoryDb = {
@@ -96,6 +97,7 @@ export const memoryDb: InMemoryDb = {
   doctor_clinic_assignments: new Map(),
   availability_requests: new Map(),
   assistants: new AliasedMap(),
+  load_balance_proposals: new Map(),
 };
 
 const DATA_DIR = path.join(__dirname, '../../data');

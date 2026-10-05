@@ -10,6 +10,7 @@ interface AppStoreState {
   isFirstLaunch: boolean;
   isGpsActive: boolean;
   gpsError: string | null;
+  isLocating: boolean;
 
   setActiveLocation: (loc: ActiveLocation) => void;
   setSavedLocations: (saved: SavedLocation[]) => void;
@@ -18,8 +19,12 @@ interface AppStoreState {
   setSearchQuery: (query: string) => void;
   setIsFirstLaunch: (isFirst: boolean) => void;
   startGpsWatching: () => () => void;
-  requestCurrentGpsLocation: () => Promise<void>;
+  requestCurrentGpsLocation: () => Promise<ActiveLocation>;
+  initializeLocation: () => Promise<void>;
 }
+
+// Monotonic sequence to prevent asynchronous storage loads from overwriting newer user selections / GPS results
+let locationUpdateSeq = 0;
 
 export const useAppStore = create<AppStoreState>((set) => ({
   activeLocation: PRESET_LOCATIONS[0], // Default: Mylapore, Chennai
@@ -29,8 +34,35 @@ export const useAppStore = create<AppStoreState>((set) => ({
   isFirstLaunch: false,
   isGpsActive: false,
   gpsError: null,
+  isLocating: false,
 
-  setActiveLocation: (activeLocation) => set({ activeLocation, isGpsActive: activeLocation.type === 'gps' }),
+  initializeLocation: async () => {
+    const currentSeq = locationUpdateSeq;
+    try {
+      const persisted = await locationService.getPersistedLocation();
+      // Guard against race condition: only apply if no newer location update has occurred
+      if (persisted && locationUpdateSeq === currentSeq) {
+        set({
+          activeLocation: persisted,
+          isGpsActive: persisted.type === 'gps',
+          gpsError: null,
+        });
+      }
+    } catch (e) {
+      console.warn('Failed to restore persisted location:', e);
+    }
+  },
+
+  setActiveLocation: (activeLocation) => {
+    locationUpdateSeq++;
+    set({
+      activeLocation,
+      isGpsActive: activeLocation.type === 'gps',
+      gpsError: null,
+    });
+    locationService.persistLocation(activeLocation).catch(() => {});
+  },
+
   setSavedLocations: (savedLocations) => set({ savedLocations }),
   addSavedLocation: (loc) =>
     set((state) => ({
@@ -43,37 +75,69 @@ export const useAppStore = create<AppStoreState>((set) => ({
   startGpsWatching: () => {
     const unwatch = locationService.watchLiveLocation(
       (gpsLoc) => {
-        set({ activeLocation: gpsLoc, isGpsActive: true, gpsError: null });
+        // Only overwrite activeLocation when user is explicitly in GPS mode.
+        // If user chose a preset or saved location, preserve it without disruption.
+        set((state) => {
+          if (state.activeLocation.type === 'gps') {
+            locationUpdateSeq++;
+            locationService.persistLocation(gpsLoc).catch(() => {});
+            return {
+              activeLocation: {
+                ...gpsLoc,
+                displayName: gpsLoc.locality || `${gpsLoc.name}, Chennai`,
+              },
+              isGpsActive: true,
+              gpsError: null,
+            };
+          }
+          return { isGpsActive: false, gpsError: null };
+        });
       },
       (err) => {
         console.warn('Live GPS watch notice:', err);
-        set({ gpsError: err.message });
       }
     );
     return unwatch;
   },
 
-  requestCurrentGpsLocation: async () => {
+  requestCurrentGpsLocation: async (): Promise<ActiveLocation> => {
+    set({ isLocating: true, gpsError: null });
     try {
       const coords = await locationService.getCurrentLocation();
       const locality = await locationService.reverseGeocode(coords);
+      const name = locality?.name || 'Current Location';
+      const locStr = locality?.locality || `${name}, Chennai`;
+
+      const gpsLocation: ActiveLocation = {
+        id: `loc-live-gps-${Date.now()}`,
+        name,
+        locality: locStr,
+        displayName: locStr,
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        accuracy: coords.accuracy,
+        timestamp: coords.timestamp || Date.now(),
+        type: 'gps',
+        label: 'Current Location',
+      };
+
+      locationUpdateSeq++;
       set({
-        activeLocation: {
-          id: 'loc-live-gps',
-          name: locality.name,
-          locality: locality.locality,
-          latitude: coords.latitude,
-          longitude: coords.longitude,
-          accuracy: coords.accuracy,
-          timestamp: coords.timestamp || Date.now(),
-          type: 'gps',
-          label: 'Current Location',
-        },
+        activeLocation: gpsLocation,
         isGpsActive: true,
         gpsError: null,
+        isLocating: false,
       });
+
+      await locationService.persistLocation(gpsLocation);
+      return gpsLocation;
     } catch (e: any) {
-      set({ gpsError: e.message });
+      set({
+        gpsError: e.message || 'Unable to retrieve device GPS location.',
+        isGpsActive: false,
+        isLocating: false,
+      });
+      throw e;
     }
   },
 }));

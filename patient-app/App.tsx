@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootNavigator } from './src/navigation/RootNavigator';
 import { useThemeStore } from './src/store/useThemeStore';
+import { useAppStore } from './src/store/useAppStore';
 
 // Silence useNativeDriver warnings on Web by overriding Animated functions
 if (Platform.OS === 'web') {
@@ -26,9 +27,11 @@ if (Platform.OS === 'web') {
 
 export default function App() {
   const { initializeTheme, isDark } = useThemeStore();
+  const { initializeLocation } = useAppStore();
 
   useEffect(() => {
     initializeTheme();
+    initializeLocation();
   }, []);
 
   const content = (

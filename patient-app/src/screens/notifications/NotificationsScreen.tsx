@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   TouchableOpacity,
   SafeAreaView,
   StatusBar,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -22,11 +24,18 @@ import {
   Info,
   CheckCircle,
   AlertCircle,
+  Sparkles,
+  ArrowRight,
+  Check,
+  X,
 } from 'lucide-react-native';
 import { AppStackParamList, NotificationCategory, NotificationItem } from '../../types';
 import { SPACING, RADIUS, SHADOWS, TYPOGRAPHY, getThemeColors } from '../../constants/theme';
 import { useThemeStore } from '../../store/useThemeStore';
 import { useNotificationStore } from '../../store/useNotificationStore';
+import { useAppointmentStore } from '../../store/useAppointmentStore';
+import { useAuthStore } from '../../store/useAuthStore';
+import { apiClient } from '../../services/apiClient';
 
 type NotifNavProp = StackNavigationProp<AppStackParamList>;
 
@@ -54,7 +63,109 @@ export const NotificationsScreen: React.FC = () => {
     markAllAsRead,
     clearAll,
     clearNotification,
+    fetchNotifications,
   } = useNotificationStore();
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const { appointments, earlierSlotSuggestion, acceptEarlierSlot, declineEarlierSlot } = useAppointmentStore();
+  const [processingActionId, setProcessingActionId] = useState<string | null>(null);
+
+  const handleAcceptOffer = async (notifItem: NotificationItem) => {
+    const apptId = notifItem.actionData?.appointmentId || earlierSlotSuggestion?.appointmentId;
+    if (!apptId) return;
+    const offeredTime = notifItem.actionData?.offeredTime || earlierSlotSuggestion?.newTime || 'earlier slot';
+    setProcessingActionId(notifItem.id);
+    try {
+      await acceptEarlierSlot(apptId);
+      Alert.alert('Earlier Slot Accepted', `Your appointment has been successfully rescheduled to ${offeredTime}.`);
+      if (!notifItem.read) {
+        markAsRead(notifItem.id);
+      }
+    } catch (err: any) {
+      Alert.alert(
+        'Slot No Longer Available',
+        'Another patient may have claimed this slot or it is no longer available. Your current appointment time is preserved.'
+      );
+    } finally {
+      setProcessingActionId(null);
+    }
+  };
+
+  const handleDeclineOffer = async (notifItem: NotificationItem) => {
+    const apptId = notifItem.actionData?.appointmentId || earlierSlotSuggestion?.appointmentId;
+    setProcessingActionId(notifItem.id);
+    try {
+      await declineEarlierSlot(apptId);
+      Alert.alert('Offer Declined', 'You have chosen to keep your current appointment time.');
+      if (!notifItem.read) {
+        markAsRead(notifItem.id);
+      }
+    } catch (err) {
+      console.warn('Decline offer error:', err);
+    } finally {
+      setProcessingActionId(null);
+    }
+  };
+
+  const { user } = useAuthStore();
+  const [loadBalanceActions, setLoadBalanceActions] = useState<Record<string, 'ACCEPTED' | 'DECLINED'>>({});
+
+  const handleAcceptLoadBalance = async (notifItem: NotificationItem) => {
+    const proposalId = notifItem.actionData?.proposalId || (notifItem as any).action_data?.proposalId;
+    const patientId = user?.id || (notifItem as any).patient_id || (notifItem as any).recipient_id;
+    if (!proposalId) return;
+
+    setProcessingActionId(notifItem.id);
+    try {
+      const res = await apiClient.post('/queue/load-balance/patient-consent', {
+        proposalId,
+        patientId,
+        consent: 'ACCEPT',
+      });
+      setLoadBalanceActions((prev) => ({ ...prev, [proposalId]: 'ACCEPTED' }));
+      Alert.alert(
+        'Transfer Accepted',
+        res.data?.message || 'You accepted the transfer offer. Your doctor will be updated once approvals finalize.'
+      );
+      if (!notifItem.read) {
+        markAsRead(notifItem.id);
+      }
+      await fetchNotifications();
+    } catch (err: any) {
+      const errorMsg = err.response?.data?.error || err.response?.data?.message || 'Unable to accept transfer at this time.';
+      Alert.alert('Transfer Notice', errorMsg);
+    } finally {
+      setProcessingActionId(null);
+    }
+  };
+
+  const handleDeclineLoadBalance = async (notifItem: NotificationItem) => {
+    const proposalId = notifItem.actionData?.proposalId || (notifItem as any).action_data?.proposalId;
+    const patientId = user?.id || (notifItem as any).patient_id || (notifItem as any).recipient_id;
+    if (!proposalId) return;
+
+    setProcessingActionId(notifItem.id);
+    try {
+      await apiClient.post('/queue/load-balance/patient-consent', {
+        proposalId,
+        patientId,
+        consent: 'DECLINE',
+      });
+      setLoadBalanceActions((prev) => ({ ...prev, [proposalId]: 'DECLINED' }));
+      Alert.alert('Transfer Declined', 'You have declined the transfer. Your original doctor assignment is preserved.');
+      if (!notifItem.read) {
+        markAsRead(notifItem.id);
+      }
+      await fetchNotifications();
+    } catch (err) {
+      console.warn('Decline transfer error:', err);
+    } finally {
+      setProcessingActionId(null);
+    }
+  };
 
   const getCategoryIcon = (category: NotificationCategory) => {
     switch (category) {
@@ -177,45 +288,317 @@ export const NotificationsScreen: React.FC = () => {
           </View>
         ) : (
           <View style={styles.notifList}>
-            {notifications.map((item) => (
-              <TouchableOpacity
-                key={item.id}
-                style={[
-                  styles.notifCard,
-                  {
-                    backgroundColor: item.read ? theme.card : isDark ? '#111E3D' : '#F0F7FF',
-                    borderColor: item.read ? theme.cardBorder : theme.primary,
-                  },
-                ]}
-                onPress={() => handleNotificationPress(item)}
-                activeOpacity={0.88}
-              >
-                <View style={[styles.iconBox, { backgroundColor: theme.backgroundSoft }]}>
-                  {getCategoryIcon(item.category)}
-                </View>
+            {notifications.map((item) => {
+              const isEarlierSlotOffer =
+                item.actionData?.offeredTime != null ||
+                item.title.toLowerCase().includes('earlier slot') ||
+                (item.category === 'Appointments' && item.message.toLowerCase().includes('earlier'));
 
-                <View style={{ flex: 1, gap: 3 }}>
-                  <View style={styles.notifTopRow}>
-                    <View style={styles.categoryBadge}>
-                      <Text style={[styles.categoryBadgeText, { color: theme.primary }]}>{item.category}</Text>
-                    </View>
-                    <Text style={[styles.timestampText, { color: theme.textMuted }]}>{item.timestamp}</Text>
-                  </View>
+              if (isEarlierSlotOffer) {
+                const relatedAppt = appointments.find((a) => a.id === item.actionData?.appointmentId);
+                const clinicName =
+                  item.actionData?.clinicName || relatedAppt?.clinicName || 'Smile & Child Pediatric Centre';
+                const doctorName =
+                  item.actionData?.doctorName || relatedAppt?.doctorName || 'Dr. Kavitha Reddy';
+                const currentTime = item.actionData?.currentTime || relatedAppt?.time || '07:20 PM';
+                const offeredTime =
+                  item.actionData?.offeredTime ||
+                  (earlierSlotSuggestion?.appointmentId === relatedAppt?.id
+                    ? earlierSlotSuggestion?.newTime
+                    : '07:00 PM');
+                const offerStatus =
+                  item.actionData?.offerStatus ||
+                  (relatedAppt as any)?.earlier_slot_offered?.status ||
+                  'OFFERED';
+                const isProcessing = processingActionId === item.id;
 
-                  <Text
+                return (
+                  <View
+                    key={item.id}
                     style={[
-                      styles.notifTitle,
-                      { color: theme.textPrimary, fontWeight: item.read ? '600' : '800' },
+                      styles.earlierOfferCard,
+                      {
+                        backgroundColor: isDark ? '#111E3D' : '#F0FDF4',
+                        borderColor: '#10B981',
+                      },
                     ]}
                   >
-                    {item.title}
-                  </Text>
-                  <Text style={[styles.notifMessage, { color: theme.textSecondary }]}>{item.message}</Text>
-                </View>
+                    {/* CARD HEADER */}
+                    <View style={styles.earlierOfferHeader}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <Sparkles size={16} color="#10B981" />
+                        <Text style={[styles.earlierOfferBadge, { color: '#059669' }]}>
+                          EARLIER SLOT AVAILABLE
+                        </Text>
+                      </View>
+                      <Text style={[styles.timestampText, { color: theme.textMuted }]}>{item.timestamp}</Text>
+                    </View>
 
-                {!item.read && <View style={[styles.unreadDot, { backgroundColor: theme.cta }]} />}
-              </TouchableOpacity>
-            ))}
+                    {/* CLINIC & DOCTOR */}
+                    <View style={styles.earlierOfferBody}>
+                      <View style={styles.earlierFieldRow}>
+                        <Text style={[styles.earlierFieldLabel, { color: theme.textMuted }]}>Clinic:</Text>
+                        <Text style={[styles.earlierFieldValue, { color: theme.textPrimary }]}>{clinicName}</Text>
+                      </View>
+                      <View style={styles.earlierFieldRow}>
+                        <Text style={[styles.earlierFieldLabel, { color: theme.textMuted }]}>Doctor:</Text>
+                        <Text style={[styles.earlierFieldValue, { color: theme.textPrimary }]}>{doctorName}</Text>
+                      </View>
+
+                      {/* TIME COMPARISON */}
+                      <View
+                        style={[
+                          styles.earlierTimeBox,
+                          { backgroundColor: theme.card, borderColor: theme.cardBorder },
+                        ]}
+                      >
+                        <View style={styles.earlierTimeCol}>
+                          <Text style={[styles.earlierTimeLabel, { color: theme.textMuted }]}>Current:</Text>
+                          <Text style={[styles.earlierTimeVal, { color: theme.textSecondary }]}>{currentTime}</Text>
+                        </View>
+                        <ArrowRight size={18} color="#10B981" />
+                        <View style={styles.earlierTimeCol}>
+                          <Text style={[styles.earlierTimeLabel, { color: '#059669', fontWeight: '700' }]}>Earlier:</Text>
+                          <Text style={[styles.earlierTimeVal, { color: '#10B981', fontWeight: '800' }]}>{offeredTime}</Text>
+                        </View>
+                      </View>
+                    </View>
+
+                    {/* ACTIONS OR STATUS */}
+                    {offerStatus === 'ACCEPTED' ? (
+                      <View style={[styles.statusBadge, { backgroundColor: '#DCFCE7' }]}>
+                        <Check size={14} color="#16A34A" />
+                        <Text style={[styles.statusBadgeText, { color: '#16A34A' }]}>Earlier Slot Accepted</Text>
+                      </View>
+                    ) : offerStatus === 'DECLINED' ? (
+                      <View style={[styles.statusBadge, { backgroundColor: theme.backgroundSoft }]}>
+                        <X size={14} color={theme.textMuted} />
+                        <Text style={[styles.statusBadgeText, { color: theme.textMuted }]}>
+                          Offer Declined — Original Slot Kept
+                        </Text>
+                      </View>
+                    ) : (
+                      <View style={styles.earlierActionsRow}>
+                        <TouchableOpacity
+                          style={[styles.earlierAcceptBtn, { backgroundColor: '#10B981' }]}
+                          onPress={() => handleAcceptOffer(item)}
+                          disabled={isProcessing}
+                          activeOpacity={0.85}
+                        >
+                          {isProcessing ? (
+                            <ActivityIndicator size="small" color="#FFFFFF" />
+                          ) : (
+                            <>
+                              <Check size={16} color="#FFFFFF" />
+                              <Text style={styles.earlierAcceptBtnText}>Accept</Text>
+                            </>
+                          )}
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          style={[
+                            styles.earlierDeclineBtn,
+                            { backgroundColor: theme.card, borderColor: theme.cardBorder },
+                          ]}
+                          onPress={() => handleDeclineOffer(item)}
+                          disabled={isProcessing}
+                          activeOpacity={0.85}
+                        >
+                          <Text style={[styles.earlierDeclineBtnText, { color: theme.textSecondary }]}>Decline</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  </View>
+                );
+              }
+
+              const isLoadBalanceOffer =
+                item.type === 'load_balance_offer' ||
+                item.type === 'load_balance_proposal' ||
+                Boolean(
+                  (item.actionData?.proposalId || (item as any).action_data?.proposalId) &&
+                    (item.title.toLowerCase().includes('consultation') ||
+                      item.title.toLowerCase().includes('load balancing') ||
+                      item.title.toLowerCase().includes('transfer') ||
+                      item.message.toLowerCase().includes('faster consultation') ||
+                      item.message.toLowerCase().includes('transfer'))
+                );
+
+              if (isLoadBalanceOffer) {
+                const proposalId = item.actionData?.proposalId || (item as any).action_data?.proposalId;
+                const clinicName = item.actionData?.clinicName || (item as any).action_data?.clinicName || 'Moon Dental Clinic';
+                const currentDoctorName = item.actionData?.currentDoctorName || item.actionData?.sourceDoctorName || (item as any).action_data?.sourceDoctorName || 'Dr. Arun Kumar';
+                const proposedDoctorName = item.actionData?.proposedDoctorName || item.actionData?.targetDoctorName || (item as any).action_data?.targetDoctorName || 'Dr. Ananya Deshmukh';
+                const patientName = item.actionData?.patientName || (item as any).action_data?.patientName || user?.name || 'Rajesh Kumar';
+                const transferReason = item.actionData?.reason || (item as any).action_data?.reason || item.actionData?.procedureName || (item as any).action_data?.procedureName || 'doctor queue load balancing';
+                const estWait = item.actionData?.estimatedWait ?? (item as any).action_data?.estimatedWait ?? 40;
+                const newEstWait = item.actionData?.newEstimatedWait ?? (item as any).action_data?.newEstimatedWait ?? 0;
+                const status: string = (proposalId ? loadBalanceActions[proposalId] : undefined) || item.actionData?.patientConsent || (item as any).action_data?.patientConsent || item.actionData?.status || (item as any).action_data?.status || 'PENDING';
+                const isProcessing = processingActionId === item.id;
+
+                return (
+                  <View
+                    key={item.id}
+                    style={[
+                      styles.earlierOfferCard,
+                      {
+                        backgroundColor: isDark ? '#111E3D' : '#F0F9FF',
+                        borderColor: '#0284C7',
+                      },
+                    ]}
+                  >
+                    {/* CARD HEADER */}
+                    <View style={styles.earlierOfferHeader}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <Sparkles size={16} color="#0284C7" />
+                        <Text style={[styles.earlierOfferBadge, { color: '#0284C7' }]}>
+                          DOCTOR QUEUE TRANSFER REQUEST
+                        </Text>
+                      </View>
+                      <Text style={[styles.timestampText, { color: theme.textMuted }]}>{item.timestamp}</Text>
+                    </View>
+
+                    {/* CLINIC & DOCTORS */}
+                    <View style={styles.earlierOfferBody}>
+                      <View style={styles.earlierFieldRow}>
+                        <Text style={[styles.earlierFieldLabel, { color: theme.textMuted }]}>Clinic:</Text>
+                        <Text style={[styles.earlierFieldValue, { color: theme.textPrimary }]}>{clinicName}</Text>
+                      </View>
+                      <View style={styles.earlierFieldRow}>
+                        <Text style={[styles.earlierFieldLabel, { color: theme.textMuted }]}>Patient:</Text>
+                        <Text style={[styles.earlierFieldValue, { color: theme.textPrimary, fontWeight: '700' }]}>{patientName}</Text>
+                      </View>
+                      <View style={styles.earlierFieldRow}>
+                        <Text style={[styles.earlierFieldLabel, { color: theme.textMuted }]}>Current Doctor:</Text>
+                        <Text style={[styles.earlierFieldValue, { color: theme.textPrimary }]}>{currentDoctorName}</Text>
+                      </View>
+                      <View style={styles.earlierFieldRow}>
+                        <Text style={[styles.earlierFieldLabel, { color: theme.textMuted }]}>Proposed Receiving Doctor:</Text>
+                        <Text style={[styles.earlierFieldValue, { color: '#0284C7', fontWeight: '700' }]}>{proposedDoctorName}</Text>
+                      </View>
+                      <View style={styles.earlierFieldRow}>
+                        <Text style={[styles.earlierFieldLabel, { color: theme.textMuted }]}>Reason / Context:</Text>
+                        <Text style={[styles.earlierFieldValue, { color: theme.textPrimary }]}>
+                          doctor queue load balancing{transferReason && transferReason.toLowerCase() !== 'doctor queue load balancing' ? ` (${transferReason})` : ''}
+                        </Text>
+                      </View>
+
+                      {/* ESTIMATED WAIT COMPARISON */}
+                      <View
+                        style={[
+                          styles.earlierTimeBox,
+                          { backgroundColor: theme.card, borderColor: theme.cardBorder },
+                        ]}
+                      >
+                        <View style={styles.earlierTimeCol}>
+                          <Text style={[styles.earlierTimeLabel, { color: theme.textMuted }]}>Current Wait:</Text>
+                          <Text style={[styles.earlierTimeVal, { color: theme.textSecondary }]}>~{estWait} min</Text>
+                        </View>
+                        <ArrowRight size={18} color="#0284C7" />
+                        <View style={styles.earlierTimeCol}>
+                          <Text style={[styles.earlierTimeLabel, { color: '#0284C7', fontWeight: '700' }]}>New Wait:</Text>
+                          <Text style={[styles.earlierTimeVal, { color: '#0284C7', fontWeight: '800' }]}>~{newEstWait} min</Text>
+                        </View>
+                      </View>
+                    </View>
+
+                    {/* ACTIONS OR STATUS */}
+                    {status === 'ACCEPTED' ? (
+                      <View style={[styles.statusBadge, { backgroundColor: '#E0F2FE' }]}>
+                        <Check size={14} color="#0284C7" />
+                        <Text style={[styles.statusBadgeText, { color: '#0284C7' }]}>
+                          Transfer Accepted — Awaiting Doctor Approval
+                        </Text>
+                      </View>
+                    ) : status === 'DECLINED' ? (
+                      <View style={[styles.statusBadge, { backgroundColor: theme.backgroundSoft }]}>
+                        <X size={14} color={theme.textMuted} />
+                        <Text style={[styles.statusBadgeText, { color: theme.textMuted }]}>
+                          Offer Declined — Original Doctor Kept
+                        </Text>
+                      </View>
+                    ) : status === 'COMMITTED' ? (
+                      <View style={[styles.statusBadge, { backgroundColor: '#DCFCE7' }]}>
+                        <Check size={14} color="#16A34A" />
+                        <Text style={[styles.statusBadgeText, { color: '#16A34A' }]}>
+                          Transfer Confirmed ✅ — Assigned to {proposedDoctorName}
+                        </Text>
+                      </View>
+                    ) : (
+                      <View style={styles.earlierActionsRow}>
+                        <TouchableOpacity
+                          style={[styles.earlierAcceptBtn, { backgroundColor: '#0284C7' }]}
+                          onPress={() => handleAcceptLoadBalance(item)}
+                          disabled={isProcessing}
+                          activeOpacity={0.85}
+                        >
+                          {isProcessing ? (
+                            <ActivityIndicator size="small" color="#FFFFFF" />
+                          ) : (
+                            <>
+                              <Check size={16} color="#FFFFFF" />
+                              <Text style={styles.earlierAcceptBtnText}>Accept</Text>
+                            </>
+                          )}
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                          style={[
+                            styles.earlierDeclineBtn,
+                            { backgroundColor: theme.card, borderColor: theme.cardBorder },
+                          ]}
+                          onPress={() => handleDeclineLoadBalance(item)}
+                          disabled={isProcessing}
+                          activeOpacity={0.85}
+                        >
+                          <Text style={[styles.earlierDeclineBtnText, { color: theme.textSecondary }]}>Decline</Text>
+                        </TouchableOpacity>
+                      </View>
+                    )}
+                  </View>
+                );
+              }
+
+              return (
+                <TouchableOpacity
+                  key={item.id}
+                  style={[
+                    styles.notifCard,
+                    {
+                      backgroundColor: item.read ? theme.card : isDark ? '#111E3D' : '#F0F7FF',
+                      borderColor: item.read ? theme.cardBorder : theme.primary,
+                    },
+                  ]}
+                  onPress={() => handleNotificationPress(item)}
+                  activeOpacity={0.88}
+                >
+                  <View style={[styles.iconBox, { backgroundColor: theme.backgroundSoft }]}>
+                    {getCategoryIcon(item.category)}
+                  </View>
+
+                  <View style={{ flex: 1, gap: 3 }}>
+                    <View style={styles.notifTopRow}>
+                      <View style={styles.categoryBadge}>
+                        <Text style={[styles.categoryBadgeText, { color: theme.primary }]}>{item.category}</Text>
+                      </View>
+                      <Text style={[styles.timestampText, { color: theme.textMuted }]}>{item.timestamp}</Text>
+                    </View>
+
+                    <Text
+                      style={[
+                        styles.notifTitle,
+                        { color: theme.textPrimary, fontWeight: item.read ? '600' : '800' },
+                      ]}
+                    >
+                      {item.title}
+                    </Text>
+                    <Text style={[styles.notifMessage, { color: theme.textSecondary }]}>{item.message}</Text>
+                  </View>
+
+                  {!item.read && <View style={[styles.unreadDot, { backgroundColor: theme.cta }]} />}
+                </TouchableOpacity>
+              );
+            })}
           </View>
         )}
       </ScrollView>
@@ -358,5 +741,104 @@ const styles = StyleSheet.create({
   emptyDesc: {
     fontSize: 12,
     textAlign: 'center',
+  },
+  earlierOfferCard: {
+    padding: SPACING.md,
+    borderRadius: RADIUS.lg,
+    borderWidth: 1.5,
+    gap: SPACING.sm,
+    ...SHADOWS.subtle,
+  },
+  earlierOfferHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  earlierOfferBadge: {
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 0.5,
+  },
+  earlierOfferBody: {
+    gap: 6,
+  },
+  earlierFieldRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  earlierFieldLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    width: 55,
+  },
+  earlierFieldValue: {
+    fontSize: 13,
+    fontWeight: '700',
+    flex: 1,
+  },
+  earlierTimeBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+    marginTop: 4,
+  },
+  earlierTimeCol: {
+    alignItems: 'center',
+  },
+  earlierTimeLabel: {
+    fontSize: 11,
+    marginBottom: 2,
+  },
+  earlierTimeVal: {
+    fontSize: 14,
+  },
+  earlierActionsRow: {
+    flexDirection: 'row',
+    gap: 10,
+    marginTop: 4,
+  },
+  earlierAcceptBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: RADIUS.md,
+  },
+  earlierAcceptBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  earlierDeclineBtn: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 10,
+    borderRadius: RADIUS.md,
+    borderWidth: 1,
+  },
+  earlierDeclineBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    borderRadius: RADIUS.md,
+    marginTop: 4,
+  },
+  statusBadgeText: {
+    fontSize: 12,
+    fontWeight: '700',
   },
 });

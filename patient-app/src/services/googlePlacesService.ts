@@ -367,13 +367,20 @@ export const googlePlacesService = {
    * Provides fallback clinics matched to the department & query.
    */
   getMockFallbackClinics(query: string, originLat: number, originLng: number): Clinic[] {
-    const { category } = this.normalizeHealthcareQuery(query);
     const q = (query || '').trim().toLowerCase();
+    const isGeneric = !q || q === 'all' || q === 'all clinics' || q === 'clinic' || q === 'hospital' || q === 'medical clinic';
+
+    if (isGeneric) {
+      return MOCK_CLINICS.map((clinic) => ({
+        ...clinic,
+        image: CATEGORY_IMAGES[clinic.category] || clinic.image,
+      }));
+    }
+
+    const { category } = this.normalizeHealthcareQuery(query);
 
     // Filter clinics specifically by department/category
     const matched = MOCK_CLINICS.filter((clinic) => {
-      if (!q || q === 'all' || q === 'clinic' || q === 'hospital' || q === 'medical clinic') return true;
-
       const catMatch =
         clinic.category.toLowerCase() === category.toLowerCase() ||
         clinic.departments?.some((d) => d.toLowerCase() === category.toLowerCase() || d.toLowerCase().includes(q));
@@ -382,7 +389,7 @@ export const googlePlacesService = {
       return catMatch || nameMatch;
     });
 
-    const resultsToUse = matched.length > 0 ? matched : MOCK_CLINICS.filter((c) => c.category === 'General Medicine');
+    const resultsToUse = matched.length > 0 ? matched : MOCK_CLINICS;
 
     return resultsToUse.map((clinic) => ({
       ...clinic,

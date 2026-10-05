@@ -1,4 +1,4 @@
-import { NotificationModel, NotificationEntity, AppointmentEntity, DoctorEntity, WalkInEntity } from '../database/models';
+import { NotificationModel, NotificationEntity, AppointmentEntity, DoctorEntity, WalkInEntity, LoadBalanceProposalEntity } from '../database/models';
 import { emitToPatient, emitToDoctor, emitToClinic, emitBroadcast } from './socketService';
 import { twilioService } from './twilioService';
 import { resendService } from './resendService';
@@ -14,7 +14,7 @@ export interface CreateNotificationParams {
   title: string;
   message: string;
   category?: 'Appointments' | 'Queue Updates' | 'Clinic Updates' | 'Reminders' | 'System' | 'Announcements' | 'Emergency' | 'Doctor Delays';
-  type?: 'appointment' | 'system' | 'reminder' | 'announcement' | 'emergency' | 'delay' | 'verification' | 'prescription' | 'queue';
+  type?: 'appointment' | 'system' | 'reminder' | 'announcement' | 'emergency' | 'delay' | 'verification' | 'prescription' | 'queue' | 'load_balance_proposal' | 'load_balance_offer' | 'load_balance_status';
   actionData?: any;
   phone?: string;
   email?: string;
@@ -377,17 +377,33 @@ export const notificationService = {
     doctorName: string,
     newDate: string,
     newTime: string,
-    timeDifference: string
+    timeDifference: string,
+    clinicName?: string,
+    currentTime?: string,
+    clinicId?: string,
+    doctorId?: string
   ): Promise<void> {
     await this.sendNotification({
       patientId,
       recipientType: 'PATIENT',
       appointmentId,
-      title: 'Earlier Appointment Available ⚡',
+      clinicId,
+      doctorId,
+      title: 'Earlier Appointment Slot Available! ⚡',
       message: `An earlier slot opened with ${doctorName} at ${newTime} (${timeDifference}). Tap to accept or keep current time.`,
       category: 'Appointments',
       type: 'appointment',
-      actionData: { appointmentId, newDate, newTime, timeDifference },
+      actionData: {
+        appointmentId,
+        clinicName: clinicName || 'Clinic',
+        doctorName,
+        currentDate: newDate,
+        currentTime: currentTime || 'Scheduled time',
+        offeredDate: newDate,
+        offeredTime: newTime,
+        timeDifference,
+        status: 'OFFERED',
+      },
     });
   },
 
@@ -404,7 +420,7 @@ export const notificationService = {
       message: `Your appointment with ${apt.doctor_name} is moved to earlier time: ${apt.time} (${apt.date}).`,
       category: 'Appointments',
       type: 'appointment',
-      actionData: { appointmentId: apt.id, date: apt.date, time: apt.time },
+      actionData: { appointmentId: apt.id, date: apt.date, time: apt.time, status: 'ACCEPTED' },
     });
 
     await this.sendNotification({
@@ -415,7 +431,24 @@ export const notificationService = {
       message: `${apt.patient_name} accepted earlier slot for ${apt.time} with ${apt.doctor_name}.`,
       category: 'Appointments',
       type: 'appointment',
-      actionData: { appointmentId: apt.id, patientName: apt.patient_name, time: apt.time },
+      actionData: { appointmentId: apt.id, patientName: apt.patient_name, time: apt.time, status: 'ACCEPTED' },
+    });
+  },
+
+  /**
+   * Trigger: Earlier Slot Declined
+   */
+  async notifyEarlierSlotDeclined(apt: AppointmentEntity): Promise<void> {
+    await this.sendNotification({
+      patientId: apt.patient_id,
+      recipientType: 'PATIENT',
+      appointmentId: apt.id,
+      clinicId: apt.clinic_id,
+      title: 'Earlier Slot Offer Declined',
+      message: `You declined the earlier slot offer. Your original appointment at ${apt.time} (${apt.date}) remains confirmed.`,
+      category: 'Appointments',
+      type: 'appointment',
+      actionData: { appointmentId: apt.id, date: apt.date, time: apt.time, status: 'DECLINED' },
     });
   },
 
@@ -493,6 +526,187 @@ export const notificationService = {
       category: 'Clinic Updates',
       type: 'verification',
       actionData: { doctorId: doctor.id, status: doctor.verification_status },
+    });
+  },
+
+  /**
+   * Trigger: Doctor Queue Load Balance Proposal (Step A)
+   */
+  async notifyDoctorLoadBalanceProposal(proposal: LoadBalanceProposalEntity): Promise<void> {
+    await this.sendNotification({
+      doctorId: proposal.target_doctor_id,
+      recipientType: 'DOCTOR',
+      clinicId: proposal.clinic_id,
+      appointmentId: proposal.appointment_id,
+      title: 'Patient Transfer Request (Load Balancing) ⚖️',
+      message: `Dr. ${proposal.source_doctor_name}'s queue has ${proposal.source_queue_count} patients. Would you accept transferring ${proposal.patient_name} (${proposal.procedure_name || 'General OPD'}) to your queue? Current: ${proposal.target_queue_count} waiting.`,
+      category: 'Queue Updates',
+      type: 'load_balance_proposal',
+      actionData: {
+        proposalId: proposal.id,
+        clinicId: proposal.clinic_id,
+        clinicName: proposal.clinic_name,
+        sourceDoctorId: proposal.source_doctor_id,
+        sourceDoctorName: proposal.source_doctor_name,
+        targetDoctorId: proposal.target_doctor_id,
+        targetDoctorName: proposal.target_doctor_name,
+        patientId: proposal.patient_id,
+        patientName: proposal.patient_name,
+        procedureName: proposal.procedure_name,
+        sourceQueueCount: proposal.source_queue_count,
+        targetQueueCount: proposal.target_queue_count,
+        proposedQueueCount: proposal.target_queue_count + 1,
+        status: proposal.status,
+        doctorConsent: proposal.doctor_consent,
+        patientConsent: proposal.patient_consent,
+      },
+    });
+
+    // Also notify Clinic Assistant of proposed balance
+    await this.sendNotification({
+      clinicId: proposal.clinic_id,
+      recipientType: 'CLINIC',
+      title: 'Queue Load Balancing Initiated ⚖️',
+      message: `Proposed transfer of ${proposal.patient_name} from ${proposal.source_doctor_name} to ${proposal.target_doctor_name}. Awaiting doctor & patient consent.`,
+      category: 'Queue Updates',
+      type: 'load_balance_status',
+      actionData: {
+        proposalId: proposal.id,
+        patientName: proposal.patient_name,
+        sourceDoctorName: proposal.source_doctor_name,
+        targetDoctorName: proposal.target_doctor_name,
+        status: proposal.status,
+      },
+    });
+  },
+
+  /**
+   * Trigger: Patient Load Balance Offer (Step B)
+   */
+  async notifyPatientLoadBalanceOffer(proposal: LoadBalanceProposalEntity): Promise<NotificationEntity> {
+    const estWait = proposal.estimated_wait_minutes ?? 40;
+    const newEstWait = proposal.new_estimated_wait_minutes ?? 0;
+    return await this.sendNotification({
+      patientId: proposal.patient_id,
+      recipientType: 'PATIENT',
+      appointmentId: proposal.appointment_id,
+      clinicId: proposal.clinic_id,
+      title: 'Doctor Queue Transfer Request ⚖️',
+      message: `You can be seen sooner by ${proposal.target_doctor_name}! Current wait with ${proposal.source_doctor_name}: ~${estWait} min. With ${proposal.target_doctor_name}: ~${newEstWait} min. Would you like to transfer?`,
+      category: 'Queue Updates',
+      type: 'load_balance_offer',
+      actionData: {
+        proposalId: proposal.id,
+        clinicId: proposal.clinic_id,
+        clinicName: proposal.clinic_name,
+        sourceDoctorId: proposal.source_doctor_id,
+        sourceDoctorName: proposal.source_doctor_name,
+        currentDoctorName: proposal.source_doctor_name,
+        targetDoctorId: proposal.target_doctor_id,
+        targetDoctorName: proposal.target_doctor_name,
+        proposedDoctorName: proposal.target_doctor_name,
+        patientId: proposal.patient_id,
+        patientName: proposal.patient_name,
+        procedureName: proposal.procedure_name,
+        reason: 'doctor queue load balancing',
+        estimatedWait: estWait,
+        newEstimatedWait: newEstWait,
+        status: proposal.status,
+        doctorConsent: proposal.doctor_consent,
+        patientConsent: proposal.patient_consent,
+      },
+    });
+  },
+
+  /**
+   * Trigger: Load Balance Transfer Committed (Step C dual consent achieved)
+   */
+  async notifyLoadBalanceTransferCompleted(proposal: LoadBalanceProposalEntity): Promise<void> {
+    // 1. Patient Notification
+    await this.sendNotification({
+      patientId: proposal.patient_id,
+      recipientType: 'PATIENT',
+      appointmentId: proposal.appointment_id,
+      clinicId: proposal.clinic_id,
+      title: 'Doctor Transfer Confirmed ✅',
+      message: `Your consultation is now transferred to ${proposal.target_doctor_name} at ${proposal.clinic_name}. Please proceed to their consultation queue.`,
+      category: 'Queue Updates',
+      type: 'queue',
+      actionData: {
+        proposalId: proposal.id,
+        doctorName: proposal.target_doctor_name,
+        clinicName: proposal.clinic_name,
+        status: 'COMMITTED',
+      },
+    });
+
+    // 2. Receiving Doctor Notification
+    await this.sendNotification({
+      doctorId: proposal.target_doctor_id,
+      recipientType: 'DOCTOR',
+      clinicId: proposal.clinic_id,
+      title: 'Patient Added to Queue (Transfer) 👥',
+      message: `${proposal.patient_name} accepted the transfer from Dr. ${proposal.source_doctor_name} and is now in your active waiting queue.`,
+      category: 'Queue Updates',
+      type: 'queue',
+      actionData: {
+        proposalId: proposal.id,
+        patientName: proposal.patient_name,
+        appointmentId: proposal.appointment_id,
+        walkInId: proposal.walk_in_id,
+      },
+    });
+
+    // 3. Source Doctor Notification
+    await this.sendNotification({
+      doctorId: proposal.source_doctor_id,
+      recipientType: 'DOCTOR',
+      clinicId: proposal.clinic_id,
+      title: 'Queue Load Balanced ⚖️',
+      message: `${proposal.patient_name} has transferred to ${proposal.target_doctor_name} to balance the clinic queue.`,
+      category: 'Queue Updates',
+      type: 'queue',
+      actionData: {
+        proposalId: proposal.id,
+        patientName: proposal.patient_name,
+      },
+    });
+
+    // 4. Clinic Assistant Notification
+    await this.sendNotification({
+      clinicId: proposal.clinic_id,
+      recipientType: 'CLINIC',
+      title: 'Load Balancing Transfer Completed 🏥',
+      message: `${proposal.patient_name} transferred from ${proposal.source_doctor_name} to ${proposal.target_doctor_name} with dual consent.`,
+      category: 'Queue Updates',
+      type: 'load_balance_status',
+      actionData: {
+        proposalId: proposal.id,
+        patientName: proposal.patient_name,
+        sourceDoctorName: proposal.source_doctor_name,
+        targetDoctorName: proposal.target_doctor_name,
+        status: 'COMMITTED',
+      },
+    });
+  },
+
+  /**
+   * Trigger: Load Balance Proposal Declined or Cancelled
+   */
+  async notifyLoadBalanceProposalCancelled(proposal: LoadBalanceProposalEntity, reason: string): Promise<void> {
+    // Notify Clinic Assistant
+    await this.sendNotification({
+      clinicId: proposal.clinic_id,
+      recipientType: 'CLINIC',
+      title: 'Load Balancing Proposal Declined / Cancelled ℹ️',
+      message: `Transfer of ${proposal.patient_name} from ${proposal.source_doctor_name} to ${proposal.target_doctor_name} was not completed: ${reason}. Original assignment retained.`,
+      category: 'Queue Updates',
+      type: 'load_balance_status',
+      actionData: {
+        proposalId: proposal.id,
+        status: proposal.status,
+        reason,
+      },
     });
   },
 };

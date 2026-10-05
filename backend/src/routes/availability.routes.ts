@@ -602,3 +602,21 @@ availabilityRouter.get('/clinics/:clinicId/slots', async (req: Request, res: Res
     res.status(500).json({ success: false, error: 'Failed to fetch clinic slots.' });
   }
 });
+
+// DELETE /api/availability/requests/:id
+availabilityRouter.delete('/requests/:id', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id;
+    const { memoryDb, saveStateToFile } = await import('../database/db');
+    if (memoryDb.availability_requests.has(id)) {
+      memoryDb.availability_requests.delete(id);
+      saveStateToFile();
+      res.status(200).json({ success: true, message: 'Request deleted successfully.' });
+      return;
+    }
+    res.status(404).json({ success: false, error: 'Request not found.' });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+

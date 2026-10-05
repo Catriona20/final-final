@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
-import { AppointmentModel, DoctorModel, ClinicModel, MedicalFileModel, PatientModel } from '../database/models';
-import { memoryDb } from '../database/db';
+import { AppointmentModel, DoctorModel, ClinicModel, MedicalFileModel, PatientModel, resolveCanonicalClinicId, resolveCanonicalDoctorId } from '../database/models';
+import { memoryDb, saveStateToFile } from '../database/db';
 import { queueManager } from '../services/queueManager';
 import { notificationService } from '../services/notificationService';
 import { twilioService } from '../services/twilioService';
@@ -57,7 +57,7 @@ const bookAppointmentHandler = async (req: Request, res: Response): Promise<void
     const clinicId = req.body.clinicId || req.body.clinic_id;
     const department = req.body.department;
     const date = req.body.date || req.body.appointment_date || req.body.appointmentDate;
-    const time = req.body.time || req.body.slot_time || req.body.slotTime;
+    const time = req.body.time || req.body.slot_time || req.body.slotTime || req.body.appointment_time || req.body.appointmentTime;
     const reason = req.body.reason || 'General consultation';
     const customReasonText = req.body.customReasonText;
     const symptoms = req.body.symptoms || [];
@@ -79,6 +79,18 @@ const bookAppointmentHandler = async (req: Request, res: Response): Promise<void
 
     if (!doctor || !clinic) {
       res.status(404).json({ success: false, error: 'Selected doctor or clinic not found in healthcare registry.' });
+      return;
+    }
+
+    if (clinic.status === 'PENDING_REVIEW' || clinic.status === 'REJECTED' || clinic.verification_status === 'PENDING_REVIEW' || clinic.verification_status === 'REJECTED') {
+      res.status(403).json({ success: false, error: 'Selected clinic is currently pending approval or inactive.' });
+      return;
+    }
+
+    const docStatus = (doctor as any).account_status || doctor.verification_status;
+    const isDocVerified = doctor.is_verified || docStatus === 'VERIFIED' || docStatus === 'ACTIVE';
+    if (!isDocVerified || docStatus === 'PENDING_REVIEW' || docStatus === 'REJECTED' || (doctor as any).account_status === 'PENDING_REVIEW') {
+      res.status(403).json({ success: false, error: 'Selected doctor is currently pending verification or inactive.' });
       return;
     }
 
@@ -630,6 +642,7 @@ const handleCancelAppointment = async (req: Request, res: Response): Promise<voi
 };
 appointmentRouter.post('/:id/cancel', handleCancelAppointment);
 appointmentRouter.put('/:id/cancel', handleCancelAppointment);
+appointmentRouter.patch('/:id/cancel', handleCancelAppointment);
 
 // POST /api/appointments/:id/switch-doctor
 appointmentRouter.post('/:id/switch-doctor', async (req: Request, res: Response): Promise<void> => {
@@ -795,49 +808,319 @@ appointmentRouter.post('/:id/reschedule', async (req: Request, res: Response): P
   }
 });
 
-// POST /api/appointments/:id/accept-earlier-slot
-appointmentRouter.post('/:id/accept-earlier-slot', async (req: Request, res: Response): Promise<void> => {
+// POST & PUT /api/appointments/:id/accept-earlier-slot
+const handleAcceptEarlierSlot = async (req: Request, res: Response): Promise<void> => {
+  let lockKey: string | null = null;
   try {
-    const appointment = await AppointmentModel.getById(req.params.id);
-    if (!appointment || !appointment.earlier_slot_offered) {
+    const appointmentId = req.params.id;
+    const appointment = await AppointmentModel.getById(appointmentId);
+    if (!appointment) {
+      res.status(404).json({ success: false, error: 'Appointment not found.' });
+      return;
+    }
+
+    // 1. Offer still exists
+    if (!appointment.earlier_slot_offered) {
       res.status(400).json({ success: false, error: 'No earlier slot offer pending for this appointment.' });
       return;
     }
 
     const offer = appointment.earlier_slot_offered;
+
+    // 2. Offer has not already been accepted/declined
+    if (offer.status === 'ACCEPTED') {
+      res.status(400).json({ success: false, error: 'This earlier slot offer has already been accepted.' });
+      return;
+    }
+    if (offer.status === 'DECLINED') {
+      res.status(400).json({ success: false, error: 'This earlier slot offer was previously declined.' });
+      return;
+    }
+
+    // 3. Offer belongs to authenticated patient (if JWT provided)
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      try {
+        const decoded = jwt.verify(authHeader.split(' ')[1], config.jwtSecret) as any;
+        if (decoded && decoded.id) {
+          const authPatientId = decoded.id;
+          const aptPatientId = appointment.patient_id;
+          const aliases = [authPatientId, ...((memoryDb.patients as any).getAliases?.(authPatientId) || [])];
+          if (!aliases.includes(aptPatientId) && aptPatientId !== authPatientId) {
+            res.status(403).json({ success: false, error: 'You are not authorized to accept this offer.' });
+            return;
+          }
+        }
+      } catch (e) {
+        // Optional JWT parsing
+      }
+    }
+
+    // 4. Original appointment is still active
+    const normAptStatus = (appointment.status || '').toUpperCase().replace(/[\s_-]+/g, '');
+    if (['CANCELLED', 'COMPLETED', 'NOSHOW', 'NO_SHOW'].includes(normAptStatus)) {
+      res.status(400).json({ success: false, error: `Cannot accept offer because appointment is ${appointment.status}.` });
+      return;
+    }
+
+    const normTargetDate = timeService.normalizeDateString(offer.newDate);
+    const normTargetTime = timeService.normalizeTimeString(offer.newTime);
+    const canonicalDoctorId = resolveCanonicalDoctorId(appointment.doctor_id);
+    const canonicalClinicId = resolveCanonicalClinicId(appointment.clinic_id);
+
+    // 5. Concurrency / race safety lock
+    lockKey = `${canonicalDoctorId}:${normTargetDate}:${normTargetTime}`;
+    if (activeBookingLocks.has(lockKey)) {
+      res.status(409).json({
+        success: false,
+        code: 'SLOT_NO_LONGER_AVAILABLE',
+        error: 'This earlier slot is currently being claimed or processed. Please try again.',
+      });
+      return;
+    }
+    activeBookingLocks.add(lockKey);
+
+    // 6. Validate that earlier slot is STILL AVAILABLE (concurrency protection)
+    for (const existing of memoryDb.appointments.values()) {
+      if (
+        existing.id !== appointment.id &&
+        resolveCanonicalDoctorId(existing.doctor_id) === canonicalDoctorId &&
+        resolveCanonicalClinicId(existing.clinic_id) === canonicalClinicId &&
+        timeService.normalizeDateString(existing.date || existing.appointmentDate) === normTargetDate &&
+        timeService.normalizeTimeString(existing.time || existing.slotStartTime) === normTargetTime &&
+        !['Cancelled', 'CANCELLED', 'NO_SHOW', 'No Show', 'Completed', 'COMPLETED'].includes(existing.status)
+      ) {
+        activeBookingLocks.delete(lockKey);
+        res.status(409).json({
+          success: false,
+          code: 'SLOT_NO_LONGER_AVAILABLE',
+          error: 'This earlier slot has already been claimed by another patient.',
+        });
+        return;
+      }
+    }
+
+    const durMins = parseInt(String(appointment.duration || '20 min').replace(/[^0-9]/g, ''), 10) || 20;
+    const validation = await doctorAvailabilityService.validateSlotAvailability(
+      appointment.doctor_id,
+      appointment.clinic_id,
+      normTargetDate,
+      normTargetTime,
+      { excludeAppointmentId: appointment.id, consultationDurationMinutes: durMins }
+    );
+
+    if (!validation.valid) {
+      activeBookingLocks.delete(lockKey);
+      res.status(409).json({
+        success: false,
+        code: validation.code || 'SLOT_NO_LONGER_AVAILABLE',
+        error: validation.error || 'The earlier slot is no longer available.',
+      });
+      return;
+    }
+
+    // 7. Perform atomic reassignment
+    const oldTime = appointment.time || appointment.slotStartTime;
+    const oldDate = appointment.date || appointment.appointmentDate;
+    const calculatedEndTime = timeService.calculateSlotEndTime(normTargetTime, appointment.duration || '20 min');
+
     const updated = await AppointmentModel.update(appointment.id, {
-      date: offer.newDate,
-      time: offer.newTime,
-      estimated_wait: offer.estimatedWait,
-      earlier_slot_offered: undefined,
+      date: normTargetDate,
+      time: normTargetTime,
+      appointmentDate: normTargetDate,
+      slotStartTime: normTargetTime,
+      slotEndTime: calculatedEndTime,
+      estimated_wait: offer.estimatedWait || appointment.estimated_wait,
+      earlier_slot_offered: {
+        ...offer,
+        status: 'ACCEPTED',
+        acceptedAt: new Date().toISOString(),
+      },
     });
+
+    // Update queue tracking if item exists in live queue
+    const queueItem = memoryDb.appointment_queue.get(appointment.id);
+    if (queueItem) {
+      queueItem.updated_at = new Date().toISOString();
+      memoryDb.appointment_queue.set(appointment.id, queueItem);
+    }
+
+    saveStateToFile();
+
+    // 8. Update in-app notifications in memoryDb.notifications
+    for (const notif of memoryDb.notifications.values()) {
+      if (
+        (notif.appointment_id === appointment.id || notif.action_data?.appointmentId === appointment.id) &&
+        (notif.title?.toLowerCase().includes('earlier') || notif.message?.toLowerCase().includes('earlier'))
+      ) {
+        notif.read = true;
+        notif.is_read = true;
+        if (notif.action_data) {
+          notif.action_data.status = 'ACCEPTED';
+          notif.action_data.acceptedAt = new Date().toISOString();
+        }
+      }
+    }
+
+    // 9. Emit real-time events to Patient, Doctor, Clinic, Broadcast
+    const updatePayload = formatAppointmentResponse(updated);
 
     emitToPatient(appointment.patient_id, 'appointment:status', {
       appointmentId: appointment.id,
-      date: offer.newDate,
-      time: offer.newTime,
+      date: normTargetDate,
+      time: normTargetTime,
       status: appointment.status,
+    });
+    emitToPatient(appointment.patient_id, 'appointment:updated', updatePayload);
+    emitToPatient(appointment.patient_id, 'slot:earlier_accepted', {
+      appointmentId: appointment.id,
+      newTime: normTargetTime,
+      newDate: normTargetDate,
+      oldTime,
+      oldDate,
+    });
+
+    emitToDoctor(appointment.doctor_id, 'appointment:updated', updatePayload);
+    emitToDoctor(appointment.doctor_id, 'queue:updated', {
+      appointmentId: appointment.id,
+      freedSlot: oldTime,
+      newSlot: normTargetTime,
+      date: normTargetDate,
+    });
+
+    if (appointment.clinic_id) {
+      emitToClinic(appointment.clinic_id, 'appointment:updated', updatePayload);
+      emitToClinic(appointment.clinic_id, 'queue:updated', {
+        appointmentId: appointment.id,
+        freedSlot: oldTime,
+        newSlot: normTargetTime,
+        date: normTargetDate,
+      });
+    }
+
+    emitBroadcast('appointment:updated', updatePayload);
+    emitBroadcast('queue:updated', {
+      appointmentId: appointment.id,
+      freedSlot: oldTime,
+      newSlot: normTargetTime,
+      date: normTargetDate,
+    });
+    emitBroadcast('doctor:availability_updated', {
+      doctorId: appointment.doctor_id,
+      clinicId: appointment.clinic_id,
+      date: normTargetDate,
+      releasedSlot: oldTime,
+      claimedSlot: normTargetTime,
+      action: 'SLOT_REASSIGNMENT',
     });
 
     if (updated) {
       await notificationService.notifyEarlierSlotAccepted(updated);
     }
 
-    res.status(200).json({ success: true, appointment: formatAppointmentResponse(updated) });
-  } catch (err: any) {
-    res.status(500).json({ success: false, error: 'Failed to accept earlier slot.' });
-  }
-});
+    // Cascade: Offer the newly released old slot (e.g. 07:20 PM) to the next eligible patient!
+    if (oldTime && oldDate) {
+      queueManager.offerReleasedSlotToNextEligiblePatient(appointment, oldTime, oldDate).catch((e) => {
+        console.warn('Cascading earlier slot offer error:', e);
+      });
+    }
 
-// POST /api/appointments/:id/decline-earlier-slot
-appointmentRouter.post('/:id/decline-earlier-slot', async (req: Request, res: Response): Promise<void> => {
+    res.status(200).json({
+      success: true,
+      appointment: formatAppointmentResponse(updated),
+      message: `Appointment successfully moved from ${oldTime} to earlier slot ${normTargetTime}.`,
+    });
+  } catch (err: any) {
+    console.error('Accept earlier slot error:', err);
+    res.status(500).json({ success: false, error: 'Failed to accept earlier slot.' });
+  } finally {
+    if (lockKey) {
+      activeBookingLocks.delete(lockKey);
+    }
+  }
+};
+appointmentRouter.post('/:id/accept-earlier-slot', handleAcceptEarlierSlot);
+appointmentRouter.put('/:id/accept-earlier-slot', handleAcceptEarlierSlot);
+
+// POST & PUT /api/appointments/:id/decline-earlier-slot
+const handleDeclineEarlierSlot = async (req: Request, res: Response): Promise<void> => {
   try {
-    const updated = await AppointmentModel.update(req.params.id, {
-      earlier_slot_offered: undefined,
+    const appointmentId = req.params.id;
+    const appointment = await AppointmentModel.getById(appointmentId);
+    if (!appointment) {
+      res.status(404).json({ success: false, error: 'Appointment not found.' });
+      return;
+    }
+
+    const currentOffer = appointment.earlier_slot_offered;
+
+    const updated = await AppointmentModel.update(appointmentId, {
+      earlier_slot_offered: currentOffer
+        ? {
+            ...currentOffer,
+            status: 'DECLINED',
+            declinedAt: new Date().toISOString(),
+          }
+        : undefined,
     });
 
-    res.status(200).json({ success: true, appointment: formatAppointmentResponse(updated) });
+    // Update in-app notifications in memoryDb.notifications
+    for (const notif of memoryDb.notifications.values()) {
+      if (
+        (notif.appointment_id === appointmentId || notif.action_data?.appointmentId === appointmentId) &&
+        (notif.title?.toLowerCase().includes('earlier') || notif.message?.toLowerCase().includes('earlier'))
+      ) {
+        notif.read = true;
+        notif.is_read = true;
+        if (notif.action_data) {
+          notif.action_data.status = 'DECLINED';
+          notif.action_data.declinedAt = new Date().toISOString();
+        }
+      }
+    }
+    saveStateToFile();
+
+    const formatted = formatAppointmentResponse(updated);
+
+    emitToPatient(appointment.patient_id, 'slot:earlier_declined', {
+      appointmentId,
+      time: appointment.time,
+      date: appointment.date,
+    });
+    emitToPatient(appointment.patient_id, 'appointment:updated', formatted);
+
+    if (updated) {
+      await notificationService.notifyEarlierSlotDeclined(updated);
+    }
+
+    res.status(200).json({
+      success: true,
+      appointment: formatted,
+      message: 'Earlier slot offer declined. Original appointment retained.',
+    });
   } catch (err: any) {
+    console.error('Decline earlier slot error:', err);
     res.status(500).json({ success: false, error: 'Failed to decline earlier slot.' });
   }
+};
+appointmentRouter.post('/:id/decline-earlier-slot', handleDeclineEarlierSlot);
+appointmentRouter.put('/:id/decline-earlier-slot', handleDeclineEarlierSlot);
+
+// DELETE /api/appointments/:id
+appointmentRouter.delete('/:id', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id;
+    const { memoryDb, saveStateToFile } = await import('../database/db');
+    if (memoryDb.appointments.has(id)) {
+      memoryDb.appointments.delete(id);
+      memoryDb.appointment_queue.delete(id);
+      saveStateToFile();
+      res.status(200).json({ success: true, message: 'Appointment deleted successfully.' });
+      return;
+    }
+    res.status(404).json({ success: false, error: 'Appointment not found.' });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message });
+  }
 });
+

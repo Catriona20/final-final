@@ -7,6 +7,7 @@ export interface ActiveLocation {
   id: string;
   name: string;
   locality: string;
+  displayName?: string;
   latitude: number;
   longitude: number;
   accuracy?: number;
@@ -286,7 +287,23 @@ export type NotificationCategory =
   | 'Clinic Updates'
   | 'Reminders'
   | 'System'
-  | 'Announcements';
+  | 'Announcements'
+  | 'Emergency'
+  | 'Doctor Delays';
+
+export type NotificationType =
+  | 'appointment'
+  | 'system'
+  | 'reminder'
+  | 'announcement'
+  | 'emergency'
+  | 'delay'
+  | 'verification'
+  | 'prescription'
+  | 'queue'
+  | 'load_balance_proposal'
+  | 'load_balance_offer'
+  | 'load_balance_status';
 
 export interface NotificationItem {
   id: string;
@@ -295,11 +312,34 @@ export interface NotificationItem {
   timestamp: string;
   read: boolean;
   category: NotificationCategory;
-  type?: 'appointment' | 'system' | 'reminder' | 'announcement';
+  type?: NotificationType;
   actionData?: {
     appointmentId?: string;
     clinicId?: string;
+    doctorId?: string;
     url?: string;
+    offerStatus?: 'OFFERED' | 'ACCEPTED' | 'DECLINED' | 'EXPIRED';
+    offeredTime?: string;
+    currentTime?: string;
+    offeredDate?: string;
+    clinicName?: string;
+    doctorName?: string;
+    timeDifference?: string;
+    // Load balance proposal & doctor transfer fields
+    proposalId?: string;
+    sourceDoctorId?: string;
+    sourceDoctorName?: string;
+    currentDoctorName?: string;
+    targetDoctorId?: string;
+    targetDoctorName?: string;
+    proposedDoctorName?: string;
+    procedureName?: string;
+    estimatedWait?: number;
+    newEstimatedWait?: number;
+    status?: string;
+    doctorConsent?: string;
+    patientConsent?: string;
+    [key: string]: any;
   };
 }
 
@@ -376,8 +416,16 @@ export interface AuthState {
   token: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isInitializing?: boolean;
   error: string | null;
   hasCompletedOnboarding: boolean;
+  pendingVerification?: {
+    patientId?: string;
+    phoneOrEmail: string;
+    phone?: string;
+    email?: string;
+    purpose: 'register' | 'forgot';
+  } | null;
 }
 
 export interface FilterOptions {
@@ -397,7 +445,13 @@ export type AuthStackParamList = {
   Welcome: undefined;
   Login: { email?: string } | undefined;
   Register: undefined;
-  OtpVerification: { phoneOrEmail: string; purpose: 'register' | 'forgot' };
+  OtpVerification: {
+    phoneOrEmail: string;
+    purpose: 'register' | 'forgot';
+    patientId?: string;
+    phone?: string;
+    email?: string;
+  };
   ForgotPassword: undefined;
   PasswordReset: { token: string };
 };

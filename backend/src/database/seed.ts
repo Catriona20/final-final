@@ -2,6 +2,7 @@ import bcrypt from 'bcryptjs';
 import { memoryDb, saveStateToFile } from './db';
 import { PatientEntity, ClinicEntity, DoctorEntity, DepartmentEntity, AppointmentEntity, DoctorClinicAssignmentModel } from './models';
 import { timeService, CLINIC_TIMEZONE } from '../services/timeService';
+import { seedMoonDentalVillivakkam } from './seedMoonDental';
 
 export interface SeedSummary {
   patientsCount: number;
@@ -652,6 +653,7 @@ export const seedDatabase = async (): Promise<SeedSummary> => {
     { id: 'rx-item-amox-01', clinic_id: 'c-demo-moon-01', sku: 'MED-AMOX-500', name: 'Amoxicillin 500mg', generic_name: 'Amoxicillin', category: 'Antibiotics', dosage_form: 'Capsule', strength: '500mg', batch_number: 'BATCH-AMOX-2027A', expiry_date: '2027-06-30', quantity: 5, min_stock_level: 15, reorder_quantity: 50, unit_price: 8.0, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
     { id: 'rx-item-amxclv-01', clinic_id: 'c-demo-moon-01', sku: 'MED-ATC-J01CR', name: 'Amoxicillin & Potassium Clavulanate 625 mg', generic_name: 'Amoxicillin + Potassium Clavulanate', category: 'Antibiotics', dosage_form: 'Tablet', strength: '625 mg', batch_number: 'BATCH-AMXCLV-2026A', expiry_date: '2026-11-30', quantity: 50, min_stock_level: 20, reorder_quantity: 100, unit_price: 22.5, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
     { id: 'rx-item-amxclv-02', clinic_id: 'c-demo-moon-01', sku: 'MED-ATC-J01CR', name: 'Amoxicillin & Potassium Clavulanate 625 mg', generic_name: 'Amoxicillin + Potassium Clavulanate', category: 'Antibiotics', dosage_form: 'Tablet', strength: '625 mg', batch_number: 'BATCH-AMXCLV-2027B', expiry_date: '2027-10-31', quantity: 100, min_stock_level: 20, reorder_quantity: 100, unit_price: 22.5, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
+    { id: 'rx-item-cet-01', clinic_id: 'c-demo-moon-01', sku: 'MED-ATC-R06', name: 'Cetirizine 10mg', generic_name: 'Cetirizine', category: 'Antihistamines', dosage_form: 'Tablet', strength: '10mg', batch_number: 'BATCH-CET-2027A', expiry_date: '2027-09-30', quantity: 60, min_stock_level: 20, reorder_quantity: 50, unit_price: 4.5, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
     { id: 'rx-item-amxclv-apollo-01', clinic_id: 'c-demo-apollo-02', sku: 'MED-ATC-J01CR', name: 'Amoxicillin & Potassium Clavulanate 625 mg', generic_name: 'Amoxicillin + Potassium Clavulanate', category: 'Antibiotics', dosage_form: 'Tablet', strength: '625 mg', batch_number: 'BATCH-AMXCLV-APOLLO', expiry_date: '2027-08-31', quantity: 80, min_stock_level: 20, reorder_quantity: 100, unit_price: 22.5, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
     { id: 'rx-item-levo-01', clinic_id: 'c-demo-apollo-02', sku: 'MED-ATC-R06', name: 'Levocetirizine 5mg', generic_name: 'Levocetirizine', category: 'Antihistamines', dosage_form: 'Tablet', strength: '5mg', batch_number: 'BATCH-LEVO-2028A', expiry_date: '2028-01-31', quantity: 80, min_stock_level: 20, reorder_quantity: 40, unit_price: 5.0, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
     { id: 'rx-item-met-01', clinic_id: 'c-demo-omr-12', sku: 'MED-ATC-A10BA', name: 'Metformin 500mg', generic_name: 'Metformin', category: 'Antidiabetic', dosage_form: 'Tablet', strength: '500mg', batch_number: 'BATCH-MET-2027A', expiry_date: '2027-08-31', quantity: 120, min_stock_level: 30, reorder_quantity: 100, unit_price: 4.0, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
@@ -752,6 +754,84 @@ export const seedDatabase = async (): Promise<SeedSummary> => {
         },
       ],
       created_at: '2026-09-30T14:09:37.446Z',
+    },
+    // Moon Dental Clinic (c-demo-moon-01) Prescriptions Waiting for Dispensation
+    {
+      id: 'rx-apt-1791196893198',
+      appointment_id: 'apt-1791196893198',
+      patient_id: 'pat-demo-01',
+      patient_name: 'Aarav Sharma',
+      doctor_id: 'doc-demo-ananya-08',
+      doctor_name: 'Dr. Ananya Deshmukh',
+      doctor_specialization: 'Dentistry',
+      doctor_registration_number: 'TN-REG-DOC-DEMO-ANANYA-08',
+      clinic_id: 'c-demo-moon-01',
+      clinic_name: 'Moon Dental Clinic',
+      clinic_address: '24 Luz Church Road, Mylapore, Chennai',
+      date: 'Oct 5, 2026',
+      diagnosis: 'Clinical evaluation of Dental Consultation',
+      clinical_notes: 'Patient presented with chief complaints. Vitals stable. Systemic examination normal.',
+      follow_up_date: 'Nov 27, 2026',
+      status: 'pending',
+      medicines: [
+        {
+          name: 'Amoxicillin & Potassium Clavulanate 625 mg',
+          dosage: '625 mg',
+          frequency: '1-0-1',
+          duration: '5 days',
+          instructions: 'After food',
+        },
+        {
+          name: 'Paracetamol 650mg (Dolo)',
+          dosage: '650 mg',
+          frequency: '1-0-1 (SOS)',
+          duration: '3 days',
+          instructions: 'After food during fever or pain',
+        },
+      ],
+      created_at: '2026-10-05T10:50:54.368Z',
+    },
+    {
+      id: 'rx-1791196894635',
+      appointment_id: 'apt-1791196795904',
+      patient_id: 'pat-demo-03',
+      patient_name: 'Rajesh Kumar',
+      doctor_id: 'doc-demo-ananya-08',
+      doctor_name: 'Dr. Ananya Deshmukh',
+      doctor_specialization: 'Dentistry',
+      doctor_registration_number: 'TN-MED-44281-2012',
+      clinic_id: 'c-demo-moon-01',
+      clinic_name: 'Moon Dental Clinic',
+      clinic_address: '24 Luz Church Road, Mylapore, Chennai',
+      date: 'Oct 5, 2026',
+      diagnosis: 'Root Canal Treatment',
+      clinical_notes: 'Follow prescribed course. Rest well and maintain adequate hydration.',
+      follow_up_date: 'In 2 weeks',
+      status: 'pending',
+      medicines: [
+        {
+          name: 'Amoxicillin 500mg',
+          dosage: '1 Capsule',
+          frequency: 'Three times daily (After meals)',
+          duration: '5 days',
+          instructions: 'Complete full 5-day course',
+        },
+        {
+          name: 'Paracetamol 650mg',
+          dosage: '1 Tablet',
+          frequency: 'As needed for fever / pain',
+          duration: '3 days',
+          instructions: 'Maximum 3 tablets daily',
+        },
+        {
+          name: 'Cetirizine 10mg',
+          dosage: '1 Tablet',
+          frequency: 'Once daily at bedtime',
+          duration: '7 days',
+          instructions: 'Take after dinner',
+        },
+      ],
+      created_at: '2026-10-05T10:41:34.636Z',
     },
   ];
   baselinePrescriptions.forEach((rx) => {
@@ -906,6 +986,9 @@ export const seedDatabase = async (): Promise<SeedSummary> => {
     doc.status = 'AVAILABLE';
     doc.is_available_today = true;
   }
+
+  // 9. Add Moon Dental Clinic Villivakkam (Clinic 2773) and its doctors
+  await seedMoonDentalVillivakkam();
 
   // Save to persistent file
   saveStateToFile();

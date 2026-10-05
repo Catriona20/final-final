@@ -69,6 +69,7 @@ export const HomeScreen: React.FC = () => {
   const theme = getThemeColors(isDark);
 
   const [clinics, setClinics] = useState<Clinic[]>([]);
+  const [totalClinics, setTotalClinics] = useState<number>(0);
   const [selectedDeptId, setSelectedDeptId] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isLoadingClinics, setIsLoadingClinics] = useState(true);
@@ -96,14 +97,15 @@ export const HomeScreen: React.FC = () => {
   const fetchDiscoveryData = async () => {
     setIsLoadingClinics(true);
     const deptObj = selectedDeptId ? MOCK_DEPARTMENTS.find((d) => d.id === selectedDeptId) : null;
-    const searchQuery = deptObj ? deptObj.name : 'medical clinic';
+    const searchQuery = deptObj ? deptObj.name : '';
     const result = await clinicSearchService.discoverNearby(
       searchQuery,
-      15,
+      20,
       { latitude: activeLocation.latitude, longitude: activeLocation.longitude },
       deptObj ? deptObj.name : null
     );
     setClinics(result.clinics);
+    setTotalClinics(result.total ?? result.clinics.length);
     setIsLoadingClinics(false);
   };
 
@@ -368,7 +370,7 @@ export const HomeScreen: React.FC = () => {
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={[styles.keepBtn, { borderColor: theme.cardBorder, backgroundColor: theme.backgroundSoft }]}
-                    onPress={declineEarlierSlot}
+                    onPress={() => declineEarlierSlot(earlierSlotSuggestion.appointmentId)}
                   >
                     <Text style={[styles.keepBtnText, { color: theme.textSecondary }]}>Keep Current</Text>
                   </TouchableOpacity>
@@ -436,7 +438,7 @@ export const HomeScreen: React.FC = () => {
               <View>
                 <Text style={[styles.sectionTitle, { color: theme.textPrimary }]}>Healthcare Near You</Text>
                 <Text style={[styles.sectionSub, { color: theme.textMuted }]}>
-                  Around {activeLocation.name} · Physical OPD Centers
+                  {totalClinics > 0 ? `${totalClinics} centers around` : 'Around'} {activeLocation.name} · Physical OPD Centers
                 </Text>
               </View>
               <TouchableOpacity

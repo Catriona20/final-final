@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   ListOrdered,
   Plus,
@@ -13,9 +13,13 @@ import {
   Search,
   Filter,
   Activity,
-  Play
+  Play,
+  Scale,
+  ArrowRight,
+  RefreshCw,
 } from 'lucide-react';
 import { useClinic } from '../context/ClinicContext.js';
+import { clinicApi } from '../services/api.js';
 import { QueueEntry, QueuePriority, QueueStatus } from '../types/queue.js';
 import { AddToQueueModal } from '../components/dashboard/AddToQueueModal.js';
 
@@ -29,6 +33,7 @@ export const QueuePage: React.FC<QueuePageProps> = ({
   setSearchQuery,
 }) => {
   const {
+    activeClinicId,
     queue,
     doctors,
     callNextPatient,
@@ -43,6 +48,35 @@ export const QueuePage: React.FC<QueuePageProps> = ({
   const [selectedDoctorFilter, setSelectedDoctorFilter] = useState<string>('ALL');
   const [localSearch, setLocalSearch] = useState<string>('');
   const [isAddQueueOpen, setIsAddQueueOpen] = useState(false);
+  const [proposals, setProposals] = useState<any[]>([]);
+  const [isEvaluating, setIsEvaluating] = useState(false);
+  const [balanceStatusMessage, setBalanceStatusMessage] = useState<string | null>(null);
+
+  const fetchProposals = useCallback(async () => {
+    if (!activeClinicId) return;
+    const list = await clinicApi.getLoadBalanceProposals(activeClinicId);
+    setProposals(list);
+  }, [activeClinicId]);
+
+  useEffect(() => {
+    fetchProposals();
+    const interval = setInterval(fetchProposals, 5000);
+    return () => clearInterval(interval);
+  }, [fetchProposals]);
+
+  const handleTriggerBalancing = async () => {
+    if (!activeClinicId) return;
+    setIsEvaluating(true);
+    try {
+      const res = await clinicApi.evaluateLoadBalance(activeClinicId);
+      if (res.data?.imbalanceDetails) {
+        setBalanceStatusMessage(res.data.imbalanceDetails);
+      }
+      await fetchProposals();
+    } finally {
+      setIsEvaluating(false);
+    }
+  };
 
   const priorityBadges: Record<
     QueuePriority,
@@ -199,6 +233,119 @@ export const QueuePage: React.FC<QueuePageProps> = ({
           <div className="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 border border-rose-200 flex items-center justify-center font-bold">
             <Flame className="w-5 h-5" />
           </div>
+        </div>
+      </div>
+
+      {/* Consent-Based Load Balancer Status Card */}
+      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-subtle p-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-200/60">
+              <Scale className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h2 className="text-sm font-bold text-slate-900">Doctor Queue Load Balancing</h2>
+                <span className="px-2 py-0.5 text-[11px] font-semibold bg-indigo-50 text-indigo-700 rounded-full border border-indigo-200">
+                  Consent-Based
+                </span>
+              </div>
+              <p className="text-xs text-slate-500">
+                Live doctor load monitoring with mandatory dual consent (patient + receiving doctor) before transfer.
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={handleTriggerBalancing}
+            disabled={isEvaluating}
+            className="px-3.5 py-1.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-bold border border-indigo-200 transition-colors flex items-center gap-1.5 self-start sm:self-auto"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${isEvaluating ? 'animate-spin' : ''}`} />
+            <span>{isEvaluating ? 'Evaluating...' : 'Check Balance'}</span>
+          </button>
+        </div>
+
+        {/* Proposals List or Empty State */}
+        <div className="mt-3">
+          {proposals.length === 0 ? (
+            <p className="text-xs text-slate-500 py-1">
+              {balanceStatusMessage || 'Active doctor queues at this clinic are balanced. No transfers pending dual consent.'}
+            </p>
+          ) : (
+            <div className="space-y-2 mt-2">
+              {proposals.slice(0, 5).map((p) => {
+                const isCommitted = p.status === 'COMMITTED';
+                const isDeclined = p.status === 'DECLINED';
+
+                return (
+                  <div
+                    key={p.id}
+                    className="p-3 rounded-xl bg-slate-50 border border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-2.5 text-xs"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="font-semibold text-slate-800">
+                        {p.patient_name}
+                        {p.procedure_name && (
+                          <span className="text-slate-500 font-normal ml-1">({p.procedure_name})</span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 text-slate-600 bg-white px-2 py-0.5 rounded-md border border-slate-200 font-medium">
+                        <span>{p.source_doctor_name}</span>
+                        <ArrowRight className="w-3 h-3 text-indigo-500" />
+                        <span className="text-indigo-700 font-bold">{p.target_doctor_name}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {/* Doctor Consent Badge */}
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                          p.doctor_consent === 'ACCEPTED'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : p.doctor_consent === 'DECLINED'
+                            ? 'bg-rose-50 text-rose-700 border-rose-200'
+                            : 'bg-amber-50 text-amber-700 border-amber-200'
+                        }`}
+                      >
+                        Doctor: {p.doctor_consent}
+                      </span>
+
+                      {/* Patient Consent Badge */}
+                      <span
+                        className={`px-2 py-0.5 rounded-full text-[10px] font-bold border ${
+                          p.patient_consent === 'ACCEPTED'
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : p.patient_consent === 'DECLINED'
+                            ? 'bg-rose-50 text-rose-700 border-rose-200'
+                            : 'bg-amber-50 text-amber-700 border-amber-200'
+                        }`}
+                      >
+                        Patient: {p.patient_consent}
+                      </span>
+
+                      {/* Overall Status Badge */}
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full text-[11px] font-bold border ${
+                          isCommitted
+                            ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                            : isDeclined
+                            ? 'bg-slate-200 text-slate-700 border-slate-300'
+                            : 'bg-blue-50 text-blue-700 border-blue-200'
+                        }`}
+                      >
+                        {isCommitted
+                          ? 'Completed (Transferred)'
+                          : isDeclined
+                          ? 'Declined (Retained)'
+                          : 'Pending Consent'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
 

@@ -125,6 +125,11 @@ export const BookingScreen: React.FC = () => {
   const [selectedClinic, setSelectedClinic] = useState<Clinic>(initialClinic);
 
   const isDoctorForClinic = (d: Doctor) => {
+    // If the clinic is explicitly Moon Dental Clinic Villivakkam (2773), match only its assigned doctors
+    if (selectedClinic.id === 'c-moon-dental-villivakkam-2773') {
+      const cId = d.clinicId || (d as any).clinic_id;
+      return cId === 'c-moon-dental-villivakkam-2773' || d.id === 'doc-alagu-vimalesh-2773' || d.id === 'doc-merlin-rajan-2773';
+    }
     const cId = d.clinicId || (d as any).clinic_id;
     const cName = d.clinicName || (d as any).clinic_name || '';
     const affiliations = d.clinicAffiliations || (d as any).clinic_affiliations || [];
@@ -141,9 +146,9 @@ export const BookingScreen: React.FC = () => {
 
   let rawAvailableDoctors = allDoctors.filter(isDoctorForClinic);
 
-  // If Moon Dental Clinic, ensure Dr. Arun Kumar is present
+  // If Moon Dental Clinic Mylapore demo, ensure Dr. Arun Kumar is present
   if (
-    (selectedClinic.id === 'c-demo-moon-01' || selectedClinic.name.toLowerCase().includes('moon dental')) &&
+    selectedClinic.id === 'c-demo-moon-01' &&
     !rawAvailableDoctors.some((d) => d.name.toLowerCase().includes('arun') || d.id === 'doc-demo-arun-01')
   ) {
     const arun = allDoctors.find(
@@ -254,16 +259,26 @@ export const BookingScreen: React.FC = () => {
   const isPreviousValid = rawPreviousDoctor && isDoctorForClinic(rawPreviousDoctor);
   const previousDoctor = isPreviousValid
     ? rawPreviousDoctor
-    : selectedClinic.id === 'c-demo-moon-01' || selectedClinic.name.toLowerCase().includes('moon dental')
+    : selectedClinic.id === 'c-demo-moon-01'
     ? allDoctors.find((d) => d.name.toLowerCase().includes('arun') || d.id === 'doc-demo-arun-01') || null
     : null;
 
+  const isRctProcedure = Boolean(
+    params.procedure &&
+      (params.procedure.toLowerCase().includes('root canal') || params.procedure.toLowerCase().includes('rct'))
+  );
+
   const procedureMatchDoctor = params.procedure
-    ? availableDoctorsForClinic.find(
+    ? (isRctProcedure
+        ? availableDoctorsForClinic.find((d) => d.id === 'doc-alagu-vimalesh-2773' || d.name.toLowerCase().includes('alagu')) ||
+          availableDoctorsForClinic.find((d) => d.specialization?.toLowerCase().includes('endodontics') || d.specialization?.toLowerCase().includes('conservative')) ||
+          availableDoctorsForClinic.find((d) => d.name.toLowerCase().includes('arun') && selectedClinic.id === 'c-demo-moon-01')
+        : null) ||
+      availableDoctorsForClinic.find(
         (d) =>
-          d.specialization?.toLowerCase().includes('dent') ||
           d.specialization?.toLowerCase().includes(params.procedure!.toLowerCase()) ||
-          (d.name.toLowerCase().includes('arun') && params.procedure!.toLowerCase().includes('root canal'))
+          ((d as any).procedures && Array.isArray((d as any).procedures) && (d as any).procedures.some((p: string) => p.toLowerCase().includes(params.procedure!.toLowerCase()))) ||
+          d.specialization?.toLowerCase().includes('dent')
       )
     : null;
 
@@ -1010,18 +1025,6 @@ export const BookingScreen: React.FC = () => {
                     </Text>
                     <Text style={[styles.summaryItemValue, { color: theme.textPrimary }]}>
                       {selectedDoctor.name} · {selectedDoctor.specialization}
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.summaryItem}>
-                  <CheckCircle size={15} color={theme.primary} />
-                  <View style={{ flex: 1 }}>
-                    <Text style={[styles.summaryItemLabel, { color: theme.textMuted }]}>
-                      PROCEDURE
-                    </Text>
-                    <Text style={[styles.summaryItemValue, { color: theme.textPrimary }]}>
-                      {customReasonText || params.procedure || 'Root Canal Treatment'}
                     </Text>
                   </View>
                 </View>

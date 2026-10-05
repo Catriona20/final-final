@@ -7,7 +7,7 @@
         "name": "Aarav Sharma",
         "email": "patient01@demo.medlink.test",
         "phone": "+91 9000000001",
-        "password_hash": "$2a$10$wz3faEuygoGUhlpnB3bHjeGaHSDBmwnVU2AcEWt8RQdeUWrgmRQje",
+        "password_hash": "$2a$10$.2/3sZUGoXsHKGyAis3NWOs0XCp3PPv9yMBpqwfrdHEiJYlkCpO0i",
         "blood_group": "B+",
         "age": 32,
         "gender": "Male",
@@ -18,8 +18,8 @@
         "preferred_doctor": "Dr. Arun Kumar",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:14.361Z",
-        "updated_at": "2026-09-30T15:38:14.361Z"
+        "created_at": "2026-10-05T11:48:30.041Z",
+        "updated_at": "2026-10-05T11:48:30.041Z"
       }
     ],
     [
@@ -29,7 +29,7 @@
         "name": "Sneha Patel",
         "email": "patient02@demo.medlink.test",
         "phone": "+91 9000000002",
-        "password_hash": "$2a$10$l7.J/fOFTuZva1Xy50T8dOawRGp.ClBbA0H.fcGGGtG1merrQ1Yly",
+        "password_hash": "$2a$10$TosSdhJQr5TiqgK6Sf2D8.nx3cjG7c48F6mj05IB.zVNzPU00SStO",
         "blood_group": "O+",
         "age": 29,
         "gender": "Female",
@@ -40,8 +40,8 @@
         "preferred_doctor": "Dr. Priya Sharma",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:14.426Z",
-        "updated_at": "2026-09-30T15:38:14.426Z"
+        "created_at": "2026-10-05T11:48:30.098Z",
+        "updated_at": "2026-10-05T11:48:30.098Z"
       }
     ],
     [
@@ -51,7 +51,7 @@
         "name": "Rajesh Kumar",
         "email": "patient03@demo.medlink.test",
         "phone": "+91 9000000003",
-        "password_hash": "$2a$10$kwAg1JIfQxmgRGX7N5s68.BTCb60P9B6MDu16WwaZq7iJhNbk6fg2",
+        "password_hash": "$2a$10$2OKgBUkSPdddkaQwVZB.r.ZEokg844hNo4nM1yv3kiQ1/1RsJuohy",
         "blood_group": "A+",
         "age": 52,
         "gender": "Male",
@@ -62,8 +62,8 @@
         "preferred_doctor": "Dr. Karthik Raman",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:14.500Z",
-        "updated_at": "2026-09-30T15:38:14.500Z"
+        "created_at": "2026-10-05T11:48:30.153Z",
+        "updated_at": "2026-10-05T11:48:30.153Z"
       }
     ],
     [
@@ -73,7 +73,7 @@
         "name": "Priya Raman",
         "email": "patient04@demo.medlink.test",
         "phone": "+91 9000000004",
-        "password_hash": "$2a$10$4W2YVcgfRin27/h6e80ADOzad1U30Xlu0V6q6BM2AUG6tMqN.kNTe",
+        "password_hash": "$2a$10$uEIaewBJHWO9ZUDAVLV5fu1Sb6e6T4kQIAMiIK46Yf1r/q55fxHFy",
         "blood_group": "AB+",
         "age": 28,
         "gender": "Female",
@@ -84,8 +84,8 @@
         "preferred_doctor": "Dr. Kavitha Reddy",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:14.564Z",
-        "updated_at": "2026-09-30T15:38:14.564Z"
+        "created_at": "2026-10-05T11:48:30.208Z",
+        "updated_at": "2026-10-05T11:48:30.208Z"
       }
     ],
     [
@@ -95,7 +95,7 @@
         "name": "Vikram Malhotra",
         "email": "patient05@demo.medlink.test",
         "phone": "+91 9000000005",
-        "password_hash": "$2a$10$9FBysXUuvlu2s3GtodOFY.HfudBlkFM7BdJm6FG3amLW//qvjOJmC",
+        "password_hash": "$2a$10$4zO7gWhbXaf9WWYEe5tsxuMGYNT9n19ygd/8lB0NvkWujUIP5JsM2",
         "blood_group": "O-",
         "age": 45,
         "gender": "Male",
@@ -106,8 +106,8 @@
         "preferred_doctor": "Dr. Priya Nair",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:14.629Z",
-        "updated_at": "2026-09-30T15:38:14.630Z"
+        "created_at": "2026-10-05T11:48:30.263Z",
+        "updated_at": "2026-10-05T11:48:30.263Z"
       }
     ],
     [
@@ -117,7 +117,7 @@
         "name": "Ananya Iyer",
         "email": "patient06@demo.medlink.test",
         "phone": "+91 9000000006",
-        "password_hash": "$2a$10$cItEd0eITYlTGvO0MAWd0usdGwfYaQ4RiS/Aw0DMax65lcoXes9sK",
+        "password_hash": "$2a$10$MFoWYNHHWcEHuB.Geb1dT.cVSmHBQgLTeL.ajDVRWbJJwNF8xMkpm",
         "blood_group": "B-",
         "age": 31,
         "gender": "Female",
@@ -128,8 +128,8 @@
         "preferred_doctor": "Dr. Venkat Raman",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:14.697Z",
-        "updated_at": "2026-09-30T15:38:14.697Z"
+        "created_at": "2026-10-05T11:48:30.318Z",
+        "updated_at": "2026-10-05T11:48:30.318Z"
       }
     ],
     [
@@ -139,7 +139,7 @@
         "name": "Rahul Verma",
         "email": "patient07@demo.medlink.test",
         "phone": "+91 9000000007",
-        "password_hash": "$2a$10$uIjkWiZ6YEpzXLLJtTTYxeAkOGBD7/rFDgRVlGlZd6IB7tmoGfqr.",
+        "password_hash": "$2a$10$Mbn0Ql6dYKydcDRCNgcOTeweNgEtqHHqHXJCKh/PkhCRKxDW9D21a",
         "blood_group": "A-",
         "age": 38,
         "gender": "Male",
@@ -150,8 +150,8 @@
         "preferred_doctor": "Dr. Aditya Rao",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:14.761Z",
-        "updated_at": "2026-09-30T15:38:14.761Z"
+        "created_at": "2026-10-05T11:48:30.374Z",
+        "updated_at": "2026-10-05T11:48:30.374Z"
       }
     ],
     [
@@ -161,7 +161,7 @@
         "name": "Pooja Nair",
         "email": "patient08@demo.medlink.test",
         "phone": "+91 9000000008",
-        "password_hash": "$2a$10$mclzZDO2kV/cX0fNQq9YwOJ/5OVXB0hlZvdNN2nkGZjkQMPXgslyS",
+        "password_hash": "$2a$10$IqGiQa3e7Gln6WbtOVNY5u/9KMke7vyfsod/ZLy6O4f9C27qtBqO2",
         "blood_group": "B+",
         "age": 26,
         "gender": "Female",
@@ -172,8 +172,8 @@
         "preferred_doctor": "Dr. Radha Sundaram",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:14.828Z",
-        "updated_at": "2026-09-30T15:38:14.828Z"
+        "created_at": "2026-10-05T11:48:30.429Z",
+        "updated_at": "2026-10-05T11:48:30.429Z"
       }
     ],
     [
@@ -183,7 +183,7 @@
         "name": "Rahul Menon",
         "email": "patient09@demo.medlink.test",
         "phone": "+91 9000000009",
-        "password_hash": "$2a$10$YKwyrhGro4ZxsloBzd8eAOoZrYIbxcCTg1edD4Bm5GWpJunPlHPQC",
+        "password_hash": "$2a$10$SnV58J8X459ofGE7G3eSauiAkg0zBiHItv7MbImxdkLDScFva9FuG",
         "blood_group": "O-",
         "age": 33,
         "gender": "Male",
@@ -194,8 +194,8 @@
         "preferred_doctor": "Dr. Arun Kumar",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:14.893Z",
-        "updated_at": "2026-09-30T15:38:14.893Z"
+        "created_at": "2026-10-05T11:48:30.485Z",
+        "updated_at": "2026-10-05T11:48:30.485Z"
       }
     ],
     [
@@ -205,7 +205,7 @@
         "name": "Priya Balaji",
         "email": "patient10@demo.medlink.test",
         "phone": "+91 9000000010",
-        "password_hash": "$2a$10$MwEl8ATJF0YnjdsRrjbpku276pFghSyFWivJgAzxFEcRfxv79w8Y2",
+        "password_hash": "$2a$10$qsoSTDhYa12aAsL0d.BX0Oe4ExC79WKVRcOmaECbrrslCbhGDZ.C.",
         "blood_group": "B+",
         "age": 58,
         "gender": "Female",
@@ -216,8 +216,8 @@
         "preferred_doctor": "Dr. Karthik Raman",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:14.960Z",
-        "updated_at": "2026-09-30T15:38:14.960Z"
+        "created_at": "2026-10-05T11:48:30.540Z",
+        "updated_at": "2026-10-05T11:48:30.540Z"
       }
     ],
     [
@@ -227,7 +227,7 @@
         "name": "Nithya Raj",
         "email": "patient11@demo.medlink.test",
         "phone": "+91 9000000011",
-        "password_hash": "$2a$10$u0MQM/h4qnkmgKXjEbAH6uICnznfL31X1Q.1htYwYOPJYS5WwC92q",
+        "password_hash": "$2a$10$A.DZ50REK4kpbkqgiicUouCpAoJuqjLx2KsEYSEEbnJyYrmHeK8zS",
         "blood_group": "A+",
         "age": 27,
         "gender": "Female",
@@ -238,8 +238,8 @@
         "preferred_doctor": "Dr. Priya Sharma",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.025Z",
-        "updated_at": "2026-09-30T15:38:15.025Z"
+        "created_at": "2026-10-05T11:48:30.596Z",
+        "updated_at": "2026-10-05T11:48:30.596Z"
       }
     ],
     [
@@ -249,7 +249,7 @@
         "name": "Sanjay Prakash",
         "email": "patient12@demo.medlink.test",
         "phone": "+91 9000000012",
-        "password_hash": "$2a$10$1YyKZrPIj5jHqsusR4.dlOnpJgtJwYCwoDCu/iuOMzgJyIwdutAjO",
+        "password_hash": "$2a$10$5FhzU7z6HeW/up9e5BWwmuCwrSnjl0RpLdKHNPlIozTvAeDXPBvHy",
         "blood_group": "O+",
         "age": 49,
         "gender": "Male",
@@ -260,8 +260,8 @@
         "preferred_doctor": "Dr. Aditya Rao",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.090Z",
-        "updated_at": "2026-09-30T15:38:15.090Z"
+        "created_at": "2026-10-05T11:48:30.651Z",
+        "updated_at": "2026-10-05T11:48:30.651Z"
       }
     ],
     [
@@ -271,7 +271,7 @@
         "name": "Deepa Sundaram",
         "email": "patient13@demo.medlink.test",
         "phone": "+91 9000000013",
-        "password_hash": "$2a$10$q/rZ1xvnFQZbB1VGCISrxugang9ZRxwcKdgI/d9ZI14Sthh4tcfY.",
+        "password_hash": "$2a$10$/zp4RZBZachOo1YAKuq0qeWqe0rwcGOknFuTvmWbyy086TsaPBABW",
         "blood_group": "B+",
         "age": 34,
         "gender": "Female",
@@ -282,8 +282,8 @@
         "preferred_doctor": "Dr. Priya Nair",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.156Z",
-        "updated_at": "2026-09-30T15:38:15.156Z"
+        "created_at": "2026-10-05T11:48:30.706Z",
+        "updated_at": "2026-10-05T11:48:30.706Z"
       }
     ],
     [
@@ -293,7 +293,7 @@
         "name": "Vikram Seth",
         "email": "patient14@demo.medlink.test",
         "phone": "+91 9000000014",
-        "password_hash": "$2a$10$C28KU6P2T8n.dNzGrlXR6ukRj.5zTXZ8aQzYgIp3S0Wl.mbZAK9Qq",
+        "password_hash": "$2a$10$gjRIKNgpjVL32crPkavOPemuzTKOPZXRbg5TB/nZoq6dSv2nprglW",
         "blood_group": "AB-",
         "age": 44,
         "gender": "Male",
@@ -304,8 +304,8 @@
         "preferred_doctor": "Dr. Venkat Raman",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.221Z",
-        "updated_at": "2026-09-30T15:38:15.221Z"
+        "created_at": "2026-10-05T11:48:30.761Z",
+        "updated_at": "2026-10-05T11:48:30.761Z"
       }
     ],
     [
@@ -315,7 +315,7 @@
         "name": "Sunita Reddy",
         "email": "patient15@demo.medlink.test",
         "phone": "+91 9000000015",
-        "password_hash": "$2a$10$9xkm55AFESWSsZUPf8iTx.nwTctkRVYbfwjyDDQEM3xwfDIh7i9TS",
+        "password_hash": "$2a$10$75/8ku8RasIHb4JEGtYC0.6xpENCaNxmoUK1AF1T24RSu2V6sBZRe",
         "blood_group": "A+",
         "age": 61,
         "gender": "Female",
@@ -326,8 +326,8 @@
         "preferred_doctor": "Dr. Karthik Raman",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.287Z",
-        "updated_at": "2026-09-30T15:38:15.287Z"
+        "created_at": "2026-10-05T11:48:30.816Z",
+        "updated_at": "2026-10-05T11:48:30.816Z"
       }
     ],
     [
@@ -337,7 +337,7 @@
         "name": "Suresh Menon",
         "email": "patient16@demo.medlink.test",
         "phone": "+91 9000000016",
-        "password_hash": "$2a$10$/K2Ifg3g20HdiAr9HqXJjO9WRk.hqdEO8CPRSqI1qqbyrhXSkzM.e",
+        "password_hash": "$2a$10$bDaiNwtdqyuJm3y6D1FerOFLy3IXxjFcjMU1.NVQbeDtU6J.tu1oy",
         "blood_group": "B+",
         "age": 63,
         "gender": "Male",
@@ -348,8 +348,8 @@
         "preferred_doctor": "Dr. Priya Sharma",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.353Z",
-        "updated_at": "2026-09-30T15:38:15.353Z"
+        "created_at": "2026-10-05T11:48:30.871Z",
+        "updated_at": "2026-10-05T11:48:30.871Z"
       }
     ],
     [
@@ -359,7 +359,7 @@
         "name": "Neha Agarwal",
         "email": "patient17@demo.medlink.test",
         "phone": "+91 9000000017",
-        "password_hash": "$2a$10$yDsbn5Ba8UJIdR2D.Bvd4OWQlQdY1trh1rGd8SCOfSLClRqynuq92",
+        "password_hash": "$2a$10$CvE4G8QIqPGMF0FxM1MxR.cMSqd5QZ090PlYhRV3o7DWsG51R3OTG",
         "blood_group": "O-",
         "age": 30,
         "gender": "Female",
@@ -370,8 +370,8 @@
         "preferred_doctor": "Dr. Radha Sundaram",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.418Z",
-        "updated_at": "2026-09-30T15:38:15.418Z"
+        "created_at": "2026-10-05T11:48:30.926Z",
+        "updated_at": "2026-10-05T11:48:30.926Z"
       }
     ],
     [
@@ -381,7 +381,7 @@
         "name": "Arjun Rao",
         "email": "patient18@demo.medlink.test",
         "phone": "+91 9000000018",
-        "password_hash": "$2a$10$atVSGEquXm0DTkj3V79Z9.PwgzrUwU2mKzD/UPHgCcmOLMRxqTssa",
+        "password_hash": "$2a$10$QD.gL/fKORQdzZuu25YaoepHbNoGv2Cv5SSb/Qd8zv04HTid4HcJO",
         "blood_group": "A+",
         "age": 36,
         "gender": "Male",
@@ -392,8 +392,8 @@
         "preferred_doctor": "Dr. Ramesh Chandran",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.484Z",
-        "updated_at": "2026-09-30T15:38:15.484Z"
+        "created_at": "2026-10-05T11:48:30.982Z",
+        "updated_at": "2026-10-05T11:48:30.982Z"
       }
     ],
     [
@@ -403,7 +403,7 @@
         "name": "Kavita Deshmukh",
         "email": "patient19@demo.medlink.test",
         "phone": "+91 9000000019",
-        "password_hash": "$2a$10$UjpxAIxn4r/IKS4tSM3.FeKIpV8qKF29oG2ifyc7TWZ0A4kLlcEH.",
+        "password_hash": "$2a$10$xmIsQCeE8x/HH319zPNNaOedyGB6NoQB/.JZ9S.dpr05BR1Zp/dpa",
         "blood_group": "AB+",
         "age": 41,
         "gender": "Female",
@@ -414,8 +414,8 @@
         "preferred_doctor": "Dr. Arvind Swaminathan",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.549Z",
-        "updated_at": "2026-09-30T15:38:15.549Z"
+        "created_at": "2026-10-05T11:48:31.038Z",
+        "updated_at": "2026-10-05T11:48:31.038Z"
       }
     ],
     [
@@ -425,7 +425,7 @@
         "name": "Manoj Pillai",
         "email": "patient20@demo.medlink.test",
         "phone": "+91 9000000020",
-        "password_hash": "$2a$10$fv9QlJXfkSqGo12pVrWVg.vCbkpXixxDFGdvTKPbJfGFIZt50QGvK",
+        "password_hash": "$2a$10$kwVQTHFztw3SeAgC1dOo8OAC2jVwbsEZQeApLG62YOaO1skR.RLRO",
         "blood_group": "B-",
         "age": 52,
         "gender": "Male",
@@ -436,8 +436,8 @@
         "preferred_doctor": "Dr. Kavitha Reddy",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.614Z",
-        "updated_at": "2026-09-30T15:38:15.614Z"
+        "created_at": "2026-10-05T11:48:31.093Z",
+        "updated_at": "2026-10-05T11:48:31.093Z"
       }
     ],
     [
@@ -447,7 +447,7 @@
         "name": "Sarah Jenkins",
         "email": "sarah.jenkins@example.com",
         "phone": "+91 98401 23456",
-        "password_hash": "$2a$10$wuQLnsDUtRvxkdlCEi3JXupWyUjKi3PBUZWO3TkkZgubj.WDI1jDG",
+        "password_hash": "$2a$10$5.KLOYXbQnovoYl7or6SQOEIWzxcnTO07cXf4ymKZZE2g1tBkOajq",
         "blood_group": "O+",
         "age": 34,
         "gender": "Female",
@@ -458,8 +458,8 @@
         "preferred_doctor": "Dr. Ananya Deshmukh",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.679Z",
-        "updated_at": "2026-09-30T15:38:15.679Z"
+        "created_at": "2026-10-05T11:48:31.148Z",
+        "updated_at": "2026-10-05T11:48:31.148Z"
       }
     ],
     [
@@ -469,7 +469,7 @@
         "name": "Priya Sharma",
         "email": "priya.sharma@example.com",
         "phone": "+91 98401 23457",
-        "password_hash": "$2a$10$sz327lK7fbjTK9npZTosl.vuwEWPpTaTxii/dOctCgHU7q.6g6kzm",
+        "password_hash": "$2a$10$jIWsShjnDqKKcOtmWWvzBO.ovBz1WIFUZ3HoE3FDwfRRrbrCMKhU.",
         "blood_group": "A+",
         "age": 29,
         "gender": "Female",
@@ -480,8 +480,8 @@
         "preferred_doctor": "Dr. Priya Sharma",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.745Z",
-        "updated_at": "2026-09-30T15:38:15.746Z"
+        "created_at": "2026-10-05T11:48:31.203Z",
+        "updated_at": "2026-10-05T11:48:31.203Z"
       }
     ],
     [
@@ -491,7 +491,7 @@
         "name": "Emergency Patient Ramesh",
         "email": "ramesh.emergency@demo.medlink.test",
         "phone": "+91 9000000039",
-        "password_hash": "$2a$10$sIbj/wlo6wI7HyYJ8Q9Rz.oluuuKjK0OzwIj7U89eQ3UeKctwmO2C",
+        "password_hash": "$2a$10$dvGdv9wl4FkIO2qNDAWY3uoitLwQdAtUXQgeejv7On2mYNj.Tgzza",
         "blood_group": "O+",
         "age": 26,
         "gender": "Male",
@@ -502,8 +502,8 @@
         "preferred_doctor": "Dr. Arun Kumar",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.810Z",
-        "updated_at": "2026-09-30T15:38:15.810Z"
+        "created_at": "2026-10-05T11:48:31.258Z",
+        "updated_at": "2026-10-05T11:48:31.258Z"
       }
     ],
     [
@@ -513,7 +513,7 @@
         "name": "Sheryl Thomas",
         "email": "assistant01@demo.medlink.test",
         "phone": "+91 9000000021",
-        "password_hash": "$2a$10$otrKzgM49GlTibFoN3TftenCuUsTvmgQehFZpvfwgCjd9VbfnYWcC",
+        "password_hash": "$2a$10$fUzlD6BRJhSBQ7Xw0CnUEeeryOiWZPiiatUcxf.f4iyhvXdKckH0S",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-moon-01",
         "clinic_name": "Moon Dental Clinic",
@@ -521,8 +521,8 @@
         "initials": "ST",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.875Z",
-        "updated_at": "2026-09-30T15:38:15.875Z"
+        "created_at": "2026-10-05T11:48:31.314Z",
+        "updated_at": "2026-10-05T11:48:31.314Z"
       }
     ],
     [
@@ -532,7 +532,7 @@
         "name": "Rahul Joseph",
         "email": "assistant02@demo.medlink.test",
         "phone": "+91 9000000022",
-        "password_hash": "$2a$10$nbkttiBoIJmxNHhR2s1AX.OddfKfHGiK2srh20p1ds6APXAK4SMRC",
+        "password_hash": "$2a$10$mCPT.cUd50OPkUMfJ61SZOR/SKuLCjnrPHkKKAA5o/xCc10oakwGC",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-apollo-02",
         "clinic_name": "Apollo Family Care Centre",
@@ -540,8 +540,8 @@
         "initials": "RJ",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.941Z",
-        "updated_at": "2026-09-30T15:38:15.941Z"
+        "created_at": "2026-10-05T11:48:31.370Z",
+        "updated_at": "2026-10-05T11:48:31.370Z"
       }
     ],
     [
@@ -551,7 +551,7 @@
         "name": "Nisha Kumar",
         "email": "assistant03@demo.medlink.test",
         "phone": "+91 9000000023",
-        "password_hash": "$2a$10$RGe6PnuFQCFF/kAOF2uBIefJEPpktY9iVVLleM15Kr6cIZQyBtGNu",
+        "password_hash": "$2a$10$/Zn46ttQ..JE0iL630R/pOhqCnAH4qx6LjogL/hzHKWydthzpd86K",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-greenlife-03",
         "clinic_name": "GreenLife Women's & Maternity Clinic",
@@ -559,8 +559,8 @@
         "initials": "NK",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.007Z",
-        "updated_at": "2026-09-30T15:38:16.007Z"
+        "created_at": "2026-10-05T11:48:31.425Z",
+        "updated_at": "2026-10-05T11:48:31.425Z"
       }
     ],
     [
@@ -570,7 +570,7 @@
         "name": "Ravi Shankar",
         "email": "assistant04@demo.medlink.test",
         "phone": "+91 9000000024",
-        "password_hash": "$2a$10$Bg//kiL18aOuzT3HG9ntFOe1QXIbIS8XxsO1imjEt8rXf0gT2kpkW",
+        "password_hash": "$2a$10$yWe5znfd9T6mokNBkE92Sewanpdykc.CLdpaqVHpP1sguV4iwrxGu",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-heart-04",
         "clinic_name": "Chennai Heart & Vascular Centre",
@@ -578,8 +578,8 @@
         "initials": "RS",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.074Z",
-        "updated_at": "2026-09-30T15:38:16.074Z"
+        "created_at": "2026-10-05T11:48:31.480Z",
+        "updated_at": "2026-10-05T11:48:31.480Z"
       }
     ],
     [
@@ -589,7 +589,7 @@
         "name": "Deepak Raj",
         "email": "assistant05@demo.medlink.test",
         "phone": "+91 9000000025",
-        "password_hash": "$2a$10$da4iKIbRDJo8CI/kYTqZnO1jQK7hM8WkTTyH/TdgV/P4zLa9Unpge",
+        "password_hash": "$2a$10$PY7vjYJykxaq6PotaVchtON1IUJHm4Gi1ywf/2znIL6kzkdlt3Qk2",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-vision-05",
         "clinic_name": "VisionPlus Eye Centre",
@@ -597,8 +597,8 @@
         "initials": "DR",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.141Z",
-        "updated_at": "2026-09-30T15:38:16.141Z"
+        "created_at": "2026-10-05T11:48:31.535Z",
+        "updated_at": "2026-10-05T11:48:31.535Z"
       }
     ],
     [
@@ -608,7 +608,7 @@
         "name": "Lavanya S",
         "email": "assistant06@demo.medlink.test",
         "phone": "+91 9000000026",
-        "password_hash": "$2a$10$pKnDshgyK8dGTANHugEKcOZu0CJRddVhNV0qPLJ/dncC56XkqsVJm",
+        "password_hash": "$2a$10$8uXNcNhguCPQizXIuRJDIexfGyO8Hl5hvSuESoaZSLoiUQR.a5e1a",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-ortho-06",
         "clinic_name": "OrthoCare Chennai",
@@ -616,8 +616,8 @@
         "initials": "LS",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.206Z",
-        "updated_at": "2026-09-30T15:38:16.206Z"
+        "created_at": "2026-10-05T11:48:31.590Z",
+        "updated_at": "2026-10-05T11:48:31.590Z"
       }
     ],
     [
@@ -627,7 +627,7 @@
         "name": "Joseph Mathew",
         "email": "assistant07@demo.medlink.test",
         "phone": "+91 9000000027",
-        "password_hash": "$2a$10$Clpw0XTXgmWitTT9iK.d7uevYzBMxUqQled.6okLtdcI3gBYOldxe",
+        "password_hash": "$2a$10$Wpg7MM.jIbhCzCcXA0RSXOGNKEnodCa08OwedbBkNuIHX/RLcRa.2",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-skin-07",
         "clinic_name": "SkinSphere Dermatology",
@@ -635,8 +635,8 @@
         "initials": "JM",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.274Z",
-        "updated_at": "2026-09-30T15:38:16.274Z"
+        "created_at": "2026-10-05T11:48:31.645Z",
+        "updated_at": "2026-10-05T11:48:31.645Z"
       }
     ],
     [
@@ -646,7 +646,7 @@
         "name": "Priyanka Das",
         "email": "assistant08@demo.medlink.test",
         "phone": "+91 9000000028",
-        "password_hash": "$2a$10$WB2FLmQzoC7O7LhjGomwK.7A3./0u28wgFhdvN63pTHO22aeXnZma",
+        "password_hash": "$2a$10$3hFKtCdKXJsIFHo5ASsmx.nVkGJX6S0kpZlkpJa9PZ3JolDwD9eiS",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-neuro-08",
         "clinic_name": "NeuroBridge Care Clinic",
@@ -654,8 +654,8 @@
         "initials": "PD",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.340Z",
-        "updated_at": "2026-09-30T15:38:16.340Z"
+        "created_at": "2026-10-05T11:48:31.700Z",
+        "updated_at": "2026-10-05T11:48:31.700Z"
       }
     ],
     [
@@ -665,7 +665,7 @@
         "name": "Karthik V",
         "email": "assistant09@demo.medlink.test",
         "phone": "+91 9000000029",
-        "password_hash": "$2a$10$RV/T3qu1q.Y2flQqomcDK.os4YyGBYLMMbVP7Vw8qGEr8A8PSe/qS",
+        "password_hash": "$2a$10$xa3XKqtJ/QJpPGQQGvbna.5Xd6IKLYz7Q03sDGGI3zZFUESaDcgP6",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-nova-09",
         "clinic_name": "Nova ENT Care",
@@ -673,8 +673,8 @@
         "initials": "KV",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.406Z",
-        "updated_at": "2026-09-30T15:38:16.406Z"
+        "created_at": "2026-10-05T11:48:31.755Z",
+        "updated_at": "2026-10-05T11:48:31.755Z"
       }
     ],
     [
@@ -684,7 +684,7 @@
         "name": "Divya Raj",
         "email": "assistant10@demo.medlink.test",
         "phone": "+91 9000000030",
-        "password_hash": "$2a$10$fmB4PhgvucPPPvExjOrWbuOGeNzyfIJC0AJ/aHLFzzZmaTHhWyEPq",
+        "password_hash": "$2a$10$ZzERbiTYnhLZ8lJoUcQJp.JxJeqqw0hw6YPsTT6kbdI5WS2mgCB.a",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-smile-10",
         "clinic_name": "Smile & Child Pediatric Centre",
@@ -692,8 +692,8 @@
         "initials": "DR",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.470Z",
-        "updated_at": "2026-09-30T15:38:16.470Z"
+        "created_at": "2026-10-05T11:48:31.810Z",
+        "updated_at": "2026-10-05T11:48:31.810Z"
       }
     ],
     [
@@ -703,7 +703,7 @@
         "name": "Suresh Nair",
         "email": "assistant11@demo.medlink.test",
         "phone": "+91 9000000031",
-        "password_hash": "$2a$10$.3a7rVsLf/BelAmNP6dXyOuEPfd22mQ7oIRYZ6G3uXzW5qWtWVVa.",
+        "password_hash": "$2a$10$v2Ax6kbzqWB3r44FH6lAEuB1q074NXJJmVxwJtXnluHcUKpfEYoR2",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-pulmo-11",
         "clinic_name": "CarePoint Pulmonology",
@@ -711,8 +711,8 @@
         "initials": "SN",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.536Z",
-        "updated_at": "2026-09-30T15:38:16.536Z"
+        "created_at": "2026-10-05T11:48:31.867Z",
+        "updated_at": "2026-10-05T11:48:31.867Z"
       }
     ],
     [
@@ -722,7 +722,7 @@
         "name": "Meenakshi R",
         "email": "assistant12@demo.medlink.test",
         "phone": "+91 9000000032",
-        "password_hash": "$2a$10$ijl9FPk20looE97aqhQ/FOmTSkLiDVBz3Iu94eK5JUCPbyf.Vr0ue",
+        "password_hash": "$2a$10$rOk/yxBdFMhk2MWfjShzFe9qEncIeh3M8bJFjPwpOo.pAmMk214WC",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-renal-12",
         "clinic_name": "RenalCare Clinic",
@@ -730,8 +730,8 @@
         "initials": "MR",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.601Z",
-        "updated_at": "2026-09-30T15:38:16.601Z"
+        "created_at": "2026-10-05T11:48:31.922Z",
+        "updated_at": "2026-10-05T11:48:31.922Z"
       }
     ],
     [
@@ -741,7 +741,7 @@
         "name": "Anand K",
         "email": "assistant13@demo.medlink.test",
         "phone": "+91 9000000033",
-        "password_hash": "$2a$10$7/G6UleGNAzXIXDMIzU2qOPUYrqvHK6sQ9rfYj6CxvrfIPWHM3D2O",
+        "password_hash": "$2a$10$9F0XiUI8n/1YKPsxefmPf.5WcWLyO70TxPPeJmWpaSUAS244URRGi",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-digestive-13",
         "clinic_name": "Digestive Health Centre",
@@ -749,8 +749,8 @@
         "initials": "AK",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.667Z",
-        "updated_at": "2026-09-30T15:38:16.667Z"
+        "created_at": "2026-10-05T11:48:31.978Z",
+        "updated_at": "2026-10-05T11:48:31.978Z"
       }
     ],
     [
@@ -760,7 +760,7 @@
         "name": "Shalini G",
         "email": "assistant14@demo.medlink.test",
         "phone": "+91 9000000034",
-        "password_hash": "$2a$10$hV6vR0VF/3Tl3tre9V3fJOCLGFjIdUafTEEsK8BJ1IEs3sdjBHFSa",
+        "password_hash": "$2a$10$FknDUe6vf3y/nISnZ6w5YOOAggoJ5EfRhP25anknYUR6Z6Y/61NRm",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-endowell-14",
         "clinic_name": "EndoWell Clinic",
@@ -768,8 +768,8 @@
         "initials": "SG",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.733Z",
-        "updated_at": "2026-09-30T15:38:16.733Z"
+        "created_at": "2026-10-05T11:48:32.034Z",
+        "updated_at": "2026-10-05T11:48:32.034Z"
       }
     ],
     [
@@ -779,7 +779,7 @@
         "name": "Vignesh B",
         "email": "assistant15@demo.medlink.test",
         "phone": "+91 9000000035",
-        "password_hash": "$2a$10$ztX8w2vUAP70MdOL.db/sOK.Znoh1h2mtLGRzDyyzXinyCJM/qcPa",
+        "password_hash": "$2a$10$zsKMyRl.9vSqS/kF0Z9sM.ZD3NdlklGW/O6YhC.u/xEC6d8Faszyq",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-uro-15",
         "clinic_name": "UroCare Chennai",
@@ -787,8 +787,8 @@
         "initials": "VB",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.800Z",
-        "updated_at": "2026-09-30T15:38:16.800Z"
+        "created_at": "2026-10-05T11:48:32.089Z",
+        "updated_at": "2026-10-05T11:48:32.089Z"
       }
     ],
     [
@@ -798,7 +798,7 @@
         "name": "Reshma T",
         "email": "assistant16@demo.medlink.test",
         "phone": "+91 9000000036",
-        "password_hash": "$2a$10$d3YAymLGuCOnPacYEEp64.TQnqd.CXRWWt2O.lnI244mwMSx3VA8G",
+        "password_hash": "$2a$10$PC187dY6dIo5PqPBgZlTOuPgaQHP7A0XCqAMXDcY1IXMf1YA.DVaO",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-physio-16",
         "clinic_name": "PhysioMotion Rehabilitation",
@@ -806,8 +806,8 @@
         "initials": "RT",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.865Z",
-        "updated_at": "2026-09-30T15:38:16.865Z"
+        "created_at": "2026-10-05T11:48:32.143Z",
+        "updated_at": "2026-10-05T11:48:32.143Z"
       }
     ],
     [
@@ -817,7 +817,7 @@
         "name": "Arjun P",
         "email": "assistant17@demo.medlink.test",
         "phone": "+91 9000000037",
-        "password_hash": "$2a$10$lwTrYQ05weiwA3m9VAT/dOHzMMWMWiak9fbhEPVgiKXb5a/q93DaW",
+        "password_hash": "$2a$10$HEX1lBFtGt8jbRa3jH7HPevcPvK2OmJ23HGdsbqD87SZSFb6hCha2",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-mind-17",
         "clinic_name": "MindCare Psychiatry Centre",
@@ -825,8 +825,8 @@
         "initials": "AP",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.932Z",
-        "updated_at": "2026-09-30T15:38:16.932Z"
+        "created_at": "2026-10-05T11:48:32.198Z",
+        "updated_at": "2026-10-05T11:48:32.198Z"
       }
     ],
     [
@@ -836,7 +836,7 @@
         "name": "Pooja M",
         "email": "assistant18@demo.medlink.test",
         "phone": "+91 9000000038",
-        "password_hash": "$2a$10$LvnhZ6hsr9588C48VUICPeNImAs3Er61Mvxhg8RGSJvt.64pr/sNe",
+        "password_hash": "$2a$10$cmfRbepknZA9.zkAYpflGO1os3Wv/RLHJ63DgzXriK7mJCSfxMen2",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-besant-18",
         "clinic_name": "Besant Nagar Coastal Health Care",
@@ -844,8 +844,8 @@
         "initials": "PM",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.998Z",
-        "updated_at": "2026-09-30T15:38:16.998Z"
+        "created_at": "2026-10-05T11:48:32.253Z",
+        "updated_at": "2026-10-05T11:48:32.253Z"
       }
     ],
     [
@@ -855,7 +855,7 @@
         "name": "Manoj S",
         "email": "assistant19@demo.medlink.test",
         "phone": "+91 9000000039",
-        "password_hash": "$2a$10$A5L0DrdYIEpRW7pQjl1FxeRAFZ65psjyi3LOcWCixfGXoj4VXtECe",
+        "password_hash": "$2a$10$VgHTZYOhp7wlvUojr2ApruH0eCShS3vQG9NarOikzORZHSfR9SHre",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-avadi-18",
         "clinic_name": "Avadi Central Care Hospital",
@@ -863,8 +863,8 @@
         "initials": "MS",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:17.065Z",
-        "updated_at": "2026-09-30T15:38:17.065Z"
+        "created_at": "2026-10-05T11:48:32.309Z",
+        "updated_at": "2026-10-05T11:48:32.309Z"
       }
     ],
     [
@@ -874,7 +874,7 @@
         "name": "Kavitha R",
         "email": "assistant20@demo.medlink.test",
         "phone": "+91 9000000040",
-        "password_hash": "$2a$10$vPHNisHE5WxfUkT/uRhIXuRa8k9/44oBQdzuilhmBGt9EsraHe9Bm",
+        "password_hash": "$2a$10$CFN9Gk5FtuYUFEfcpfnH2uOPwXii8pV107VlCs1dYQb9WwDA4aiQW",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-royapuram-20",
         "clinic_name": "Royapuram Community Health Clinic",
@@ -882,8 +882,8 @@
         "initials": "KR",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:17.131Z",
-        "updated_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z",
+        "updated_at": "2026-10-05T11:48:32.364Z"
       }
     ]
   ],
@@ -899,7 +899,7 @@
         "latitude": 13.0338,
         "longitude": 80.2677,
         "address": "24, Luz Church Road, Mylapore, Chennai",
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -913,7 +913,7 @@
         "latitude": 13.0012,
         "longitude": 80.2565,
         "address": "12, Gandhi Nagar 1st Main Rd, Adyar, Chennai",
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ]
   ],
@@ -1376,7 +1376,7 @@
         "departments": [
           "Dentistry"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1402,7 +1402,7 @@
         "departments": [
           "General Medicine"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1428,7 +1428,7 @@
         "departments": [
           "Gynecology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1454,7 +1454,7 @@
         "departments": [
           "Cardiology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1480,7 +1480,7 @@
         "departments": [
           "Ophthalmology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1506,7 +1506,7 @@
         "departments": [
           "Orthopedics"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1532,7 +1532,7 @@
         "departments": [
           "Dermatology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1558,7 +1558,7 @@
         "departments": [
           "Neurology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1584,7 +1584,7 @@
         "departments": [
           "ENT"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1610,7 +1610,7 @@
         "departments": [
           "Pediatrics"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1636,7 +1636,7 @@
         "departments": [
           "Pulmonology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1662,7 +1662,7 @@
         "departments": [
           "Nephrology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1688,7 +1688,7 @@
         "departments": [
           "Gastroenterology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1714,7 +1714,7 @@
         "departments": [
           "Endocrinology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1740,7 +1740,7 @@
         "departments": [
           "Urology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1766,7 +1766,7 @@
         "departments": [
           "Physiotherapy"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1792,7 +1792,7 @@
         "departments": [
           "Psychiatry"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1819,7 +1819,7 @@
           "Cardiology",
           "General Medicine"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1845,7 +1845,7 @@
         "departments": [
           "General Medicine"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1871,7 +1871,7 @@
         "departments": [
           "Orthopedics"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1897,7 +1897,7 @@
         "departments": [
           "Dermatology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1923,7 +1923,7 @@
         "departments": [
           "ENT"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1949,7 +1949,7 @@
         "departments": [
           "General Medicine"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -1975,7 +1975,7 @@
         "departments": [
           "Pediatrics"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -2001,7 +2001,7 @@
         "departments": [
           "Ophthalmology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -2027,7 +2027,7 @@
         "departments": [
           "Neurology"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -2053,7 +2053,46 @@
         "departments": [
           "General Medicine"
         ],
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
+      }
+    ],
+    [
+      "c-moon-dental-villivakkam-2773",
+      {
+        "id": "c-moon-dental-villivakkam-2773",
+        "clinic_number": 2773,
+        "registration_number": "2773",
+        "name": "Moon Dental Clinic",
+        "locality": "Villivakkam",
+        "city": "Chennai",
+        "state": "Tamil Nadu",
+        "postal_code": "600082",
+        "address": "28/15, Sannathi Street, Villivakkam, Chennai, Tamil Nadu 600082",
+        "category": "Dentistry",
+        "clinic_type": "Dental clinic",
+        "departments": [
+          "Dentistry"
+        ],
+        "latitude": 13.1075,
+        "longitude": 80.206,
+        "rating": 4.9,
+        "reviews_count": 48,
+        "doctors_count": 2,
+        "open_hours": "09:00 AM – 08:30 PM",
+        "phone": "+91 44 2617 2773",
+        "email": "contact@moondentalvillivakkam.test",
+        "is_open": true,
+        "is_popular": false,
+        "is_nearby": true,
+        "wait_time": "10 min wait",
+        "consultation_fee": "₹400",
+        "status": "ACTIVE",
+        "verification_status": "ACTIVE",
+        "email_verified": true,
+        "phone_verified": true,
+        "image": "https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=800&q=80",
+        "created_at": "2026-10-05T11:48:34.977Z",
+        "updated_at": "2026-10-05T11:48:34.977Z"
       }
     ]
   ],
@@ -2066,7 +2105,7 @@
         "name": "Dr. Arun Kumar",
         "email": "doctor01@demo.medlink.test",
         "phone": "+91 98402 10000",
-        "password_hash": "$2a$10$.xuH3yBFNBTaLmEMIozYHuB/IBMNt8oD15g6RPv3.7HCgHANUTiNG",
+        "password_hash": "$2a$10$c0SPQHrsM1BjOm0KM3GZv.TGjS4RU8znqvpmOUs/MCCtEMX33asxy",
         "specialization": "Dentistry",
         "primary_specialization": "Endodontics",
         "qualification": "MBBS, MD (Endodontics)",
@@ -2166,7 +2205,7 @@
         "name": "Dr. Ananya Deshmukh",
         "email": "doctor20@demo.medlink.test",
         "phone": "+91 98402 10001",
-        "password_hash": "$2a$10$5JGfEr.p5viGFEoZ8I8yqud11hReGso5IreyzgwKwdL0/vsbcrYWO",
+        "password_hash": "$2a$10$j2ep8G1NK4mTgLR8HOPqP.WWrkQ8psqlD/TAsWm5z321wPV1dyq/m",
         "specialization": "Dentistry",
         "primary_specialization": "Oral & Maxillofacial Surgery",
         "qualification": "MBBS, MD (Oral & Maxillofacial Surgery)",
@@ -2266,7 +2305,7 @@
         "name": "Dr. Suresh Babu",
         "email": "suresh.babu@medlink.test",
         "phone": "+91 98402 10002",
-        "password_hash": "$2a$10$tS5WDdBm2j9KIpi9XFlZzupp.8U8iqW/hNwNeTyp768FPQyVGvOhO",
+        "password_hash": "$2a$10$ThElrDyYR4y1HQrcxIP55Oq7V7SVZpaNcnJGsKX6B7.H9LKIV/gaq",
         "specialization": "Dentistry",
         "primary_specialization": "Conservative Dentistry",
         "qualification": "MBBS, MD (Conservative Dentistry)",
@@ -2363,7 +2402,7 @@
         "name": "Dr. Priya Sharma",
         "email": "doctor02@demo.medlink.test",
         "phone": "+91 98402 10003",
-        "password_hash": "$2a$10$lkYRSXE95VNthcMgVWC5N.WkMmwP0gW9fyrm0YdcjGRslNABHQOjq",
+        "password_hash": "$2a$10$5FLNz5Jkosu/yqPgBGj4fugRmdNMOMoiy.JVOp/OO7kftRZPJ1LOe",
         "specialization": "General Medicine",
         "primary_specialization": "Internal Medicine",
         "qualification": "MBBS, MD (Internal Medicine)",
@@ -2462,7 +2501,7 @@
         "name": "Dr. Rajesh Varma",
         "email": "doctor19@demo.medlink.test",
         "phone": "+91 98402 10004",
-        "password_hash": "$2a$10$xIybm/z2YF/f10zkpgMGxuquDd.J.gsQ/AKyYRAalL.HW59A5C2zW",
+        "password_hash": "$2a$10$K4aywVfir9H1VrngbCoxbObxJROOGXb17fFUZ.aGXOv.Dh3SrEuTO",
         "specialization": "General Medicine",
         "primary_specialization": "Family Medicine",
         "qualification": "MBBS, MD (Family Medicine)",
@@ -2560,7 +2599,7 @@
         "name": "Dr. Meenakshi Iyer",
         "email": "dr.meenakshi@medlink.test",
         "phone": "+91 98402 10005",
-        "password_hash": "$2a$10$b.VzhbGR4bPU/AwAXsyqYeoKfTgJnxkW9PtSCc3hjXOBndOSayC1m",
+        "password_hash": "$2a$10$u3OGsdYjAyRriVlm7EdWLutopqTvLrt7w6NDa22HEnM6HDnQhGinq",
         "specialization": "General Medicine",
         "primary_specialization": "Internal Medicine",
         "qualification": "MBBS, MD (Internal Medicine)",
@@ -2658,7 +2697,7 @@
         "name": "Dr. Karthik Raman",
         "email": "doctor03@demo.medlink.test",
         "phone": "+91 98402 10006",
-        "password_hash": "$2a$10$yAZyCFm4IZT9OQViy/63cOpGuctW5y6gXqJJKyCW9t1j8TdZgFZJ2",
+        "password_hash": "$2a$10$Rpfr.dG9gKSw1HAEVSdDluhvOKn40VWjVGsf1YCYqt.f5HyvJKJ16",
         "specialization": "Cardiology",
         "primary_specialization": "Interventional Cardiology",
         "qualification": "MBBS, MD (Interventional Cardiology)",
@@ -2757,7 +2796,7 @@
         "name": "Dr. Nithya Menon",
         "email": "dr.nithya@medlink.test",
         "phone": "+91 98402 10007",
-        "password_hash": "$2a$10$4mIzjLlw23/RpNUfIvb7BuBSsrMWZIzT2g0M2XWFPBeY9//QygIyS",
+        "password_hash": "$2a$10$RFlNJ70.ipoRzK/zLGy4BuRopX56ztfReGZsCSHWzmFA/2H7oNFh6",
         "specialization": "Cardiology",
         "primary_specialization": "Preventive Cardiology",
         "qualification": "MBBS, MD (Preventive Cardiology)",
@@ -2855,7 +2894,7 @@
         "name": "Dr. Vikram Sundaram",
         "email": "dr.vikram.sundaram@medlink.test",
         "phone": "+91 98402 10008",
-        "password_hash": "$2a$10$TTTYhh6uNTmw3v7SQoFN.OqdUXhmWW8DeIexo4Q4FvaC/xZExZAre",
+        "password_hash": "$2a$10$MfqEGOs35U3nw00avyt2/.F.BQekyqpZbN/d8uwF0Uc3rLgrUKA2e",
         "specialization": "Cardiology",
         "primary_specialization": "Clinical Cardiology",
         "qualification": "MBBS, MD (Clinical Cardiology)",
@@ -2953,7 +2992,7 @@
         "name": "Dr. Kavitha Reddy",
         "email": "doctor04@demo.medlink.test",
         "phone": "+91 98402 10009",
-        "password_hash": "$2a$10$QJq1SdWUoUQUVsAGSrBGHeonqj1ZtfwYQs1YWvy68Bd9VbRbGAnz6",
+        "password_hash": "$2a$10$2bsSwM57kqYK0s4sKctG/OKagOCU/Gxmp2qmwMnGY8U8uHKcWQ2v.",
         "specialization": "Pediatrics",
         "primary_specialization": "Pediatrics & Neonatology",
         "qualification": "MBBS, MD (Pediatrics & Neonatology)",
@@ -3051,7 +3090,7 @@
         "name": "Dr. Arun Prakash",
         "email": "dr.arun.prakash@medlink.test",
         "phone": "+91 98402 10010",
-        "password_hash": "$2a$10$uqSoBeQI1Eha8D5o1LcYXOIxu77caYiLwaHt0nUJm1x3ZW7Jl5XW6",
+        "password_hash": "$2a$10$NMnIZzze5RSVsYLiBw1As.SZl.Yf.uFAnCOHpp33yG64BdRRnhOFy",
         "specialization": "Pediatrics",
         "primary_specialization": "Pediatric Care",
         "qualification": "MBBS, MD (Pediatric Care)",
@@ -3149,7 +3188,7 @@
         "name": "Dr. Divya Krishnan",
         "email": "dr.divya.krishnan@medlink.test",
         "phone": "+91 98402 10011",
-        "password_hash": "$2a$10$5OjwN8W4BVKNI6EkAFcSiutHgGx5G/yHOKJ4C6lM9ypTHkGaDQygK",
+        "password_hash": "$2a$10$mX3XdodNnjMi/LG44PGTS.WtH3kuvRQywnR1BylwFb.Eumf/rxX8O",
         "specialization": "Pediatrics",
         "primary_specialization": "Child Wellness",
         "qualification": "MBBS, MD (Child Wellness)",
@@ -3246,7 +3285,7 @@
         "name": "Dr. Priya Nair",
         "email": "doctor05@demo.medlink.test",
         "phone": "+91 98402 10012",
-        "password_hash": "$2a$10$B/QJcEAmBWnIUjgrAZz8W.e4vWpLb9DbKaVtRNaS2hQsNp.1XPjvm",
+        "password_hash": "$2a$10$3.6b2LL4o0wdVvTjZq72vuX.sGpNtklc8e8gKzMkC/L74rXSLvrDe",
         "specialization": "Dermatology",
         "primary_specialization": "Clinical Dermatology",
         "qualification": "MBBS, MD (Clinical Dermatology)",
@@ -3344,7 +3383,7 @@
         "name": "Dr. Harish Menon",
         "email": "dr.harish.menon@medlink.test",
         "phone": "+91 98402 10013",
-        "password_hash": "$2a$10$NBySuPwb4BzRTasZVXxH.eM3yZS7Kwl2nfgwWVqwoUdK37PpTl5uu",
+        "password_hash": "$2a$10$qNAePjJWkzKLsqzbUBLcxO7pVxU3OYIJpsdcvsk1CO5ogg2Pxm0Ma",
         "specialization": "Dermatology",
         "primary_specialization": "Aesthetic Dermatosurgery",
         "qualification": "MBBS, MD (Aesthetic Dermatosurgery)",
@@ -3442,7 +3481,7 @@
         "name": "Dr. Kavya Narayanan",
         "email": "dr.kavya.narayanan@medlink.test",
         "phone": "+91 98402 10014",
-        "password_hash": "$2a$10$q9YEsf2iENKqQPk.Rqm/gOQpW70kWsXpyuIfyhVUdE9qLNAz3mQBy",
+        "password_hash": "$2a$10$ydfobuNt3VnGT1aPL7X7N.TJ9.RUb70pgo0tCBgNye0F0W8wGDna.",
         "specialization": "Dermatology",
         "primary_specialization": "Cutaneous Medicine",
         "qualification": "MBBS, MD (Cutaneous Medicine)",
@@ -3539,7 +3578,7 @@
         "name": "Dr. Venkat Raman",
         "email": "doctor06@demo.medlink.test",
         "phone": "+91 98402 10015",
-        "password_hash": "$2a$10$l7VQ8cBvDeiEb1lEYA.vI.yfmBS8xWfMrE/eRO5E/bVBMS6JPlE5m",
+        "password_hash": "$2a$10$0yc2X8D9hNMThw31Cb5tC.yNOC5c7GrXmD2fby6O7rWqUhs.7PL8S",
         "specialization": "ENT",
         "primary_specialization": "Otolaryngology",
         "qualification": "MBBS, MD (Otolaryngology)",
@@ -3637,7 +3676,7 @@
         "name": "Dr. Swetha Narayanan",
         "email": "dr.swetha.narayanan@medlink.test",
         "phone": "+91 98402 10016",
-        "password_hash": "$2a$10$.wusams6DGl7EC47Sa5RS.Vbp5EnGEEFSuGTB5/EIdY2PQBgQ3trS",
+        "password_hash": "$2a$10$iWekwC2raJXN4cw7Ne5wuu8p43/z/ywTdA3uTcbNVGkATAl5SKC0y",
         "specialization": "ENT",
         "primary_specialization": "Rhinology & Sinus",
         "qualification": "MBBS, MD (Rhinology & Sinus)",
@@ -3734,7 +3773,7 @@
         "name": "Dr. Rahul Srinivasan",
         "email": "dr.rahul.srinivasan@medlink.test",
         "phone": "+91 98402 10017",
-        "password_hash": "$2a$10$/pP7WBGvRjZStaqb1JoLyOhItKTOlJp5nt8X5T4yZ8o6NaHBzAgnG",
+        "password_hash": "$2a$10$TLVupButO1FxDyvapR.VoebrO9lfnOk30jdsPuYKEGszvJA4CoHiy",
         "specialization": "ENT",
         "primary_specialization": "Otolaryngology",
         "qualification": "MBBS, MD (Otolaryngology)",
@@ -3831,7 +3870,7 @@
         "name": "Dr. Ramesh Chandran",
         "email": "doctor07@demo.medlink.test",
         "phone": "+91 98402 10018",
-        "password_hash": "$2a$10$g1vorS6ArGOnnYTXv8FJbOkFpijyuaTPR6xGsc7PH3Wa3OLu0DADS",
+        "password_hash": "$2a$10$ZAjXlqKf.02cbu4unJiblubJy6XJBRgXkf4JRklGIE0f4UmwvbvGy",
         "specialization": "Ophthalmology",
         "primary_specialization": "Cataract & Refractive",
         "qualification": "MBBS, MD (Cataract & Refractive)",
@@ -3929,7 +3968,7 @@
         "name": "Dr. Deepa Sundar",
         "email": "dr.deepa.sundar@medlink.test",
         "phone": "+91 98402 10019",
-        "password_hash": "$2a$10$pB.nbt0J2xBv.APBT1KAZuhr9h2jF3gmrxzuCu1BPr/3hBRWTojTa",
+        "password_hash": "$2a$10$K75Zcad6Bfvu0e7Pvqg8l.tta3I01G8n1GpcxYmsl92isg7oNZa/m",
         "specialization": "Ophthalmology",
         "primary_specialization": "Glaucoma & Cornea",
         "qualification": "MBBS, MD (Glaucoma & Cornea)",
@@ -4026,7 +4065,7 @@
         "name": "Dr. Pooja Balaji",
         "email": "dr.pooja.balaji@medlink.test",
         "phone": "+91 98402 10020",
-        "password_hash": "$2a$10$osmRQnpR0.qaYE1/gPY98OHlZTu7TUuAJvXteJP6WsElofskZ4hzm",
+        "password_hash": "$2a$10$E0Kbra1eH6Rk1gtA6PiGleCu5hWB/.haEedHSPOODm8ijKI5AGolm",
         "specialization": "Ophthalmology",
         "primary_specialization": "Ophthalmic Surgery",
         "qualification": "MBBS, MD (Ophthalmic Surgery)",
@@ -4123,7 +4162,7 @@
         "name": "Dr. Aditya Rao",
         "email": "doctor08@demo.medlink.test",
         "phone": "+91 98402 10021",
-        "password_hash": "$2a$10$sSYvV5AmMrWQqDFoaRN9TOEZufo4eq9bL7vNebOuqgzbA8RmqWsnK",
+        "password_hash": "$2a$10$hXqm9rmm5rfJJCIoVrEVlO0u.CasymmuR6e0aCKeTXqQ7/882uqAG",
         "specialization": "Orthopedics",
         "primary_specialization": "Joint Replacement & Spine",
         "qualification": "MBBS, MD (Joint Replacement & Spine)",
@@ -4221,7 +4260,7 @@
         "name": "Dr. Sneha Krishnan",
         "email": "dr.sneha.krishnan@medlink.test",
         "phone": "+91 98402 10022",
-        "password_hash": "$2a$10$Q4ZuLOYw.gsym294zw/KseMUkRP69N4pcwl2BRGaHu48MDWuajuea",
+        "password_hash": "$2a$10$EkPqRWz/GDLH064sg7Mw7.ZA/9qq5KTfSvXuxqJ1t5M5/LXG5B.JO",
         "specialization": "Orthopedics",
         "primary_specialization": "Sports Medicine",
         "qualification": "MBBS, MD (Sports Medicine)",
@@ -4318,7 +4357,7 @@
         "name": "Dr. Suresh Balaji",
         "email": "dr.suresh.balaji@medlink.test",
         "phone": "+91 98402 10023",
-        "password_hash": "$2a$10$E8IaNFYybF4a8D77do4gNuOroXgMq/G2quNNF/Qu7Ky1xNi3UCqda",
+        "password_hash": "$2a$10$HiIh4QIrxiNLvfjAIF5UtOPJJRygG3WBX53m2VjASxe2dUum0ACjK",
         "specialization": "Orthopedics",
         "primary_specialization": "Trauma & Musculoskeletal",
         "qualification": "MBBS, MD (Trauma & Musculoskeletal)",
@@ -4415,7 +4454,7 @@
         "name": "Dr. Radha Sundaram",
         "email": "doctor09@demo.medlink.test",
         "phone": "+91 98402 10024",
-        "password_hash": "$2a$10$Ukjh1xM3Va/uCwe1OZjuz.G.D0vCgCIf3tMF7T5xEErR97e4e.HRO",
+        "password_hash": "$2a$10$vegB5Y94KHVC2x5zYJ99JucNzuvcseca7vI1pW73iZngA89hYH1qO",
         "specialization": "Gynecology",
         "primary_specialization": "Obstetrics & Gynecology",
         "qualification": "MBBS, MD (Obstetrics & Gynecology)",
@@ -4513,7 +4552,7 @@
         "name": "Dr. Shalini Mukerjee",
         "email": "doctor18@demo.medlink.test",
         "phone": "+91 98402 10025",
-        "password_hash": "$2a$10$MhHLUHl1gA3FntujMXTEKe6XkzSur7CMJu3jeK2sOo6VgZc6hFgHC",
+        "password_hash": "$2a$10$vN7mkjye9QsFlTCvTRIkfeOp/jocNRiwdY.oAP6iQnUpGPpwHWEee",
         "specialization": "Gynecology",
         "primary_specialization": "Reproductive Medicine",
         "qualification": "MBBS, MD (Reproductive Medicine)",
@@ -4611,7 +4650,7 @@
         "name": "Dr. Arvind Swaminathan",
         "email": "doctor10@demo.medlink.test",
         "phone": "+91 98402 10026",
-        "password_hash": "$2a$10$eaGTvlTdOugB4BRXtFT74uy7eakSEMvxYYlJ4C4xf1r3Pd2rbMnuO",
+        "password_hash": "$2a$10$9a.veVLDZwgmLzwqVLpJ5ecfAyYY2h6EPGYUMtHsqSL2VCjlGwqeC",
         "specialization": "Neurology",
         "primary_specialization": "Clinical Neurology & Stroke",
         "qualification": "MBBS, MD (Clinical Neurology & Stroke)",
@@ -4709,7 +4748,7 @@
         "name": "Dr. Gayatri Mohan",
         "email": "dr.gayatri.mohan@medlink.test",
         "phone": "+91 98402 10027",
-        "password_hash": "$2a$10$XYcSX4WxTc.tqSjyCvGXiOsUD2Lbn4518ynzrydVTMUgREGxZ.L9W",
+        "password_hash": "$2a$10$Uf9OlfEKCEkrI1pZwBLiteJrv4Eq4oHqXHLmfY1V67yYC6.JH7hCq",
         "specialization": "Neurology",
         "primary_specialization": "Neurophysiology",
         "qualification": "MBBS, MD (Neurophysiology)",
@@ -4806,7 +4845,7 @@
         "name": "Dr. Vignesh Kumar",
         "email": "dr.vignesh.kumar@medlink.test",
         "phone": "+91 98402 10028",
-        "password_hash": "$2a$10$D4aG4XpvjJOdvdeMQRjnhur9sR6gFeBH2bY2pOVkljog6dAE7fdrW",
+        "password_hash": "$2a$10$MvV39wa3a0KV1sAWf3Rgyuwp0CkLkrHf2XlhQjB8dIn3VkNFLW64C",
         "specialization": "Neurology",
         "primary_specialization": "Neuro-Vascular Care",
         "qualification": "MBBS, MD (Neuro-Vascular Care)",
@@ -4903,7 +4942,7 @@
         "name": "Dr. Sanjay Prakash",
         "email": "dr.sanjay.prakash@medlink.test",
         "phone": "+91 98402 10029",
-        "password_hash": "$2a$10$6s9QuB9FdXqpEjjyaPQKaeuNxdrVVsJkD9WH37CMqM1j3KBPXb8Ri",
+        "password_hash": "$2a$10$cPbDTXat6aJN2kQOETSBE.LakgVQH3xwus7Mi8OhHmDmyGlLeW2ZW",
         "specialization": "General Medicine",
         "primary_specialization": "Primary Health & Preventive",
         "qualification": "MBBS, MD (Primary Health & Preventive)",
@@ -5000,7 +5039,7 @@
         "name": "Dr. Sanjay Krishnan",
         "email": "doctor11@demo.medlink.test",
         "phone": "+91 98402 10030",
-        "password_hash": "$2a$10$1eF8blEahk4KjzRy1hnI3uTNyfBXvIU6K6.MrG7wuiEj5aMQMH9KK",
+        "password_hash": "$2a$10$DOOb64YcwNp6FIMah3zdNevnS3DBiNvawpym/vDe9GE.QrgUUMYSS",
         "specialization": "Pulmonology",
         "primary_specialization": "Pulmonary & Critical Care",
         "qualification": "MBBS, MD (Pulmonary & Critical Care)",
@@ -5098,7 +5137,7 @@
         "name": "Dr. Preeti Varghese",
         "email": "dr.preeti.varghese@medlink.test",
         "phone": "+91 98402 10031",
-        "password_hash": "$2a$10$WcrD3obkLWP6J8Z6ftzb6O/okVvY80nj.vv1wj9eFzSzw3JHZCmI6",
+        "password_hash": "$2a$10$qtxM3ZSLQCTMM/R3x7/hpOw7Vvvqm8hFN3id7bsnVCxdC8ibXReQu",
         "specialization": "Pulmonology",
         "primary_specialization": "Respiratory Medicine",
         "qualification": "MBBS, MD (Respiratory Medicine)",
@@ -5196,7 +5235,7 @@
         "name": "Dr. Balaji Natarajan",
         "email": "doctor12@demo.medlink.test",
         "phone": "+91 98402 10032",
-        "password_hash": "$2a$10$MRGc96UDZc/MWD/0f7x3PeZEdS8mlJaOiCnFLk25PRp4rFQv70j4a",
+        "password_hash": "$2a$10$Pu5I33qhEAJjg2bWqgV5iuXH9xqg6o6CcbWexnMuVpUE.e2aUqW3O",
         "specialization": "Nephrology",
         "primary_specialization": "Nephrology & Renal Care",
         "qualification": "MBBS, MD (Nephrology & Renal Care)",
@@ -5294,7 +5333,7 @@
         "name": "Dr. Malini Sridhar",
         "email": "dr.malini.sridhar@medlink.test",
         "phone": "+91 98402 10033",
-        "password_hash": "$2a$10$xx10xCIuapM8geLIKr47b.683rSN2ya5QrXL.ylmcAdkPbdQ7opRa",
+        "password_hash": "$2a$10$52JwQ5squwdoT40JlUjXHezDOC1azByepCuh6UwDiPaLD6vUQBM6y",
         "specialization": "Nephrology",
         "primary_specialization": "Clinical Nephrology",
         "qualification": "MBBS, MD (Clinical Nephrology)",
@@ -5392,7 +5431,7 @@
         "name": "Dr. Manoj Kulkarni",
         "email": "doctor13@demo.medlink.test",
         "phone": "+91 98402 10034",
-        "password_hash": "$2a$10$eX8tsP3fiBlw4fmsUXAf6.6p8TfVqrMDzfac8dpBE026rcvCYQs7a",
+        "password_hash": "$2a$10$G4eWQjVsjq9OWypBZnZ.mOkq0cew9WRYwSouyGP7ZD6CobMSc1.wm",
         "specialization": "Gastroenterology",
         "primary_specialization": "Gastroenterology & Hepatology",
         "qualification": "MBBS, MD (Gastroenterology & Hepatology)",
@@ -5490,7 +5529,7 @@
         "name": "Dr. Lakshmi Narayanan",
         "email": "dr.lakshmi.narayanan@medlink.test",
         "phone": "+91 98402 10035",
-        "password_hash": "$2a$10$NkL4FVAK.u8QVStq.rObZ.jleFCaMCrA13Ms8AbnhxuUa93YvTyEW",
+        "password_hash": "$2a$10$ADfkw7c6aJl9xiRW9f1iz.eNvZ2bGZ5oBNMKazQ8QVJ4G9OFEcHeC",
         "specialization": "Gastroenterology",
         "primary_specialization": "Digestive Endoscopy",
         "qualification": "MBBS, MD (Digestive Endoscopy)",
@@ -5588,7 +5627,7 @@
         "name": "Dr. Kiran Chawla",
         "email": "doctor14@demo.medlink.test",
         "phone": "+91 98402 10036",
-        "password_hash": "$2a$10$U4XBf6cLImpu2kXU6xo3b.gVZhQ0VVAkVCNjgYnulH7TFYC6HYTE2",
+        "password_hash": "$2a$10$xFky37RlsHpLOQwq1zixZOj67otKceST2zpG8eIpV7wwuNdySAhTq",
         "specialization": "Endocrinology",
         "primary_specialization": "Endocrinology & Diabetology",
         "qualification": "MBBS, MD (Endocrinology & Diabetology)",
@@ -5686,7 +5725,7 @@
         "name": "Dr. Rekha Gopal",
         "email": "dr.rekha.gopal@medlink.test",
         "phone": "+91 98402 10037",
-        "password_hash": "$2a$10$gHuR5.rCPHvfRmKUQ7edte5rTt6fWWYNiarNpBWtnXrVUxT49YwHa",
+        "password_hash": "$2a$10$hQrPVxjM153McgBzEzA21OtwIdbnUmx6e74N4sPUDno3yLPWw/Wy6",
         "specialization": "Endocrinology",
         "primary_specialization": "Metabolic Disorders",
         "qualification": "MBBS, MD (Metabolic Disorders)",
@@ -5784,7 +5823,7 @@
         "name": "Dr. Dinesh Karthikeyan",
         "email": "doctor15@demo.medlink.test",
         "phone": "+91 98402 10038",
-        "password_hash": "$2a$10$eUF5XupEy85PfZFEjn4EBeuX30xon.UCTyeejNaos4w7U4YmK8B3S",
+        "password_hash": "$2a$10$AIyPuKULPrWPipBkEHfslOx23g65JbVyNedzCP7v3FHcvuL6FMg1C",
         "specialization": "Urology",
         "primary_specialization": "Urology & Andrology",
         "qualification": "MBBS, MD (Urology & Andrology)",
@@ -5882,7 +5921,7 @@
         "name": "Dr. Madhavan Pillai",
         "email": "dr.madhavan.pillai@medlink.test",
         "phone": "+91 98402 10039",
-        "password_hash": "$2a$10$hDr1fCYG9PLrJpUNqdbTZeDMm5.59ousMmNhY/ST1Y79AXjg3Tl.a",
+        "password_hash": "$2a$10$kDNFdHA/VMj6CEecPff8/uqbHEhO5i3aeEmGX12/y4Rm9eqovRs0O",
         "specialization": "Urology",
         "primary_specialization": "Endourology & Lithotripsy",
         "qualification": "MBBS, MD (Endourology & Lithotripsy)",
@@ -5980,7 +6019,7 @@
         "name": "Dr. Antony Raj",
         "email": "doctor16@demo.medlink.test",
         "phone": "+91 98402 10040",
-        "password_hash": "$2a$10$0kwi0uSggVV1xLeh0yzwveqfvo1p4unjiEyMHmF/4lc5yHqzs7zdi",
+        "password_hash": "$2a$10$LQOhUQffHNL3XOuwBELOZu1ayCGAENLIPycduuU.SNK6YFeNraPAy",
         "specialization": "Physiotherapy",
         "primary_specialization": "Musculoskeletal & Sports Physio",
         "qualification": "MBBS, MD (Musculoskeletal & Sports Physio)",
@@ -6078,7 +6117,7 @@
         "name": "Dr. Saranya Devi",
         "email": "dr.saranya.devi@medlink.test",
         "phone": "+91 98402 10041",
-        "password_hash": "$2a$10$WCSjdCJpxI0IYyLtEB4hA.4pYwDwdTyhe1huu5Fs1.KthaApuag/G",
+        "password_hash": "$2a$10$3NsAAgoUuTKbOEP918lWw.rjmK06a76ruLQw6Z3sCmkGHfD9BuHxK",
         "specialization": "Physiotherapy",
         "primary_specialization": "Post-Op Rehab & Mobility",
         "qualification": "MBBS, MD (Post-Op Rehab & Mobility)",
@@ -6176,7 +6215,7 @@
         "name": "Dr. Siddharth Sen",
         "email": "doctor17@demo.medlink.test",
         "phone": "+91 98402 10042",
-        "password_hash": "$2a$10$MncgjVj0.B15x6ylzc.UI.x5QjGlkRzQw2rFpy7W8djBEZ57fW/6G",
+        "password_hash": "$2a$10$TTCXBUFhDVnF9qYgEIWO1epEJ8Z/7z//hx0eWvZEpdhRVYseh/V3u",
         "specialization": "Psychiatry",
         "primary_specialization": "Adult Psychiatry & Psychotherapy",
         "qualification": "MBBS, MD (Adult Psychiatry & Psychotherapy)",
@@ -6274,7 +6313,7 @@
         "name": "Dr. Tanvi Hegde",
         "email": "dr.tanvi.hegde@medlink.test",
         "phone": "+91 98402 10043",
-        "password_hash": "$2a$10$DUFIYjmOzGeefkgyWvBJxOBHHJWvNCiHe0XVlZ0FrRlAyu6g9d.he",
+        "password_hash": "$2a$10$7WvV1yT7sQSUf7sNR1k3w.7QtK4/V5bBMk37i2kr/MUPjwua3/RJa",
         "specialization": "Psychiatry",
         "primary_specialization": "Cognitive Behavioral Therapy",
         "qualification": "MBBS, MD (Cognitive Behavioral Therapy)",
@@ -6364,6 +6403,212 @@
           }
         }
       }
+    ],
+    [
+      "doc-alagu-vimalesh-2773",
+      {
+        "id": "doc-alagu-vimalesh-2773",
+        "name": "Dr. Alagu Vimalesh",
+        "email": "dr.alagu.vimalesh@moondental.test",
+        "phone": "+91 98402 27731",
+        "password_hash": "$2a$10$lIPs5zfJ1ykPk.23LuamGeHD4cORVGQrLmBK58XeRBH6hIxCeShgG",
+        "specialization": "Dentistry",
+        "primary_specialization": "Conservative Dentistry and Endodontics",
+        "secondary_specialization": "Endodontics (RCT Specialist)",
+        "qualification": "BDS, MDS — Conservative Dentistry and Endodontics",
+        "university": "The Tamil Nadu Dr. M.G.R. Medical University",
+        "grad_year": 2013,
+        "dob": "1987-04-18",
+        "gender": "Male",
+        "rating": 4.96,
+        "reviews_count": 140,
+        "experience_years": 12,
+        "avatar": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&q=80&w=400",
+        "clinic_id": "c-moon-dental-villivakkam-2773",
+        "clinic_name": "Moon Dental Clinic",
+        "available_days": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat"
+        ],
+        "wait_time": "10 min",
+        "is_available_today": true,
+        "status": "AVAILABLE",
+        "languages": [
+          "English",
+          "Tamil"
+        ],
+        "consultation_fee": "₹400",
+        "is_preferred": true,
+        "about": "Specialist in Conservative Dentistry and Endodontics with extensive clinical focus on Root Canal Treatment (RCT) and modern painless restorative dental procedures.",
+        "is_verified": true,
+        "verification_status": "VERIFIED",
+        "verified_at": "2025-01-10T10:00:00.000Z",
+        "registration_number": "TN-DENT-2773-01",
+        "registration_authority": "Tamil Nadu Dental Council",
+        "consultation_duration": "25 min",
+        "clinic_affiliations": [
+          "Moon Dental Clinic"
+        ],
+        "procedures": [
+          "Root Canal Treatment",
+          "Root Canal Treatment (RCT)",
+          "Dental Cleaning",
+          "Dental Filling",
+          "Tooth Extraction"
+        ],
+        "schedule": {
+          "monday": {
+            "start": "09:00 AM",
+            "end": "08:30 PM",
+            "slot_duration": 25,
+            "is_off": false
+          },
+          "tuesday": {
+            "start": "09:00 AM",
+            "end": "08:30 PM",
+            "slot_duration": 25,
+            "is_off": false
+          },
+          "wednesday": {
+            "start": "09:00 AM",
+            "end": "08:30 PM",
+            "slot_duration": 25,
+            "is_off": false
+          },
+          "thursday": {
+            "start": "09:00 AM",
+            "end": "08:30 PM",
+            "slot_duration": 25,
+            "is_off": false
+          },
+          "friday": {
+            "start": "09:00 AM",
+            "end": "08:30 PM",
+            "slot_duration": 25,
+            "is_off": false
+          },
+          "saturday": {
+            "start": "09:00 AM",
+            "end": "08:30 PM",
+            "slot_duration": 25,
+            "is_off": false
+          },
+          "sunday": {
+            "start": "10:00 AM",
+            "end": "02:00 PM",
+            "slot_duration": 25,
+            "is_off": true
+          }
+        },
+        "created_at": "2026-10-05T11:48:34.977Z",
+        "updated_at": "2026-10-05T11:48:34.977Z"
+      }
+    ],
+    [
+      "doc-merlin-rajan-2773",
+      {
+        "id": "doc-merlin-rajan-2773",
+        "name": "Dr. Merlin Rajan",
+        "email": "dr.merlin.rajan@moondental.test",
+        "phone": "+91 98402 27732",
+        "password_hash": "$2a$10$lIPs5zfJ1ykPk.23LuamGeHD4cORVGQrLmBK58XeRBH6hIxCeShgG",
+        "specialization": "Dentistry",
+        "primary_specialization": "Conservative Dentistry and Endodontics",
+        "secondary_specialization": "Conservative Dentistry",
+        "qualification": "Conservative Dentistry and Endodontics",
+        "university": "The Tamil Nadu Dr. M.G.R. Medical University",
+        "grad_year": 2016,
+        "dob": "1990-08-22",
+        "gender": "Female",
+        "rating": 4.91,
+        "reviews_count": 95,
+        "experience_years": 9,
+        "avatar": "https://images.unsplash.com/photo-1594824813680-4824244ec5f4?auto=format&fit=crop&q=80&w=400",
+        "clinic_id": "c-moon-dental-villivakkam-2773",
+        "clinic_name": "Moon Dental Clinic",
+        "available_days": [
+          "Mon",
+          "Tue",
+          "Wed",
+          "Thu",
+          "Fri",
+          "Sat"
+        ],
+        "wait_time": "10 min",
+        "is_available_today": true,
+        "status": "AVAILABLE",
+        "languages": [
+          "English",
+          "Tamil"
+        ],
+        "consultation_fee": "₹400",
+        "is_preferred": true,
+        "about": "Specialist in Conservative Dentistry and Endodontics providing routine dental cleaning, composite tooth fillings, and general dental procedures.",
+        "is_verified": true,
+        "verification_status": "VERIFIED",
+        "verified_at": "2025-01-10T10:00:00.000Z",
+        "registration_number": "TN-DENT-2773-02",
+        "registration_authority": "Tamil Nadu Dental Council",
+        "consultation_duration": "25 min",
+        "clinic_affiliations": [
+          "Moon Dental Clinic"
+        ],
+        "procedures": [
+          "Dental Cleaning",
+          "Dental Filling",
+          "Tooth Extraction"
+        ],
+        "schedule": {
+          "monday": {
+            "start": "09:00 AM",
+            "end": "08:30 PM",
+            "slot_duration": 25,
+            "is_off": false
+          },
+          "tuesday": {
+            "start": "09:00 AM",
+            "end": "08:30 PM",
+            "slot_duration": 25,
+            "is_off": false
+          },
+          "wednesday": {
+            "start": "09:00 AM",
+            "end": "08:30 PM",
+            "slot_duration": 25,
+            "is_off": false
+          },
+          "thursday": {
+            "start": "09:00 AM",
+            "end": "08:30 PM",
+            "slot_duration": 25,
+            "is_off": false
+          },
+          "friday": {
+            "start": "09:00 AM",
+            "end": "08:30 PM",
+            "slot_duration": 25,
+            "is_off": false
+          },
+          "saturday": {
+            "start": "09:00 AM",
+            "end": "08:30 PM",
+            "slot_duration": 25,
+            "is_off": false
+          },
+          "sunday": {
+            "start": "10:00 AM",
+            "end": "02:00 PM",
+            "slot_duration": 25,
+            "is_off": true
+          }
+        },
+        "created_at": "2026-10-05T11:48:34.977Z",
+        "updated_at": "2026-10-05T11:48:34.977Z"
+      }
     ]
   ],
   "doctor_departments": [],
@@ -6378,7 +6623,7 @@
         "department": "Dentistry",
         "description": "Single/multi-visit endodontic root canal therapy & bio-ceramic obturation.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6389,7 +6634,7 @@
         "department": "Dentistry",
         "description": "Ultrasonic scaling, subgingival plaque debridement, and enamel polishing.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6400,7 +6645,7 @@
         "department": "Dentistry",
         "description": "Atraumatic dental extraction, socket preservation, and surgical removal.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6411,7 +6656,7 @@
         "department": "Dentistry",
         "description": "Composite tooth-colored restorative cavity restoration.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6422,7 +6667,7 @@
         "department": "General Medicine",
         "description": "Acute pyrexia evaluation, CBC platelet check, and symptom triage.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6433,7 +6678,7 @@
         "department": "General Medicine",
         "description": "Routine clinical checkup, metabolic and primary health screening.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6444,7 +6689,7 @@
         "department": "General Medicine",
         "description": "Glycemic control review, diet counseling, and oral hypoglycemic modulation.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6455,7 +6700,7 @@
         "department": "Gynecology",
         "description": "Prenatal maternal health review, fetal Doppler monitoring, and obstetric care.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6466,7 +6711,7 @@
         "department": "Gynecology",
         "description": "Endocrine and pelvic ultrasound review for polycystic ovarian syndrome.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6477,7 +6722,7 @@
         "department": "Cardiology",
         "description": "Comprehensive cardiopulmonary examination and lipid profiling.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6488,7 +6733,7 @@
         "department": "Cardiology",
         "description": "12-lead Electrocardiogram recording and cardiac rhythm analysis.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6499,7 +6744,7 @@
         "department": "Cardiology",
         "description": "Blood pressure mapping, secondary hypertension screening, and therapy.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6510,7 +6755,7 @@
         "department": "Ophthalmology",
         "description": "Slit-lamp ocular examination, refraction check, and intraocular pressure test.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6521,7 +6766,7 @@
         "department": "Ophthalmology",
         "description": "Lens opacification assessment and intraocular lens planning.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6532,7 +6777,7 @@
         "department": "Orthopedics",
         "description": "Articular cartilage assessment, range of motion tests, and joint review.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6543,7 +6788,7 @@
         "department": "Orthopedics",
         "description": "Degenerative joint evaluation, radiographic review, and viscosupplementation.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6554,7 +6799,7 @@
         "department": "Dermatology",
         "description": "Dermatologic clinical evaluation of skin lesions, pigmentation, and rashes.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6565,7 +6810,7 @@
         "department": "Dermatology",
         "description": "Grade 1-4 acne vulgaris protocol, chemical peel assessment, and topicals.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6576,7 +6821,7 @@
         "department": "Neurology",
         "description": "Neurovascular headache workup, aura profiling, and abortive/prophylactic therapy.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6587,7 +6832,7 @@
         "department": "Neurology",
         "description": "Cranial nerve reflex testing, peripheral neuropathy and sensory review.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6598,7 +6843,7 @@
         "department": "ENT",
         "description": "Otolaryngology examination of ear canals, nasal septum, and pharynx.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6609,7 +6854,7 @@
         "department": "ENT",
         "description": "Otitis media/externa diagnosis, micro-suctioning, and topical antibiotic therapy.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6620,7 +6865,7 @@
         "department": "Pediatrics",
         "description": "Pediatric physical exam, growth milestones, and pediatric symptom review.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6631,7 +6876,7 @@
         "department": "Pediatrics",
         "description": "Pediatric viral fever protocol, hydration assessment, and weight-based dosing.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6642,7 +6887,7 @@
         "department": "Pulmonology",
         "description": "Airflow obstruction review, metered-dose inhaler optimization, and allergy workup.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6653,7 +6898,7 @@
         "department": "Pulmonology",
         "description": "Forced expiratory volume (FEV1) testing and pulmonary function analysis.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6664,7 +6909,7 @@
         "department": "Nephrology",
         "description": "Glomerular filtration rate (eGFR) profiling, proteinuria check, and kidney health.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6675,7 +6920,7 @@
         "department": "Nephrology",
         "description": "Chronic kidney disease evaluation, electrolyte monitoring, and blood pressure control.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6686,7 +6931,7 @@
         "department": "Gastroenterology",
         "description": "Gastroesophageal reflux evaluation, gastric mucosa assessment, and PPI therapy.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6697,7 +6942,7 @@
         "department": "Gastroenterology",
         "description": "Comprehensive gastrointestinal workup, mesenteric palpation, and ultrasound triage.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6708,7 +6953,7 @@
         "department": "Endocrinology",
         "description": "HbA1c glycemic profiling, continuous glucose review, and insulin adjustment.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6719,7 +6964,7 @@
         "department": "Endocrinology",
         "description": "Free T3/T4, TSH hormonal mapping, and thyroid nodule clinical assessment.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6730,7 +6975,7 @@
         "department": "Urology",
         "description": "Renal calculus ultrasound review, medical expulsive therapy, and lithotripsy check.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6741,7 +6986,7 @@
         "department": "Urology",
         "description": "Dysuria workup, urine microscopy analysis, and targeted antimicrobial care.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6752,7 +6997,7 @@
         "department": "Physiotherapy",
         "description": "Manual therapy, biomechanical alignment, posture correction, and exercise protocol.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6763,7 +7008,7 @@
         "department": "Physiotherapy",
         "description": "Lumbar core stabilization, decompression therapy, and therapeutic ultrasound.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6774,7 +7019,7 @@
         "department": "Psychiatry",
         "description": "Clinical psychometric evaluation, cognitive assessment, and therapeutic counseling.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ],
     [
@@ -6785,11 +7030,100 @@
         "department": "Psychiatry",
         "description": "Sleep architecture analysis, circadian modulation, and psychotherapy guidance.",
         "is_verified": true,
-        "created_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z"
       }
     ]
   ],
-  "doctor_procedures": [],
+  "doctor_procedures": [
+    [
+      "dp-doc-alagu-vimalesh-2773-1791200914981",
+      {
+        "id": "dp-doc-alagu-vimalesh-2773-1791200914981",
+        "doctor_id": "doc-alagu-vimalesh-2773",
+        "procedure_id": "p-1791200914981",
+        "procedure_name": "Root Canal Treatment",
+        "is_verified": true,
+        "created_at": "2026-10-05T11:48:34.981Z"
+      }
+    ],
+    [
+      "dp-doc-alagu-vimalesh-2773-1791200914983",
+      {
+        "id": "dp-doc-alagu-vimalesh-2773-1791200914983",
+        "doctor_id": "doc-alagu-vimalesh-2773",
+        "procedure_id": "p-1791200914983",
+        "procedure_name": "Root Canal Treatment (RCT)",
+        "is_verified": true,
+        "created_at": "2026-10-05T11:48:34.983Z"
+      }
+    ],
+    [
+      "dp-doc-alagu-vimalesh-2773-1791200914984",
+      {
+        "id": "dp-doc-alagu-vimalesh-2773-1791200914984",
+        "doctor_id": "doc-alagu-vimalesh-2773",
+        "procedure_id": "p-1791200914984",
+        "procedure_name": "Dental Cleaning",
+        "is_verified": true,
+        "created_at": "2026-10-05T11:48:34.984Z"
+      }
+    ],
+    [
+      "dp-doc-alagu-vimalesh-2773-1791200914986",
+      {
+        "id": "dp-doc-alagu-vimalesh-2773-1791200914986",
+        "doctor_id": "doc-alagu-vimalesh-2773",
+        "procedure_id": "p-1791200914986",
+        "procedure_name": "Dental Filling",
+        "is_verified": true,
+        "created_at": "2026-10-05T11:48:34.986Z"
+      }
+    ],
+    [
+      "dp-doc-alagu-vimalesh-2773-1791200914988",
+      {
+        "id": "dp-doc-alagu-vimalesh-2773-1791200914988",
+        "doctor_id": "doc-alagu-vimalesh-2773",
+        "procedure_id": "p-1791200914988",
+        "procedure_name": "Tooth Extraction",
+        "is_verified": true,
+        "created_at": "2026-10-05T11:48:34.988Z"
+      }
+    ],
+    [
+      "dp-doc-merlin-rajan-2773-1791200914989",
+      {
+        "id": "dp-doc-merlin-rajan-2773-1791200914989",
+        "doctor_id": "doc-merlin-rajan-2773",
+        "procedure_id": "p-1791200914989",
+        "procedure_name": "Dental Cleaning",
+        "is_verified": true,
+        "created_at": "2026-10-05T11:48:34.989Z"
+      }
+    ],
+    [
+      "dp-doc-merlin-rajan-2773-1791200914991",
+      {
+        "id": "dp-doc-merlin-rajan-2773-1791200914991",
+        "doctor_id": "doc-merlin-rajan-2773",
+        "procedure_id": "p-1791200914991",
+        "procedure_name": "Dental Filling",
+        "is_verified": true,
+        "created_at": "2026-10-05T11:48:34.991Z"
+      }
+    ],
+    [
+      "dp-doc-merlin-rajan-2773-1791200914992",
+      {
+        "id": "dp-doc-merlin-rajan-2773-1791200914992",
+        "doctor_id": "doc-merlin-rajan-2773",
+        "procedure_id": "p-1791200914992",
+        "procedure_name": "Tooth Extraction",
+        "is_verified": true,
+        "created_at": "2026-10-05T11:48:34.992Z"
+      }
+    ]
+  ],
   "doctor_verification_documents": [],
   "consultations": [],
   "audit_logs": [],
@@ -6873,6 +7207,89 @@
         ],
         "created_at": "2026-09-30T14:09:37.446Z"
       }
+    ],
+    [
+      "rx-apt-1791196893198",
+      {
+        "id": "rx-apt-1791196893198",
+        "appointment_id": "apt-1791196893198",
+        "patient_id": "pat-demo-01",
+        "patient_name": "Aarav Sharma",
+        "doctor_id": "doc-demo-ananya-08",
+        "doctor_name": "Dr. Ananya Deshmukh",
+        "doctor_specialization": "Dentistry",
+        "doctor_registration_number": "TN-REG-DOC-DEMO-ANANYA-08",
+        "clinic_id": "c-demo-moon-01",
+        "clinic_name": "Moon Dental Clinic",
+        "clinic_address": "24 Luz Church Road, Mylapore, Chennai",
+        "date": "Oct 5, 2026",
+        "diagnosis": "Clinical evaluation of Dental Consultation",
+        "clinical_notes": "Patient presented with chief complaints. Vitals stable. Systemic examination normal.",
+        "follow_up_date": "Nov 27, 2026",
+        "status": "pending",
+        "medicines": [
+          {
+            "name": "Amoxicillin & Potassium Clavulanate 625 mg",
+            "dosage": "625 mg",
+            "frequency": "1-0-1",
+            "duration": "5 days",
+            "instructions": "After food"
+          },
+          {
+            "name": "Paracetamol 650mg (Dolo)",
+            "dosage": "650 mg",
+            "frequency": "1-0-1 (SOS)",
+            "duration": "3 days",
+            "instructions": "After food during fever or pain"
+          }
+        ],
+        "created_at": "2026-10-05T10:50:54.368Z"
+      }
+    ],
+    [
+      "rx-1791196894635",
+      {
+        "id": "rx-1791196894635",
+        "appointment_id": "apt-1791196795904",
+        "patient_id": "pat-demo-03",
+        "patient_name": "Rajesh Kumar",
+        "doctor_id": "doc-demo-ananya-08",
+        "doctor_name": "Dr. Ananya Deshmukh",
+        "doctor_specialization": "Dentistry",
+        "doctor_registration_number": "TN-MED-44281-2012",
+        "clinic_id": "c-demo-moon-01",
+        "clinic_name": "Moon Dental Clinic",
+        "clinic_address": "24 Luz Church Road, Mylapore, Chennai",
+        "date": "Oct 5, 2026",
+        "diagnosis": "Root Canal Treatment",
+        "clinical_notes": "Follow prescribed course. Rest well and maintain adequate hydration.",
+        "follow_up_date": "In 2 weeks",
+        "status": "pending",
+        "medicines": [
+          {
+            "name": "Amoxicillin 500mg",
+            "dosage": "1 Capsule",
+            "frequency": "Three times daily (After meals)",
+            "duration": "5 days",
+            "instructions": "Complete full 5-day course"
+          },
+          {
+            "name": "Paracetamol 650mg",
+            "dosage": "1 Tablet",
+            "frequency": "As needed for fever / pain",
+            "duration": "3 days",
+            "instructions": "Maximum 3 tablets daily"
+          },
+          {
+            "name": "Cetirizine 10mg",
+            "dosage": "1 Tablet",
+            "frequency": "Once daily at bedtime",
+            "duration": "7 days",
+            "instructions": "Take after dinner"
+          }
+        ],
+        "created_at": "2026-10-05T10:41:34.636Z"
+      }
     ]
   ],
   "prescription_items": [],
@@ -6880,111 +7297,6 @@
   "notifications": [],
   "clinic_announcements": [],
   "pharmacy_inventory": [
-    [
-      "rx-item-dolo-01",
-      {
-        "id": "rx-item-dolo-01",
-        "clinic_id": "c-demo-moon-01",
-        "sku": "MED-ATC-N02BE",
-        "name": "Paracetamol 650mg (Dolo)",
-        "generic_name": "Paracetamol",
-        "category": "Analgesics",
-        "dosage_form": "Tablet",
-        "strength": "650mg",
-        "batch_number": "BATCH-DOLO-2026A",
-        "expiry_date": "2026-11-30",
-        "quantity": 50,
-        "min_stock_level": 20,
-        "reorder_quantity": 100,
-        "unit_price": 3.5,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
-      }
-    ],
-    [
-      "rx-item-dolo-02",
-      {
-        "id": "rx-item-dolo-02",
-        "clinic_id": "c-demo-moon-01",
-        "sku": "MED-ATC-N02BE",
-        "name": "Paracetamol 650mg (Dolo)",
-        "generic_name": "Paracetamol",
-        "category": "Analgesics",
-        "dosage_form": "Tablet",
-        "strength": "650mg",
-        "batch_number": "BATCH-DOLO-2027B",
-        "expiry_date": "2027-12-31",
-        "quantity": 100,
-        "min_stock_level": 20,
-        "reorder_quantity": 100,
-        "unit_price": 3.5,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
-      }
-    ],
-    [
-      "rx-item-amox-01",
-      {
-        "id": "rx-item-amox-01",
-        "clinic_id": "c-demo-moon-01",
-        "sku": "MED-AMOX-500",
-        "name": "Amoxicillin 500mg",
-        "generic_name": "Amoxicillin",
-        "category": "Antibiotics",
-        "dosage_form": "Capsule",
-        "strength": "500mg",
-        "batch_number": "BATCH-AMOX-2027A",
-        "expiry_date": "2027-06-30",
-        "quantity": 5,
-        "min_stock_level": 15,
-        "reorder_quantity": 50,
-        "unit_price": 8,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
-      }
-    ],
-    [
-      "rx-item-amxclv-01",
-      {
-        "id": "rx-item-amxclv-01",
-        "clinic_id": "c-demo-moon-01",
-        "sku": "MED-ATC-J01CR",
-        "name": "Amoxicillin & Potassium Clavulanate 625 mg",
-        "generic_name": "Amoxicillin + Potassium Clavulanate",
-        "category": "Antibiotics",
-        "dosage_form": "Tablet",
-        "strength": "625 mg",
-        "batch_number": "BATCH-AMXCLV-2026A",
-        "expiry_date": "2026-11-30",
-        "quantity": 50,
-        "min_stock_level": 20,
-        "reorder_quantity": 100,
-        "unit_price": 22.5,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
-      }
-    ],
-    [
-      "rx-item-amxclv-02",
-      {
-        "id": "rx-item-amxclv-02",
-        "clinic_id": "c-demo-moon-01",
-        "sku": "MED-ATC-J01CR",
-        "name": "Amoxicillin & Potassium Clavulanate 625 mg",
-        "generic_name": "Amoxicillin + Potassium Clavulanate",
-        "category": "Antibiotics",
-        "dosage_form": "Tablet",
-        "strength": "625 mg",
-        "batch_number": "BATCH-AMXCLV-2027B",
-        "expiry_date": "2027-10-31",
-        "quantity": 100,
-        "min_stock_level": 20,
-        "reorder_quantity": 100,
-        "unit_price": 22.5,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
-      }
-    ],
     [
       "rx-item-amxclv-apollo-01",
       {
@@ -7002,8 +7314,8 @@
         "min_stock_level": 20,
         "reorder_quantity": 100,
         "unit_price": 22.5,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -7023,8 +7335,8 @@
         "min_stock_level": 20,
         "reorder_quantity": 40,
         "unit_price": 5,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -7044,8 +7356,8 @@
         "min_stock_level": 30,
         "reorder_quantity": 100,
         "unit_price": 4,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -7065,8 +7377,8 @@
         "min_stock_level": 25,
         "reorder_quantity": 100,
         "unit_price": 11,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -7086,8 +7398,8 @@
         "min_stock_level": 20,
         "reorder_quantity": 100,
         "unit_price": 3.5,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -7107,8 +7419,8 @@
         "min_stock_level": 20,
         "reorder_quantity": 100,
         "unit_price": 3.5,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -7128,8 +7440,8 @@
         "min_stock_level": 20,
         "reorder_quantity": 100,
         "unit_price": 22.5,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -7149,8 +7461,8 @@
         "min_stock_level": 20,
         "reorder_quantity": 100,
         "unit_price": 22.5,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -7170,8 +7482,8 @@
         "min_stock_level": 15,
         "reorder_quantity": 50,
         "unit_price": 8,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -7191,8 +7503,8 @@
         "min_stock_level": 20,
         "reorder_quantity": 40,
         "unit_price": 5,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -7212,8 +7524,8 @@
         "min_stock_level": 20,
         "reorder_quantity": 50,
         "unit_price": 4.5,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -7233,752 +7545,959 @@
         "min_stock_level": 20,
         "reorder_quantity": 50,
         "unit_price": 6,
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
+      }
+    ],
+    [
+      "rx-2773-amox-01",
+      {
+        "id": "rx-2773-amox-01",
+        "clinic_id": "c-moon-dental-villivakkam-2773",
+        "sku": "MED-DENT-AMOX-500",
+        "name": "Amoxicillin 500mg",
+        "generic_name": "Amoxicillin",
+        "category": "Antibiotics",
+        "dosage_form": "Capsule",
+        "strength": "500mg",
+        "batch_number": "BATCH-2773-AMOX-26A",
+        "expiry_date": "2027-06-30",
+        "quantity": 50,
+        "min_stock_level": 15,
+        "reorder_quantity": 50,
+        "unit_price": 8.5,
+        "created_at": "2026-10-05T11:48:34.995Z",
+        "updated_at": "2026-10-05T11:48:34.995Z"
+      }
+    ],
+    [
+      "rx-2773-dolo-01",
+      {
+        "id": "rx-2773-dolo-01",
+        "clinic_id": "c-moon-dental-villivakkam-2773",
+        "sku": "MED-DENT-DOLO-650",
+        "name": "Paracetamol 650mg (Dolo)",
+        "generic_name": "Paracetamol",
+        "category": "Analgesics",
+        "dosage_form": "Tablet",
+        "strength": "650mg",
+        "batch_number": "BATCH-2773-DOLO-26B",
+        "expiry_date": "2027-12-31",
+        "quantity": 80,
+        "min_stock_level": 20,
+        "reorder_quantity": 100,
+        "unit_price": 3.5,
+        "created_at": "2026-10-05T11:48:34.995Z",
+        "updated_at": "2026-10-05T11:48:34.995Z"
+      }
+    ],
+    [
+      "rx-item-dolo-01",
+      {
+        "id": "rx-item-dolo-01",
+        "clinic_id": "c-demo-moon-01",
+        "sku": "MED-ATC-N02BE",
+        "name": "Paracetamol 650mg (Dolo)",
+        "generic_name": "Paracetamol",
+        "category": "Analgesics",
+        "dosage_form": "Tablet",
+        "strength": "650mg",
+        "batch_number": "BATCH-DOLO-2026A",
+        "expiry_date": "2026-11-30",
+        "quantity": 50,
+        "min_stock_level": 20,
+        "reorder_quantity": 100,
+        "unit_price": 3.5,
+        "created_at": "2026-09-30T12:00:00.000Z",
+        "updated_at": "2026-10-05T11:48:50.714Z"
+      }
+    ],
+    [
+      "rx-item-dolo-02",
+      {
+        "id": "rx-item-dolo-02",
+        "clinic_id": "c-demo-moon-01",
+        "sku": "MED-ATC-N02BE",
+        "name": "Paracetamol 650mg (Dolo)",
+        "generic_name": "Paracetamol",
+        "category": "Analgesics",
+        "dosage_form": "Tablet",
+        "strength": "650mg",
+        "batch_number": "BATCH-DOLO-2027B",
+        "expiry_date": "2027-12-31",
+        "quantity": 100,
+        "min_stock_level": 20,
+        "reorder_quantity": 100,
+        "unit_price": 3.5,
+        "created_at": "2026-09-30T12:00:00.000Z",
+        "updated_at": "2026-10-05T11:48:50.714Z"
+      }
+    ],
+    [
+      "rx-item-amox-01",
+      {
+        "id": "rx-item-amox-01",
+        "clinic_id": "c-demo-moon-01",
+        "sku": "MED-AMOX-500",
+        "name": "Amoxicillin 500mg",
+        "generic_name": "Amoxicillin",
+        "category": "Antibiotics",
+        "dosage_form": "Capsule",
+        "strength": "500mg",
+        "batch_number": "BATCH-AMOX-2027A",
+        "expiry_date": "2027-06-30",
+        "quantity": 5,
+        "min_stock_level": 15,
+        "reorder_quantity": 50,
+        "unit_price": 8,
+        "created_at": "2026-09-30T12:00:00.000Z",
+        "updated_at": "2026-10-05T11:48:50.714Z"
+      }
+    ],
+    [
+      "rx-item-amxclv-01",
+      {
+        "id": "rx-item-amxclv-01",
+        "clinic_id": "c-demo-moon-01",
+        "sku": "MED-ATC-J01CR",
+        "name": "Amoxicillin & Potassium Clavulanate 625 mg",
+        "generic_name": "Amoxicillin + Potassium Clavulanate",
+        "category": "Antibiotics",
+        "dosage_form": "Tablet",
+        "strength": "625 mg",
+        "batch_number": "BATCH-AMXCLV-2026A",
+        "expiry_date": "2026-11-30",
+        "quantity": 50,
+        "min_stock_level": 20,
+        "reorder_quantity": 100,
+        "unit_price": 22.5,
+        "created_at": "2026-09-30T12:00:00.000Z",
+        "updated_at": "2026-10-05T11:48:50.714Z"
+      }
+    ],
+    [
+      "rx-item-amxclv-02",
+      {
+        "id": "rx-item-amxclv-02",
+        "clinic_id": "c-demo-moon-01",
+        "sku": "MED-ATC-J01CR",
+        "name": "Amoxicillin & Potassium Clavulanate 625 mg",
+        "generic_name": "Amoxicillin + Potassium Clavulanate",
+        "category": "Antibiotics",
+        "dosage_form": "Tablet",
+        "strength": "625 mg",
+        "batch_number": "BATCH-AMXCLV-2027B",
+        "expiry_date": "2027-10-31",
+        "quantity": 100,
+        "min_stock_level": 20,
+        "reorder_quantity": 100,
+        "unit_price": 22.5,
+        "created_at": "2026-09-30T12:00:00.000Z",
+        "updated_at": "2026-10-05T11:48:50.714Z"
+      }
+    ],
+    [
+      "rx-item-cet-01",
+      {
+        "id": "rx-item-cet-01",
+        "clinic_id": "c-demo-moon-01",
+        "sku": "MED-ATC-R06",
+        "name": "Cetirizine 10mg",
+        "generic_name": "Cetirizine",
+        "category": "Antihistamines",
+        "dosage_form": "Tablet",
+        "strength": "10mg",
+        "batch_number": "BATCH-CET-2027A",
+        "expiry_date": "2027-09-30",
+        "quantity": 60,
+        "min_stock_level": 20,
+        "reorder_quantity": 50,
+        "unit_price": 4.5,
+        "created_at": "2026-09-30T12:00:00.000Z",
+        "updated_at": "2026-10-05T11:48:50.714Z"
       }
     ]
   ],
-  "pharmacy_dispensations": [],
+  "pharmacy_dispensations": [
+    [
+      "disp-1791200930704-739",
+      {
+        "medicine_name": "Paracetamol 650mg (Dolo)",
+        "patient_name": "FEFO Verification Patient",
+        "quantity_dispensed": 5,
+        "batch_number": "BATCH-DOLO-2026A (5)",
+        "dispensed_by": "Pharmacy Staff",
+        "id": "disp-1791200930704-739",
+        "dispensed_at": "2026-10-05T11:48:50.704Z"
+      }
+    ]
+  ],
   "doctor_clinic_assignments": [
     [
-      "dca-1790782700023-881",
+      "dca-1791200914796-163",
       {
-        "id": "dca-1790782700023-881",
+        "id": "dca-1791200914796-163",
         "doctor_id": "doc-demo-arun-01",
         "clinic_id": "c-demo-moon-01",
         "specialty": "Dentistry",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.023Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.796Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700025-40",
+      "dca-1791200914798-22",
       {
-        "id": "dca-1790782700025-40",
+        "id": "dca-1791200914798-22",
         "doctor_id": "doc-demo-ananya-08",
         "clinic_id": "c-demo-moon-01",
         "specialty": "Dentistry",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.025Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.798Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700026-549",
+      "dca-1791200914799-902",
       {
-        "id": "dca-1790782700026-549",
+        "id": "dca-1791200914799-902",
         "doctor_id": "doc-demo-suresh-07",
         "clinic_id": "c-demo-moon-01",
         "specialty": "Dentistry",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.026Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.799Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700027-213",
+      "dca-1791200914801-185",
       {
-        "id": "dca-1790782700027-213",
+        "id": "dca-1791200914801-185",
         "doctor_id": "doc-demo-priya-02",
         "clinic_id": "c-demo-apollo-02",
         "specialty": "General Medicine",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.027Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.801Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700028-170",
+      "dca-1791200914802-545",
       {
-        "id": "dca-1790782700028-170",
+        "id": "dca-1791200914802-545",
         "doctor_id": "doc-demo-rajesh-14",
         "clinic_id": "c-demo-apollo-02",
         "specialty": "General Medicine",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.028Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.802Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700029-516",
+      "dca-1791200914803-404",
       {
-        "id": "dca-1790782700029-516",
+        "id": "dca-1791200914803-404",
         "doctor_id": "doc-demo-meenakshi-23",
         "clinic_id": "c-demo-omr-12",
         "specialty": "General Medicine",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.029Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.803Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700030-980",
+      "dca-1791200914804-256",
       {
-        "id": "dca-1790782700030-980",
+        "id": "dca-1791200914804-256",
         "doctor_id": "doc-demo-karthik-03",
         "clinic_id": "c-demo-heart-04",
         "specialty": "Cardiology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.030Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.804Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700031-377",
+      "dca-1791200914805-263",
       {
-        "id": "dca-1790782700031-377",
+        "id": "dca-1791200914805-263",
         "doctor_id": "doc-demo-nithya-13",
         "clinic_id": "c-demo-ramapuram-11",
         "specialty": "Cardiology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.031Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.805Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700032-798",
+      "dca-1791200914806-546",
       {
-        "id": "dca-1790782700032-798",
+        "id": "dca-1791200914806-546",
         "doctor_id": "doc-demo-vikram-22",
         "clinic_id": "c-demo-heart-04",
         "specialty": "Cardiology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.032Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.806Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700034-125",
+      "dca-1791200914808-755",
       {
-        "id": "dca-1790782700034-125",
+        "id": "dca-1791200914808-755",
         "doctor_id": "doc-demo-kavitha-04",
         "clinic_id": "c-demo-smile-10",
         "specialty": "Pediatrics",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.034Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.808Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700035-77",
+      "dca-1791200914809-390",
       {
-        "id": "dca-1790782700035-77",
+        "id": "dca-1791200914809-390",
         "doctor_id": "doc-demo-arun-21",
         "clinic_id": "c-demo-smile-10",
         "specialty": "Pediatrics",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.035Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.809Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700036-783",
+      "dca-1791200914810-879",
       {
-        "id": "dca-1790782700036-783",
+        "id": "dca-1791200914810-879",
         "doctor_id": "doc-demo-divya-27",
         "clinic_id": "c-demo-ambattur-17",
         "specialty": "Pediatrics",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.036Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.810Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700037-621",
+      "dca-1791200914811-501",
       {
-        "id": "dca-1790782700037-621",
+        "id": "dca-1791200914811-501",
         "doctor_id": "doc-demo-priya-05",
         "clinic_id": "c-demo-skin-07",
         "specialty": "Dermatology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.037Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.811Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700038-771",
+      "dca-1791200914812-298",
       {
-        "id": "dca-1790782700038-771",
+        "id": "dca-1791200914812-298",
         "doctor_id": "doc-demo-harish-18",
         "clinic_id": "c-demo-skin-07",
         "specialty": "Dermatology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.038Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.812Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700039-5",
+      "dca-1791200914813-197",
       {
-        "id": "dca-1790782700039-5",
+        "id": "dca-1791200914813-197",
         "doctor_id": "doc-demo-kavya-25",
         "clinic_id": "c-demo-tambaram-14",
         "specialty": "Dermatology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.039Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.813Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700040-891",
+      "dca-1791200914814-938",
       {
-        "id": "dca-1790782700040-891",
+        "id": "dca-1791200914814-938",
         "doctor_id": "doc-demo-venkat-06",
         "clinic_id": "c-demo-nova-09",
         "specialty": "ENT",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.040Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.814Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700041-218",
+      "dca-1791200914815-417",
       {
-        "id": "dca-1790782700041-218",
+        "id": "dca-1791200914815-417",
         "doctor_id": "doc-demo-swetha-20",
         "clinic_id": "c-demo-nova-09",
         "specialty": "ENT",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.041Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.815Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700043-552",
+      "dca-1791200914817-220",
       {
-        "id": "dca-1790782700043-552",
+        "id": "dca-1791200914817-220",
         "doctor_id": "doc-demo-rahul-26",
         "clinic_id": "c-demo-chromepet-15",
         "specialty": "ENT",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.043Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.817Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700044-537",
+      "dca-1791200914818-150",
       {
-        "id": "dca-1790782700044-537",
+        "id": "dca-1791200914818-150",
         "doctor_id": "doc-demo-ramesh-10",
         "clinic_id": "c-demo-vision-05",
         "specialty": "Ophthalmology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.044Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.818Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700045-179",
+      "dca-1791200914820-318",
       {
-        "id": "dca-1790782700045-179",
+        "id": "dca-1791200914820-318",
         "doctor_id": "doc-demo-deepa-16",
         "clinic_id": "c-demo-vision-05",
         "specialty": "Ophthalmology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.045Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.820Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700046-449",
+      "dca-1791200914821-234",
       {
-        "id": "dca-1790782700046-449",
+        "id": "dca-1791200914821-234",
         "doctor_id": "doc-demo-pooja-29",
         "clinic_id": "c-demo-besant-18",
         "specialty": "Ophthalmology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.046Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.821Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700047-745",
+      "dca-1791200914822-688",
       {
-        "id": "dca-1790782700047-745",
+        "id": "dca-1791200914822-688",
         "doctor_id": "doc-demo-aditya-11",
         "clinic_id": "c-demo-ortho-06",
         "specialty": "Orthopedics",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.047Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.822Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700048-394",
+      "dca-1791200914823-386",
       {
-        "id": "dca-1790782700048-394",
+        "id": "dca-1791200914823-386",
         "doctor_id": "doc-demo-sneha-17",
         "clinic_id": "c-demo-ortho-06",
         "specialty": "Orthopedics",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.048Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.823Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700049-874",
+      "dca-1791200914824-724",
       {
-        "id": "dca-1790782700049-874",
+        "id": "dca-1791200914824-724",
         "doctor_id": "doc-demo-balaji-24",
         "clinic_id": "c-demo-sholinganallur-13",
         "specialty": "Orthopedics",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.049Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.824Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700050-681",
+      "dca-1791200914825-403",
       {
-        "id": "dca-1790782700050-681",
+        "id": "dca-1791200914825-403",
         "doctor_id": "doc-demo-radha-09",
         "clinic_id": "c-demo-greenlife-03",
         "specialty": "Gynecology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.050Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.825Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700051-263",
+      "dca-1791200914827-239",
       {
-        "id": "dca-1790782700051-263",
+        "id": "dca-1791200914827-239",
         "doctor_id": "doc-demo-shalini-15",
         "clinic_id": "c-demo-greenlife-03",
         "specialty": "Gynecology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.051Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.827Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700052-675",
+      "dca-1791200914828-344",
       {
-        "id": "dca-1790782700052-675",
+        "id": "dca-1791200914828-344",
         "doctor_id": "doc-demo-arvind-12",
         "clinic_id": "c-demo-neuro-08",
         "specialty": "Neurology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.052Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.828Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700053-793",
+      "dca-1791200914829-671",
       {
-        "id": "dca-1790782700053-793",
+        "id": "dca-1791200914829-671",
         "doctor_id": "doc-demo-gayatri-19",
         "clinic_id": "c-demo-neuro-08",
         "specialty": "Neurology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.053Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.829Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700054-446",
+      "dca-1791200914830-476",
       {
-        "id": "dca-1790782700054-446",
+        "id": "dca-1791200914830-476",
         "doctor_id": "doc-demo-vignesh-30",
         "clinic_id": "c-demo-avadi-18",
         "specialty": "Neurology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.054Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.830Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700055-87",
+      "dca-1791200914831-589",
       {
-        "id": "dca-1790782700055-87",
+        "id": "dca-1791200914831-589",
         "doctor_id": "doc-demo-sanjay-28",
         "clinic_id": "c-demo-pallavaram-16",
         "specialty": "General Medicine",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.055Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.831Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700057-861",
+      "dca-1791200914832-361",
       {
-        "id": "dca-1790782700057-861",
+        "id": "dca-1791200914832-361",
         "doctor_id": "doc-demo-sanjay-29",
         "clinic_id": "c-demo-pulmo-11",
         "specialty": "Pulmonology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.057Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.832Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700058-165",
+      "dca-1791200914833-629",
       {
-        "id": "dca-1790782700058-165",
+        "id": "dca-1791200914833-629",
         "doctor_id": "doc-demo-preeti-30",
         "clinic_id": "c-demo-pulmo-11",
         "specialty": "Pulmonology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.058Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.833Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700059-453",
+      "dca-1791200914835-559",
       {
-        "id": "dca-1790782700059-453",
+        "id": "dca-1791200914835-559",
         "doctor_id": "doc-demo-balaji-31",
         "clinic_id": "c-demo-renal-12",
         "specialty": "Nephrology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.059Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.835Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700060-199",
+      "dca-1791200914836-698",
       {
-        "id": "dca-1790782700060-199",
+        "id": "dca-1791200914836-698",
         "doctor_id": "doc-demo-malini-32",
         "clinic_id": "c-demo-renal-12",
         "specialty": "Nephrology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.060Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.836Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700061-874",
+      "dca-1791200914837-237",
       {
-        "id": "dca-1790782700061-874",
+        "id": "dca-1791200914837-237",
         "doctor_id": "doc-demo-manoj-33",
         "clinic_id": "c-demo-digestive-13",
         "specialty": "Gastroenterology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.061Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.837Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700062-464",
+      "dca-1791200914838-547",
       {
-        "id": "dca-1790782700062-464",
+        "id": "dca-1791200914838-547",
         "doctor_id": "doc-demo-lakshmi-34",
         "clinic_id": "c-demo-digestive-13",
         "specialty": "Gastroenterology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.062Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.838Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700063-73",
+      "dca-1791200914840-651",
       {
-        "id": "dca-1790782700063-73",
+        "id": "dca-1791200914840-651",
         "doctor_id": "doc-demo-kiran-35",
         "clinic_id": "c-demo-endowell-14",
         "specialty": "Endocrinology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.063Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.840Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700065-890",
+      "dca-1791200914841-921",
       {
-        "id": "dca-1790782700065-890",
+        "id": "dca-1791200914841-921",
         "doctor_id": "doc-demo-reka-36",
         "clinic_id": "c-demo-endowell-14",
         "specialty": "Endocrinology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.065Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.841Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700066-80",
+      "dca-1791200914842-699",
       {
-        "id": "dca-1790782700066-80",
+        "id": "dca-1791200914842-699",
         "doctor_id": "doc-demo-dinesh-37",
         "clinic_id": "c-demo-uro-15",
         "specialty": "Urology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.066Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.842Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700067-448",
+      "dca-1791200914843-949",
       {
-        "id": "dca-1790782700067-448",
+        "id": "dca-1791200914843-949",
         "doctor_id": "doc-demo-madhav-38",
         "clinic_id": "c-demo-uro-15",
         "specialty": "Urology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.067Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.843Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700068-445",
+      "dca-1791200914845-784",
       {
-        "id": "dca-1790782700068-445",
+        "id": "dca-1791200914845-784",
         "doctor_id": "doc-demo-antony-39",
         "clinic_id": "c-demo-physio-16",
         "specialty": "Physiotherapy",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.068Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.845Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700069-271",
+      "dca-1791200914846-978",
       {
-        "id": "dca-1790782700069-271",
+        "id": "dca-1791200914846-978",
         "doctor_id": "doc-demo-saranya-40",
         "clinic_id": "c-demo-physio-16",
         "specialty": "Physiotherapy",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.069Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.846Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700070-348",
+      "dca-1791200914847-44",
       {
-        "id": "dca-1790782700070-348",
+        "id": "dca-1791200914847-44",
         "doctor_id": "doc-demo-siddharth-41",
         "clinic_id": "c-demo-mind-17",
         "specialty": "Psychiatry",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.070Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.847Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700071-193",
+      "dca-1791200914848-201",
       {
-        "id": "dca-1790782700071-193",
+        "id": "dca-1791200914848-201",
         "doctor_id": "doc-demo-tanvi-42",
         "clinic_id": "c-demo-mind-17",
         "specialty": "Psychiatry",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.071Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.848Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700072-886",
+      "dca-1791200914849-632",
       {
-        "id": "dca-1790782700072-886",
+        "id": "dca-1791200914849-632",
         "doctor_id": "doc-demo-arun-01",
         "clinic_id": "c-demo-moon-01",
         "specialty": "Dentistry",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.072Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.849Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700073-837",
+      "dca-1791200914851-806",
       {
-        "id": "dca-1790782700073-837",
+        "id": "dca-1791200914851-806",
         "doctor_id": "doc-demo-arun-01",
         "clinic_id": "c-demo-apollo-02",
         "specialty": "Dentistry",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.073Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.851Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700074-525",
+      "dca-1791200914852-748",
       {
-        "id": "dca-1790782700074-525",
+        "id": "dca-1791200914852-748",
         "doctor_id": "doc-demo-arun-01",
         "clinic_id": "c-demo-vision-05",
         "specialty": "Dentistry",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.074Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.852Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700075-811",
+      "dca-1791200914853-805",
       {
-        "id": "dca-1790782700075-811",
+        "id": "dca-1791200914853-805",
         "doctor_id": "doc-demo-arun-01",
         "clinic_id": "c-demo-ramapuram-11",
         "specialty": "Dentistry",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.075Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.853Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700076-917",
+      "dca-1791200914854-325",
       {
-        "id": "dca-1790782700076-917",
+        "id": "dca-1791200914854-325",
         "doctor_id": "doc-demo-priya-02",
         "clinic_id": "c-demo-apollo-02",
         "specialty": "General Medicine",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.076Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.854Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700078-316",
+      "dca-1791200914856-613",
       {
-        "id": "dca-1790782700078-316",
+        "id": "dca-1791200914856-613",
         "doctor_id": "doc-demo-priya-02",
         "clinic_id": "c-demo-moon-01",
         "specialty": "General Medicine",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.078Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.856Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700079-59",
+      "dca-1791200914857-918",
       {
-        "id": "dca-1790782700079-59",
+        "id": "dca-1791200914857-918",
         "doctor_id": "doc-demo-priya-02",
         "clinic_id": "c-demo-heart-04",
         "specialty": "General Medicine",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.079Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.857Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700080-599",
+      "dca-1791200914858-284",
       {
-        "id": "dca-1790782700080-599",
+        "id": "dca-1791200914858-284",
         "doctor_id": "doc-demo-karthik-03",
         "clinic_id": "c-demo-heart-04",
         "specialty": "Cardiology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.080Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.858Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700081-830",
+      "dca-1791200914859-296",
       {
-        "id": "dca-1790782700081-830",
+        "id": "dca-1791200914859-296",
         "doctor_id": "doc-demo-karthik-03",
         "clinic_id": "c-demo-apollo-02",
         "specialty": "Cardiology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.081Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.859Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700082-335",
+      "dca-1791200914861-389",
       {
-        "id": "dca-1790782700082-335",
+        "id": "dca-1791200914861-389",
         "doctor_id": "doc-demo-priya-05",
         "clinic_id": "c-demo-skin-07",
         "specialty": "Dermatology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.082Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.861Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700083-364",
+      "dca-1791200914862-21",
       {
-        "id": "dca-1790782700083-364",
+        "id": "dca-1791200914862-21",
         "doctor_id": "doc-demo-priya-05",
         "clinic_id": "c-demo-tambaram-14",
         "specialty": "Dermatology",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.083Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.862Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700084-664",
+      "dca-1791200914863-472",
       {
-        "id": "dca-1790782700084-664",
+        "id": "dca-1791200914863-472",
         "doctor_id": "doc-demo-aditya-11",
         "clinic_id": "c-demo-ortho-06",
         "specialty": "Orthopedics",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.084Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.863Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
-      "dca-1790782700085-851",
+      "dca-1791200914865-623",
       {
-        "id": "dca-1790782700085-851",
+        "id": "dca-1791200914865-623",
         "doctor_id": "doc-demo-aditya-11",
         "clinic_id": "c-demo-sholinganallur-13",
         "specialty": "Orthopedics",
         "active": true,
         "status": "AVAILABLE",
-        "created_at": "2026-09-30T15:38:20.085Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.865Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
+      }
+    ],
+    [
+      "dca-1791200914977-285",
+      {
+        "id": "dca-1791200914977-285",
+        "doctor_id": "doc-alagu-vimalesh-2773",
+        "clinic_id": "c-moon-dental-villivakkam-2773",
+        "specialty": "Dentistry",
+        "active": true,
+        "status": "AVAILABLE",
+        "created_at": "2026-10-05T11:48:34.977Z",
+        "updated_at": "2026-10-05T11:48:34.977Z"
+      }
+    ],
+    [
+      "dca-1791200914979-729",
+      {
+        "id": "dca-1791200914979-729",
+        "doctor_id": "doc-merlin-rajan-2773",
+        "clinic_id": "c-moon-dental-villivakkam-2773",
+        "specialty": "Dentistry",
+        "active": true,
+        "status": "AVAILABLE",
+        "created_at": "2026-10-05T11:48:34.979Z",
+        "updated_at": "2026-10-05T11:48:34.979Z"
       }
     ]
   ],
@@ -7999,8 +8518,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8019,8 +8538,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8039,8 +8558,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8059,8 +8578,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8079,8 +8598,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8099,8 +8618,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8119,8 +8638,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8139,8 +8658,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8159,8 +8678,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8179,8 +8698,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8199,8 +8718,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8219,8 +8738,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8239,8 +8758,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8259,8 +8778,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8279,8 +8798,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8299,8 +8818,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8319,8 +8838,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8339,8 +8858,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8359,8 +8878,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8379,8 +8898,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8399,8 +8918,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8419,8 +8938,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8439,8 +8958,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8459,8 +8978,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8479,8 +8998,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8499,8 +9018,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8519,8 +9038,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8539,8 +9058,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8559,8 +9078,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8579,8 +9098,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8599,8 +9118,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8619,8 +9138,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8639,8 +9158,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8659,8 +9178,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8679,8 +9198,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8699,8 +9218,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8719,8 +9238,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8739,8 +9258,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8759,8 +9278,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8779,8 +9298,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8799,8 +9318,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8819,8 +9338,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8839,8 +9358,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8859,8 +9378,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8879,8 +9398,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8899,8 +9418,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8919,8 +9438,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8939,8 +9458,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8959,8 +9478,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8979,8 +9498,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -8999,8 +9518,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9019,8 +9538,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9039,8 +9558,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9059,8 +9578,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9079,8 +9598,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9099,8 +9618,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9119,8 +9638,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9139,8 +9658,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9159,8 +9678,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9179,8 +9698,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9199,8 +9718,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9219,8 +9738,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9239,8 +9758,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline presentation schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ],
     [
@@ -9259,8 +9778,8 @@
         "status": "APPROVED",
         "notes": "Approved baseline schedule",
         "requested_by": "Clinic Assistant",
-        "created_at": "2026-09-30T15:38:20.087Z",
-        "updated_at": "2026-09-30T15:38:20.087Z"
+        "created_at": "2026-10-05T11:48:34.866Z",
+        "updated_at": "2026-10-05T11:48:34.866Z"
       }
     ]
   ],
@@ -9272,7 +9791,7 @@
         "name": "Sheryl Thomas",
         "email": "assistant01@demo.medlink.test",
         "phone": "+91 9000000021",
-        "password_hash": "$2a$10$otrKzgM49GlTibFoN3TftenCuUsTvmgQehFZpvfwgCjd9VbfnYWcC",
+        "password_hash": "$2a$10$fUzlD6BRJhSBQ7Xw0CnUEeeryOiWZPiiatUcxf.f4iyhvXdKckH0S",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-moon-01",
         "clinic_name": "Moon Dental Clinic",
@@ -9280,8 +9799,8 @@
         "initials": "ST",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.875Z",
-        "updated_at": "2026-09-30T15:38:15.875Z"
+        "created_at": "2026-10-05T11:48:31.314Z",
+        "updated_at": "2026-10-05T11:48:31.314Z"
       }
     ],
     [
@@ -9291,7 +9810,7 @@
         "name": "Rahul Joseph",
         "email": "assistant02@demo.medlink.test",
         "phone": "+91 9000000022",
-        "password_hash": "$2a$10$nbkttiBoIJmxNHhR2s1AX.OddfKfHGiK2srh20p1ds6APXAK4SMRC",
+        "password_hash": "$2a$10$mCPT.cUd50OPkUMfJ61SZOR/SKuLCjnrPHkKKAA5o/xCc10oakwGC",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-apollo-02",
         "clinic_name": "Apollo Family Care Centre",
@@ -9299,8 +9818,8 @@
         "initials": "RJ",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:15.941Z",
-        "updated_at": "2026-09-30T15:38:15.941Z"
+        "created_at": "2026-10-05T11:48:31.370Z",
+        "updated_at": "2026-10-05T11:48:31.370Z"
       }
     ],
     [
@@ -9310,7 +9829,7 @@
         "name": "Nisha Kumar",
         "email": "assistant03@demo.medlink.test",
         "phone": "+91 9000000023",
-        "password_hash": "$2a$10$RGe6PnuFQCFF/kAOF2uBIefJEPpktY9iVVLleM15Kr6cIZQyBtGNu",
+        "password_hash": "$2a$10$/Zn46ttQ..JE0iL630R/pOhqCnAH4qx6LjogL/hzHKWydthzpd86K",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-greenlife-03",
         "clinic_name": "GreenLife Women's & Maternity Clinic",
@@ -9318,8 +9837,8 @@
         "initials": "NK",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.007Z",
-        "updated_at": "2026-09-30T15:38:16.007Z"
+        "created_at": "2026-10-05T11:48:31.425Z",
+        "updated_at": "2026-10-05T11:48:31.425Z"
       }
     ],
     [
@@ -9329,7 +9848,7 @@
         "name": "Ravi Shankar",
         "email": "assistant04@demo.medlink.test",
         "phone": "+91 9000000024",
-        "password_hash": "$2a$10$Bg//kiL18aOuzT3HG9ntFOe1QXIbIS8XxsO1imjEt8rXf0gT2kpkW",
+        "password_hash": "$2a$10$yWe5znfd9T6mokNBkE92Sewanpdykc.CLdpaqVHpP1sguV4iwrxGu",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-heart-04",
         "clinic_name": "Chennai Heart & Vascular Centre",
@@ -9337,8 +9856,8 @@
         "initials": "RS",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.074Z",
-        "updated_at": "2026-09-30T15:38:16.074Z"
+        "created_at": "2026-10-05T11:48:31.480Z",
+        "updated_at": "2026-10-05T11:48:31.480Z"
       }
     ],
     [
@@ -9348,7 +9867,7 @@
         "name": "Deepak Raj",
         "email": "assistant05@demo.medlink.test",
         "phone": "+91 9000000025",
-        "password_hash": "$2a$10$da4iKIbRDJo8CI/kYTqZnO1jQK7hM8WkTTyH/TdgV/P4zLa9Unpge",
+        "password_hash": "$2a$10$PY7vjYJykxaq6PotaVchtON1IUJHm4Gi1ywf/2znIL6kzkdlt3Qk2",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-vision-05",
         "clinic_name": "VisionPlus Eye Centre",
@@ -9356,8 +9875,8 @@
         "initials": "DR",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.141Z",
-        "updated_at": "2026-09-30T15:38:16.141Z"
+        "created_at": "2026-10-05T11:48:31.535Z",
+        "updated_at": "2026-10-05T11:48:31.535Z"
       }
     ],
     [
@@ -9367,7 +9886,7 @@
         "name": "Lavanya S",
         "email": "assistant06@demo.medlink.test",
         "phone": "+91 9000000026",
-        "password_hash": "$2a$10$pKnDshgyK8dGTANHugEKcOZu0CJRddVhNV0qPLJ/dncC56XkqsVJm",
+        "password_hash": "$2a$10$8uXNcNhguCPQizXIuRJDIexfGyO8Hl5hvSuESoaZSLoiUQR.a5e1a",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-ortho-06",
         "clinic_name": "OrthoCare Chennai",
@@ -9375,8 +9894,8 @@
         "initials": "LS",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.206Z",
-        "updated_at": "2026-09-30T15:38:16.206Z"
+        "created_at": "2026-10-05T11:48:31.590Z",
+        "updated_at": "2026-10-05T11:48:31.590Z"
       }
     ],
     [
@@ -9386,7 +9905,7 @@
         "name": "Joseph Mathew",
         "email": "assistant07@demo.medlink.test",
         "phone": "+91 9000000027",
-        "password_hash": "$2a$10$Clpw0XTXgmWitTT9iK.d7uevYzBMxUqQled.6okLtdcI3gBYOldxe",
+        "password_hash": "$2a$10$Wpg7MM.jIbhCzCcXA0RSXOGNKEnodCa08OwedbBkNuIHX/RLcRa.2",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-skin-07",
         "clinic_name": "SkinSphere Dermatology",
@@ -9394,8 +9913,8 @@
         "initials": "JM",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.274Z",
-        "updated_at": "2026-09-30T15:38:16.274Z"
+        "created_at": "2026-10-05T11:48:31.645Z",
+        "updated_at": "2026-10-05T11:48:31.645Z"
       }
     ],
     [
@@ -9405,7 +9924,7 @@
         "name": "Priyanka Das",
         "email": "assistant08@demo.medlink.test",
         "phone": "+91 9000000028",
-        "password_hash": "$2a$10$WB2FLmQzoC7O7LhjGomwK.7A3./0u28wgFhdvN63pTHO22aeXnZma",
+        "password_hash": "$2a$10$3hFKtCdKXJsIFHo5ASsmx.nVkGJX6S0kpZlkpJa9PZ3JolDwD9eiS",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-neuro-08",
         "clinic_name": "NeuroBridge Care Clinic",
@@ -9413,8 +9932,8 @@
         "initials": "PD",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.340Z",
-        "updated_at": "2026-09-30T15:38:16.340Z"
+        "created_at": "2026-10-05T11:48:31.700Z",
+        "updated_at": "2026-10-05T11:48:31.700Z"
       }
     ],
     [
@@ -9424,7 +9943,7 @@
         "name": "Karthik V",
         "email": "assistant09@demo.medlink.test",
         "phone": "+91 9000000029",
-        "password_hash": "$2a$10$RV/T3qu1q.Y2flQqomcDK.os4YyGBYLMMbVP7Vw8qGEr8A8PSe/qS",
+        "password_hash": "$2a$10$xa3XKqtJ/QJpPGQQGvbna.5Xd6IKLYz7Q03sDGGI3zZFUESaDcgP6",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-nova-09",
         "clinic_name": "Nova ENT Care",
@@ -9432,8 +9951,8 @@
         "initials": "KV",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.406Z",
-        "updated_at": "2026-09-30T15:38:16.406Z"
+        "created_at": "2026-10-05T11:48:31.755Z",
+        "updated_at": "2026-10-05T11:48:31.755Z"
       }
     ],
     [
@@ -9443,7 +9962,7 @@
         "name": "Divya Raj",
         "email": "assistant10@demo.medlink.test",
         "phone": "+91 9000000030",
-        "password_hash": "$2a$10$fmB4PhgvucPPPvExjOrWbuOGeNzyfIJC0AJ/aHLFzzZmaTHhWyEPq",
+        "password_hash": "$2a$10$ZzERbiTYnhLZ8lJoUcQJp.JxJeqqw0hw6YPsTT6kbdI5WS2mgCB.a",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-smile-10",
         "clinic_name": "Smile & Child Pediatric Centre",
@@ -9451,8 +9970,8 @@
         "initials": "DR",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.470Z",
-        "updated_at": "2026-09-30T15:38:16.470Z"
+        "created_at": "2026-10-05T11:48:31.810Z",
+        "updated_at": "2026-10-05T11:48:31.810Z"
       }
     ],
     [
@@ -9462,7 +9981,7 @@
         "name": "Suresh Nair",
         "email": "assistant11@demo.medlink.test",
         "phone": "+91 9000000031",
-        "password_hash": "$2a$10$.3a7rVsLf/BelAmNP6dXyOuEPfd22mQ7oIRYZ6G3uXzW5qWtWVVa.",
+        "password_hash": "$2a$10$v2Ax6kbzqWB3r44FH6lAEuB1q074NXJJmVxwJtXnluHcUKpfEYoR2",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-pulmo-11",
         "clinic_name": "CarePoint Pulmonology",
@@ -9470,8 +9989,8 @@
         "initials": "SN",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.536Z",
-        "updated_at": "2026-09-30T15:38:16.536Z"
+        "created_at": "2026-10-05T11:48:31.867Z",
+        "updated_at": "2026-10-05T11:48:31.867Z"
       }
     ],
     [
@@ -9481,7 +10000,7 @@
         "name": "Meenakshi R",
         "email": "assistant12@demo.medlink.test",
         "phone": "+91 9000000032",
-        "password_hash": "$2a$10$ijl9FPk20looE97aqhQ/FOmTSkLiDVBz3Iu94eK5JUCPbyf.Vr0ue",
+        "password_hash": "$2a$10$rOk/yxBdFMhk2MWfjShzFe9qEncIeh3M8bJFjPwpOo.pAmMk214WC",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-renal-12",
         "clinic_name": "RenalCare Clinic",
@@ -9489,8 +10008,8 @@
         "initials": "MR",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.601Z",
-        "updated_at": "2026-09-30T15:38:16.601Z"
+        "created_at": "2026-10-05T11:48:31.922Z",
+        "updated_at": "2026-10-05T11:48:31.922Z"
       }
     ],
     [
@@ -9500,7 +10019,7 @@
         "name": "Anand K",
         "email": "assistant13@demo.medlink.test",
         "phone": "+91 9000000033",
-        "password_hash": "$2a$10$7/G6UleGNAzXIXDMIzU2qOPUYrqvHK6sQ9rfYj6CxvrfIPWHM3D2O",
+        "password_hash": "$2a$10$9F0XiUI8n/1YKPsxefmPf.5WcWLyO70TxPPeJmWpaSUAS244URRGi",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-digestive-13",
         "clinic_name": "Digestive Health Centre",
@@ -9508,8 +10027,8 @@
         "initials": "AK",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.667Z",
-        "updated_at": "2026-09-30T15:38:16.667Z"
+        "created_at": "2026-10-05T11:48:31.978Z",
+        "updated_at": "2026-10-05T11:48:31.978Z"
       }
     ],
     [
@@ -9519,7 +10038,7 @@
         "name": "Shalini G",
         "email": "assistant14@demo.medlink.test",
         "phone": "+91 9000000034",
-        "password_hash": "$2a$10$hV6vR0VF/3Tl3tre9V3fJOCLGFjIdUafTEEsK8BJ1IEs3sdjBHFSa",
+        "password_hash": "$2a$10$FknDUe6vf3y/nISnZ6w5YOOAggoJ5EfRhP25anknYUR6Z6Y/61NRm",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-endowell-14",
         "clinic_name": "EndoWell Clinic",
@@ -9527,8 +10046,8 @@
         "initials": "SG",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.733Z",
-        "updated_at": "2026-09-30T15:38:16.733Z"
+        "created_at": "2026-10-05T11:48:32.034Z",
+        "updated_at": "2026-10-05T11:48:32.034Z"
       }
     ],
     [
@@ -9538,7 +10057,7 @@
         "name": "Vignesh B",
         "email": "assistant15@demo.medlink.test",
         "phone": "+91 9000000035",
-        "password_hash": "$2a$10$ztX8w2vUAP70MdOL.db/sOK.Znoh1h2mtLGRzDyyzXinyCJM/qcPa",
+        "password_hash": "$2a$10$zsKMyRl.9vSqS/kF0Z9sM.ZD3NdlklGW/O6YhC.u/xEC6d8Faszyq",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-uro-15",
         "clinic_name": "UroCare Chennai",
@@ -9546,8 +10065,8 @@
         "initials": "VB",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.800Z",
-        "updated_at": "2026-09-30T15:38:16.800Z"
+        "created_at": "2026-10-05T11:48:32.089Z",
+        "updated_at": "2026-10-05T11:48:32.089Z"
       }
     ],
     [
@@ -9557,7 +10076,7 @@
         "name": "Reshma T",
         "email": "assistant16@demo.medlink.test",
         "phone": "+91 9000000036",
-        "password_hash": "$2a$10$d3YAymLGuCOnPacYEEp64.TQnqd.CXRWWt2O.lnI244mwMSx3VA8G",
+        "password_hash": "$2a$10$PC187dY6dIo5PqPBgZlTOuPgaQHP7A0XCqAMXDcY1IXMf1YA.DVaO",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-physio-16",
         "clinic_name": "PhysioMotion Rehabilitation",
@@ -9565,8 +10084,8 @@
         "initials": "RT",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.865Z",
-        "updated_at": "2026-09-30T15:38:16.865Z"
+        "created_at": "2026-10-05T11:48:32.143Z",
+        "updated_at": "2026-10-05T11:48:32.143Z"
       }
     ],
     [
@@ -9576,7 +10095,7 @@
         "name": "Arjun P",
         "email": "assistant17@demo.medlink.test",
         "phone": "+91 9000000037",
-        "password_hash": "$2a$10$lwTrYQ05weiwA3m9VAT/dOHzMMWMWiak9fbhEPVgiKXb5a/q93DaW",
+        "password_hash": "$2a$10$HEX1lBFtGt8jbRa3jH7HPevcPvK2OmJ23HGdsbqD87SZSFb6hCha2",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-mind-17",
         "clinic_name": "MindCare Psychiatry Centre",
@@ -9584,8 +10103,8 @@
         "initials": "AP",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.932Z",
-        "updated_at": "2026-09-30T15:38:16.932Z"
+        "created_at": "2026-10-05T11:48:32.198Z",
+        "updated_at": "2026-10-05T11:48:32.198Z"
       }
     ],
     [
@@ -9595,7 +10114,7 @@
         "name": "Pooja M",
         "email": "assistant18@demo.medlink.test",
         "phone": "+91 9000000038",
-        "password_hash": "$2a$10$LvnhZ6hsr9588C48VUICPeNImAs3Er61Mvxhg8RGSJvt.64pr/sNe",
+        "password_hash": "$2a$10$cmfRbepknZA9.zkAYpflGO1os3Wv/RLHJ63DgzXriK7mJCSfxMen2",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-besant-18",
         "clinic_name": "Besant Nagar Coastal Health Care",
@@ -9603,8 +10122,8 @@
         "initials": "PM",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:16.998Z",
-        "updated_at": "2026-09-30T15:38:16.998Z"
+        "created_at": "2026-10-05T11:48:32.253Z",
+        "updated_at": "2026-10-05T11:48:32.253Z"
       }
     ],
     [
@@ -9614,7 +10133,7 @@
         "name": "Manoj S",
         "email": "assistant19@demo.medlink.test",
         "phone": "+91 9000000039",
-        "password_hash": "$2a$10$A5L0DrdYIEpRW7pQjl1FxeRAFZ65psjyi3LOcWCixfGXoj4VXtECe",
+        "password_hash": "$2a$10$VgHTZYOhp7wlvUojr2ApruH0eCShS3vQG9NarOikzORZHSfR9SHre",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-avadi-18",
         "clinic_name": "Avadi Central Care Hospital",
@@ -9622,8 +10141,8 @@
         "initials": "MS",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:17.065Z",
-        "updated_at": "2026-09-30T15:38:17.065Z"
+        "created_at": "2026-10-05T11:48:32.309Z",
+        "updated_at": "2026-10-05T11:48:32.309Z"
       }
     ],
     [
@@ -9633,7 +10152,7 @@
         "name": "Kavitha R",
         "email": "assistant20@demo.medlink.test",
         "phone": "+91 9000000040",
-        "password_hash": "$2a$10$vPHNisHE5WxfUkT/uRhIXuRa8k9/44oBQdzuilhmBGt9EsraHe9Bm",
+        "password_hash": "$2a$10$CFN9Gk5FtuYUFEfcpfnH2uOPwXii8pV107VlCs1dYQb9WwDA4aiQW",
         "role": "CLINIC_ADMIN",
         "clinic_id": "c-demo-royapuram-20",
         "clinic_name": "Royapuram Community Health Clinic",
@@ -9641,9 +10160,30 @@
         "initials": "KR",
         "notifications_enabled": true,
         "theme_preference": "system",
-        "created_at": "2026-09-30T15:38:17.131Z",
-        "updated_at": "2026-09-30T15:38:17.131Z"
+        "created_at": "2026-10-05T11:48:32.364Z",
+        "updated_at": "2026-10-05T11:48:32.364Z"
+      }
+    ],
+    [
+      "asst-moon-villivakkam-2773",
+      {
+        "id": "asst-moon-villivakkam-2773",
+        "name": "Moon Dental Assistant",
+        "email": "assistant2773@demo.medlink.test",
+        "phone": "+91 9000002773",
+        "password_hash": "$2a$10$x8BCx5VAjeRL9YYB00m0wO9WEkPJJn/iJpZDqs6ync66FOU9owyQ2",
+        "clinic_id": "c-moon-dental-villivakkam-2773",
+        "clinic_name": "Moon Dental Clinic",
+        "location": "28/15, Sannathi Street, Villivakkam, Chennai",
+        "staff_id": "STAFF-MDC-2773",
+        "initials": "MD",
+        "role": "CLINIC_ADMIN",
+        "notifications_enabled": true,
+        "theme_preference": "system",
+        "created_at": "2026-10-05T11:48:34.995Z",
+        "updated_at": "2026-10-05T11:48:34.995Z"
       }
     ]
-  ]
+  ],
+  "load_balance_proposals": []
 }

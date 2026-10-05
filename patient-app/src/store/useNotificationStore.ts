@@ -9,6 +9,7 @@ interface NotificationStoreState {
   unreadCount: number;
   selectedCategory: NotificationCategory | 'All';
 
+  fetchNotifications: () => Promise<NotificationItem[]>;
   refreshNotifications: () => void;
   setSelectedCategory: (cat: NotificationCategory | 'All') => void;
   markAsRead: (id: string) => void;
@@ -23,6 +24,17 @@ export const useNotificationStore = create<NotificationStoreState>((set, get) =>
   announcements: announcementService.getAnnouncements(),
   unreadCount: notificationService.getUnreadCount(),
   selectedCategory: 'All',
+
+  fetchNotifications: async () => {
+    const items = await notificationService.fetchNotifications();
+    const { selectedCategory } = get();
+    set({
+      notifications: notificationService.getNotifications(selectedCategory),
+      unreadCount: notificationService.getUnreadCount(),
+      announcements: announcementService.getAnnouncements(),
+    });
+    return items;
+  },
 
   refreshNotifications: () => {
     const { selectedCategory } = get();

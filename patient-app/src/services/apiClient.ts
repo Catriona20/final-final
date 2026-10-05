@@ -6,7 +6,7 @@ const AUTH_STORAGE_KEY = '@patient_app_user_session';
 
 export const apiClient: AxiosInstance = axios.create({
   baseURL: API_URL,
-  timeout: 10000,
+  timeout: 25000,
   headers: {
     'Content-Type': 'application/json',
   },

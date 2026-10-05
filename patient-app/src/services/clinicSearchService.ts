@@ -8,6 +8,7 @@ import { MOCK_DOCTORS } from '../data/mockData';
 
 export interface SearchResult {
   clinics: Clinic[];
+  total: number;
   userCoords: LocationCoords;
   isOutOfBounds: boolean;
   error?: string;
@@ -32,12 +33,18 @@ export const clinicSearchService = {
     try {
       // 1. Query Backend Discovery API
       const params = new URLSearchParams();
-      if (query) params.append('query', query);
-      const targetDept = filters?.department || filters?.specialization || (query && query !== 'all' ? query : '');
-      if (targetDept) params.append('department', targetDept);
+      const cleanQ = (query || '').trim();
+      if (cleanQ && cleanQ !== 'all' && cleanQ !== 'all clinics' && cleanQ !== 'medical clinic') {
+        params.append('query', cleanQ);
+      }
+      const targetDept = filters?.department || filters?.specialization || '';
+      if (targetDept && targetDept !== 'all') {
+        params.append('department', targetDept);
+      }
       params.append('latitude', userCoords.latitude.toString());
       params.append('longitude', userCoords.longitude.toString());
-      params.append('radius', radiusKm.toString());
+      const effectiveRadius = filters?.distance || radiusKm || 20;
+      params.append('radius', effectiveRadius.toString());
       if (userPrefSpecialty) params.append('preference', userPrefSpecialty);
       if (filters?.openNow) params.append('openNow', 'true');
       if (filters?.minRating) params.append('minRating', filters.minRating.toString());
@@ -45,9 +52,13 @@ export const clinicSearchService = {
       const response = await apiClient.get(`/clinics/discovery?${params.toString()}`);
       if (response.data && (Array.isArray(response.data.clinics) || Array.isArray(response.data.results))) {
         const clinics: Clinic[] = response.data.clinics || response.data.results || [];
+        const total = typeof response.data.total === 'number'
+          ? response.data.total
+          : (typeof response.data.count === 'number' ? response.data.count : clinics.length);
         clinics.forEach((c) => discoveredClinicCache.set(c.id, c));
         return {
           clinics,
+          total,
           userCoords,
           isOutOfBounds,
         };
@@ -150,6 +161,7 @@ export const clinicSearchService = {
 
       return {
         clinics: rankedClinics,
+        total: rankedClinics.length,
         userCoords,
         isOutOfBounds: false,
       };
@@ -157,6 +169,7 @@ export const clinicSearchService = {
       console.error('Discover nearby fallback error:', fallbackErr);
       return {
         clinics: [],
+        total: 0,
         userCoords,
         isOutOfBounds: false,
         error: fallbackErr.message || 'Discovery error',

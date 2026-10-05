@@ -2,17 +2,19 @@ import { create } from 'zustand';
 import { AuthState, Patient } from '../types';
 import { authService, LoginParams, RegisterParams } from '../services/authService';
 import { patientService } from '../services/patientService';
+import { useNotificationStore } from './useNotificationStore';
 
 interface AuthStoreActions {
   initializeAuth: () => Promise<void>;
   login: (params: LoginParams) => Promise<void>;
-  register: (params: RegisterParams) => Promise<{ requiresOtp: boolean }>;
-  verifyOtp: (phoneOrEmail: string, code: string) => Promise<void>;
+  register: (params: RegisterParams) => Promise<any>;
+  verifyOtp: (phoneOrEmail: string, code: string, options?: { email?: string; phone?: string }) => Promise<void>;
   forgotPassword: (emailOrPhone: string) => Promise<void>;
   resetPassword: (token: string, pass: string) => Promise<void>;
   logout: () => Promise<void>;
   updateProfile: (updatedData: Partial<Patient>) => void;
   setHasCompletedOnboarding: (val: boolean) => Promise<void>;
+  clearPendingVerification: () => void;
   isSplashTriggered: boolean;
   clearSplashTrigger: () => void;
   clearError: () => void;
@@ -22,25 +24,29 @@ export const useAuthStore = create<AuthState & AuthStoreActions>((set, get) => (
   user: null,
   token: null,
   isAuthenticated: false,
-  isLoading: true,
+  isLoading: false,
+  isInitializing: true,
   isSplashTriggered: false,
   error: null,
   hasCompletedOnboarding: false,
+  pendingVerification: null,
 
   initializeAuth: async () => {
-    set({ isLoading: true, error: null });
+    set({ isInitializing: true, error: null });
     try {
       const hasOnboarded = await authService.hasCompletedOnboarding();
       const session = await authService.getCurrentSession();
 
-      if (session && session.token && session.user) {
+      if (session && session.token && session.user && (session.user as any).account_status !== 'PENDING') {
         set({
           user: session.user,
           token: session.token,
           isAuthenticated: true,
           hasCompletedOnboarding: true,
           isLoading: false,
+          isInitializing: false,
         });
+        useNotificationStore.getState().fetchNotifications().catch(() => {});
       } else {
         set({
           user: null,
@@ -48,6 +54,7 @@ export const useAuthStore = create<AuthState & AuthStoreActions>((set, get) => (
           isAuthenticated: false,
           hasCompletedOnboarding: hasOnboarded,
           isLoading: false,
+          isInitializing: false,
         });
       }
     } catch (err: any) {
@@ -56,6 +63,7 @@ export const useAuthStore = create<AuthState & AuthStoreActions>((set, get) => (
         token: null,
         isAuthenticated: false,
         isLoading: false,
+        isInitializing: false,
         error: err.message || 'Initialization error',
       });
     }
@@ -70,7 +78,9 @@ export const useAuthStore = create<AuthState & AuthStoreActions>((set, get) => (
         token: session.token,
         isAuthenticated: true,
         isLoading: false,
+        pendingVerification: null,
       });
+      useNotificationStore.getState().fetchNotifications().catch(() => {});
     } catch (err: any) {
       set({ isLoading: false, error: err.message || 'Failed to login' });
       throw err;
@@ -81,7 +91,17 @@ export const useAuthStore = create<AuthState & AuthStoreActions>((set, get) => (
     set({ isLoading: true, error: null });
     try {
       const res = await authService.register(params);
-      set({ isLoading: false });
+      set({
+        isLoading: false,
+        error: null,
+        pendingVerification: {
+          patientId: res.patientId,
+          phoneOrEmail: res.email || params.email.trim().toLowerCase(),
+          phone: res.phone || params.phone.trim(),
+          email: res.email || params.email.trim().toLowerCase(),
+          purpose: 'register',
+        },
+      });
       return res;
     } catch (err: any) {
       set({ isLoading: false, error: err.message || 'Failed to register' });
@@ -89,21 +109,26 @@ export const useAuthStore = create<AuthState & AuthStoreActions>((set, get) => (
     }
   },
 
-  verifyOtp: async (phoneOrEmail: string, code: string) => {
+  verifyOtp: async (phoneOrEmail: string, code: string, options?: { email?: string; phone?: string }) => {
     set({ isLoading: true, error: null });
     try {
-      const session = await authService.verifyOtp(phoneOrEmail, code);
+      const session = await authService.verifyOtp(phoneOrEmail, code, options);
       set({
         user: session.user,
         token: session.token,
         isAuthenticated: true,
         isLoading: false,
+        pendingVerification: null,
+        error: null,
       });
+      useNotificationStore.getState().fetchNotifications().catch(() => {});
     } catch (err: any) {
       set({ isLoading: false, error: err.message || 'Invalid OTP code' });
       throw err;
     }
   },
+
+  clearPendingVerification: () => set({ pendingVerification: null }),
 
   forgotPassword: async (emailOrPhone: string) => {
     set({ isLoading: true, error: null });
@@ -138,6 +163,7 @@ export const useAuthStore = create<AuthState & AuthStoreActions>((set, get) => (
       error: null,
       isSplashTriggered: true,
     });
+    useNotificationStore.getState().clearAll();
   },
 
   clearSplashTrigger: () => set({ isSplashTriggered: false }),

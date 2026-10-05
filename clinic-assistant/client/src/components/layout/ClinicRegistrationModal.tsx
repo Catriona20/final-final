@@ -39,6 +39,7 @@ const DEMO_ASSISTANTS = [
   { name: 'Pooja M', email: 'assistant18@demo.medlink.test', otp: '300018', clinicId: 'c-demo-besant-18', clinicName: 'Besant Nagar Coastal Health Care (Besant Nagar)', staffId: 'STAFF-BNC-18', initials: 'PM' },
   { name: 'Manoj S', email: 'assistant19@demo.medlink.test', otp: '300019', clinicId: 'c-demo-avadi-18', clinicName: 'Avadi Central Care Hospital (Avadi)', staffId: 'STAFF-ACC-19', initials: 'MS' },
   { name: 'Kavitha R', email: 'assistant20@demo.medlink.test', otp: '300020', clinicId: 'c-demo-royapuram-20', clinicName: 'Royapuram Community Health Clinic (Royapuram)', staffId: 'STAFF-RCH-20', initials: 'KR' },
+  { name: 'Moon Dental Assistant', email: 'assistant2773@demo.medlink.test', otp: '302773', clinicId: 'c-moon-dental-villivakkam-2773', clinicName: 'Moon Dental Clinic (Villivakkam - 2773)', staffId: 'STAFF-MDC-2773', initials: 'MD' },
 ];
 
 export const ClinicRegistrationModal: React.FC<ClinicRegistrationModalProps> = ({

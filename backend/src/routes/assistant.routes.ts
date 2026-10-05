@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { ClinicModel, DoctorModel, AppointmentModel, AnnouncementModel, MedicalFileModel, PrescriptionModel } from '../database/models';
 import { googleMapsBackendService, HEALTHCARE_TERM_MAP } from '../services/googleMapsBackendService';
 import { recommendationEngine } from '../services/recommendationEngine';
+import { aiService } from '../services/aiService';
 
 export const assistantRouter = Router();
 
@@ -273,3 +274,40 @@ assistantRouter.post('/query', async (req: Request, res: Response): Promise<void
     res.status(500).json({ success: false, error: 'Failed to process healthcare assistant query.' });
   }
 });
+
+// POST /api/assistant/chat
+assistantRouter.post('/chat', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { message, query, conversationHistory, context } = req.body;
+    const userMessage = (message || query || '').toString().trim();
+
+    if (!userMessage) {
+      res.status(400).json({ success: false, error: 'Message payload is required for chat.' });
+      return;
+    }
+
+    const result = await aiService.chat({
+      message: userMessage,
+      conversationHistory: Array.isArray(conversationHistory) ? conversationHistory : [],
+      context: context || {},
+    });
+
+    res.status(200).json({
+      success: !result.error,
+      reply: result.reply,
+      provider: result.providerUsed,
+      intent: result.intent,
+      actionLink: result.actionLink,
+      quickReplies: result.quickReplies,
+      error: result.error,
+    });
+  } catch (err: any) {
+    console.error('Assistant chat endpoint error:', err);
+    res.status(500).json({
+      success: false,
+      reply: "I'm having trouble connecting right now. Please try again.",
+      error: 'Failed to process assistant chat.',
+    });
+  }
+});
+

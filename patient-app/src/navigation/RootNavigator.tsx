@@ -62,7 +62,7 @@ export const RootNavigator: React.FC = () => {
   const [minSplashDone, setMinSplashDone] = useState(false);
   const {
     isAuthenticated,
-    isLoading,
+    isInitializing,
     user,
     initializeAuth,
     isSplashTriggered,
@@ -80,15 +80,17 @@ export const RootNavigator: React.FC = () => {
     }
   }, [isSplashTriggered]);
 
+  const isFullyAuthenticated = isAuthenticated && user && (user as any).account_status !== 'PENDING';
+
   useEffect(() => {
-    if (isAuthenticated && user?.id) {
+    if (isFullyAuthenticated && user?.id) {
       initializeStore();
-    } else if (!isAuthenticated) {
+    } else if (!isFullyAuthenticated) {
       resetStore();
     }
-  }, [isAuthenticated, user?.id]);
+  }, [isFullyAuthenticated, user?.id]);
 
-  const showSplashScreen = !minSplashDone || isSplashTriggered || isLoading;
+  const showSplashScreen = !minSplashDone || isSplashTriggered || isInitializing;
 
   if (showSplashScreen) {
     return (
@@ -104,7 +106,7 @@ export const RootNavigator: React.FC = () => {
 
   return (
     <NavigationContainer>
-      {isAuthenticated ? <AppStack /> : <AuthNavigator />}
+      {isFullyAuthenticated ? <AppStack /> : <AuthNavigator />}
     </NavigationContainer>
   );
 };

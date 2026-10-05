@@ -52,7 +52,7 @@ type SortMode = 'best' | 'fastest' | 'nearest';
 
 const DEFAULT_FILTERS: FilterOptions = {
   specialization: null,
-  distance: 10,
+  distance: 20,
   availability: 'all',
   maxWait: 60,
   minRating: 0,
@@ -67,7 +67,7 @@ export const SearchScreen: React.FC = () => {
 
   const { isDark } = useThemeStore();
   const theme = getThemeColors(isDark);
-  const { activeLocation } = useAppStore();
+  const { activeLocation, requestCurrentGpsLocation } = useAppStore();
 
   const [query, setQuery] = useState(initialQuery);
   const [filters, setFilters] = useState<FilterOptions>({
@@ -78,6 +78,7 @@ export const SearchScreen: React.FC = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>('list');
   const [results, setResults] = useState<Clinic[]>([]);
+  const [totalClinics, setTotalClinics] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
 
   // Modals
@@ -172,7 +173,7 @@ export const SearchScreen: React.FC = () => {
     setIsLoading(true);
     setSelectedMapClinic(null);
 
-    const searchTarget = query.trim() || filters.specialization || 'medical clinic';
+    const searchTarget = query.trim() || filters.specialization || '';
 
     const result = await clinicSearchService.discoverNearby(
       searchTarget,
@@ -215,8 +216,16 @@ export const SearchScreen: React.FC = () => {
     filtered = [...demoClinics, ...externalClinics];
 
     setResults(filtered);
+    setTotalClinics(result.total ?? filtered.length);
     setIsLoading(false);
   };
+
+  useEffect(() => {
+    // If activeLocation was acquired via GPS and is older than 45s, refresh seamlessly
+    if (activeLocation.type === 'gps' && Date.now() - (activeLocation.timestamp || 0) > 45000) {
+      requestCurrentGpsLocation().catch(() => {});
+    }
+  }, []);
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
@@ -474,6 +483,14 @@ export const SearchScreen: React.FC = () => {
       {/* VIEW BODY: LIST OR MAP */}
       {viewMode === 'map' ? (
         <View style={styles.mapContainer}>
+          <View style={[styles.mapCountBadge, { backgroundColor: isDark ? 'rgba(6,21,47,0.92)' : 'rgba(255,255,255,0.95)', borderColor: theme.cardBorder }]}>
+            <MapPin size={12} color={theme.primary} />
+            <Text style={[styles.mapCountBadgeText, { color: theme.textPrimary }]}>
+              <Text style={{ fontWeight: '800', color: theme.primary }}>{totalClinics}</Text>{' '}
+              {filters.specialization ? `${filters.specialization} ` : ''}clinics near {activeLocation.name}
+            </Text>
+          </View>
+
           <InteractiveMap
             clinics={results}
             selectedClinicId={activeMapClinic?.id ?? null}
@@ -685,8 +702,10 @@ export const SearchScreen: React.FC = () => {
             </View>
           ) : (
             <View style={styles.resultsList}>
-              <Text style={[styles.resultsCountText, { color: theme.textMuted }]}>
-                Showing {results.length} {filters.specialization ? `${filters.specialization} ` : ''}center{results.length === 1 ? '' : 's'} near {activeLocation.name}
+              <Text style={[styles.resultsCountText, { color: theme.textSecondary }]}>
+                <Text style={{ fontWeight: '800', color: theme.textPrimary }}>{totalClinics}</Text>{' '}
+                {filters.specialization ? `${filters.specialization} ` : ''}clinic{totalClinics === 1 ? '' : 's'} found near {activeLocation.name}
+                {results.length < totalClinics ? ` (showing ${results.length})` : ''}
               </Text>
 
               {(() => {
@@ -892,6 +911,28 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
     overflow: 'hidden',
+  },
+  mapCountBadge: {
+    position: 'absolute',
+    top: 12,
+    left: 12,
+    zIndex: 1000,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderRadius: RADIUS.full,
+    borderWidth: 1,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+  },
+  mapCountBadgeText: {
+    fontSize: 11,
+    fontWeight: '600',
   },
   mapCardFloatingContainer: {
     position: 'absolute',

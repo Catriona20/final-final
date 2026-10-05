@@ -19,6 +19,7 @@ import {
   resolveCanonicalDoctorId,
   AvailabilityRequestModel,
 } from '../database/models';
+import { authNotificationService } from '../services/authNotificationService';
 import { memoryDb } from '../database/db';
 import { authenticateDoctorJwt, AuthenticatedDoctorRequest } from '../middleware/authMiddleware';
 import { queueManager } from '../services/queueManager';
@@ -518,6 +519,31 @@ const handleDoctorVerification = async (req: Request, res: Response): Promise<vo
 
     const { password_hash, ...safeDoctor } = updated;
 
+    // Trigger auth-only email and SMS notifications (independent, non-blocking)
+    if (status === 'VERIFIED' || status === 'ACTIVE') {
+      if (updated.email) {
+        authNotificationService.sendDoctorApprovalEmail(updated.email, updated.name).catch((err) =>
+          console.warn('Doctor approval email error:', err.message)
+        );
+      }
+      if (updated.phone) {
+        authNotificationService.sendDoctorApprovalSms(updated.phone, updated.name).catch((err) =>
+          console.warn('Doctor approval SMS error:', err.message)
+        );
+      }
+    } else if (status === 'REJECTED') {
+      if (updated.email) {
+        authNotificationService.sendDoctorRejectionEmail(updated.email, updated.name, rejectionReason).catch((err) =>
+          console.warn('Doctor rejection email error:', err.message)
+        );
+      }
+      if (updated.phone) {
+        authNotificationService.sendDoctorRejectionSms(updated.phone, updated.name, rejectionReason).catch((err) =>
+          console.warn('Doctor rejection SMS error:', err.message)
+        );
+      }
+    }
+
     // Real-time broadcast
     emitBroadcast('doctor:verified', safeDoctor);
     emitBroadcast('doctor:availability_changed', safeDoctor);
@@ -734,7 +760,7 @@ doctorRouter.get('/auth/clinics', authenticateDoctorJwt, async (req: Authenticat
       const canonicalClinicId = resolveCanonicalClinicId(c.id);
       const isPrimary =
         canonicalClinicId === resolveCanonicalClinicId(doctor.clinic_id) ||
-        c.name.toLowerCase() === (doctor.clinic_name || '').toLowerCase();
+        (!doctor.clinic_id && c.name.toLowerCase() === (doctor.clinic_name || '').toLowerCase());
 
       const isAssigned =
         isPrimary ||
@@ -742,7 +768,6 @@ doctorRouter.get('/auth/clinics', authenticateDoctorJwt, async (req: Authenticat
         (doctor.clinic_affiliations &&
           doctor.clinic_affiliations.some(
             (aff: string) =>
-              aff.toLowerCase() === c.name.toLowerCase() ||
               resolveCanonicalClinicId(aff) === canonicalClinicId
           ));
 

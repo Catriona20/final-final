@@ -1,6 +1,9 @@
 import { Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LocationCoords, ActiveLocation, SavedLocation } from '../types';
 import { apiClient } from './apiClient';
+
+export const LOCATION_STORAGE_KEY = '@patient_app_active_location';
 
 export const CHENNAI_NEIGHBORHOOD_CELLS = [
   { name: 'Mylapore', lat: 13.0338, lng: 80.2677 },
@@ -33,7 +36,7 @@ export const CHENNAI_NEIGHBORHOOD_CELLS = [
   { name: 'Ramapuram', lat: 13.0315, lng: 80.1790 },
   { name: 'Manapakkam', lat: 13.0205, lng: 80.1635 },
   { name: 'Nandambakkam', lat: 13.0118, lng: 80.1680 },
-  { name: 'Mugalivakkam', lat: 13.0180, lng: 80.1480 },
+  { name: 'Mugalivakkam', lat: 13.0195, lng: 80.1620 },
   { name: 'Velachery', lat: 12.9815, lng: 80.2180 },
   { name: 'Madipakkam', lat: 12.9647, lng: 80.1961 },
   { name: 'Medavakkam', lat: 12.9185, lng: 80.1912 },
@@ -140,6 +143,15 @@ export const PRESET_LOCATIONS: ActiveLocation[] = [
     type: 'preset',
     label: 'Other',
   },
+  {
+    id: 'loc-mugalivakkam',
+    name: 'Mugalivakkam',
+    locality: 'Mugalivakkam, Chennai',
+    latitude: 13.0195,
+    longitude: 80.1620,
+    type: 'preset',
+    label: 'Other',
+  },
 ];
 
 export const DEFAULT_SAVED_LOCATIONS: SavedLocation[] = [
@@ -191,12 +203,51 @@ export const locationService = {
   },
 
   /**
+   * Persists active location to AsyncStorage so it survives refreshes.
+   */
+  async persistLocation(location: ActiveLocation): Promise<void> {
+    try {
+      if (location && typeof location.latitude === 'number' && typeof location.longitude === 'number') {
+        await AsyncStorage.setItem(LOCATION_STORAGE_KEY, JSON.stringify(location));
+      }
+    } catch (e) {
+      console.warn('Failed to persist active location:', e);
+    }
+  },
+
+  /**
+   * Retrieves last successfully persisted location on app boot/refresh.
+   */
+  async getPersistedLocation(): Promise<ActiveLocation | null> {
+    try {
+      const data = await AsyncStorage.getItem(LOCATION_STORAGE_KEY);
+      if (!data) return null;
+      const parsed = JSON.parse(data);
+      if (
+        parsed &&
+        typeof parsed.latitude === 'number' &&
+        isFinite(parsed.latitude) &&
+        typeof parsed.longitude === 'number' &&
+        isFinite(parsed.longitude) &&
+        parsed.name
+      ) {
+        return parsed as ActiveLocation;
+      }
+    } catch (e) {
+      console.warn('Failed to parse persisted location:', e);
+    }
+    return null;
+  },
+
+  /**
    * Retrieves user's live device GPS coordinates using browser Geolocation API.
+   * Throws explicit errors on permission denial, timeout, or unavailable position.
+   * Never silently swallows errors with hardcoded fallback coordinates.
    */
   async getCurrentLocation(): Promise<LocationCoords & { accuracy?: number; timestamp: number }> {
-    const timestamp = Date.now();
     if (Platform.OS === 'web' && typeof window !== 'undefined' && navigator.geolocation) {
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
+        // Attempt high-accuracy positioning first with sensible timeout
         navigator.geolocation.getCurrentPosition(
           (position) => {
             resolve({
@@ -206,25 +257,47 @@ export const locationService = {
               timestamp: position.timestamp || Date.now(),
             });
           },
-          (error) => {
-            console.warn('Geolocation notice:', error.message);
-            resolve({
-              latitude: 13.0368,
-              longitude: 80.2676,
-              accuracy: 25,
-              timestamp: Date.now(),
-            });
+          (highAccError) => {
+            // If high accuracy times out or position unavailable, fall back to standard accuracy
+            if (highAccError.code === 3 || highAccError.code === 2) {
+              navigator.geolocation.getCurrentPosition(
+                (fallbackPos) => {
+                  resolve({
+                    latitude: fallbackPos.coords.latitude,
+                    longitude: fallbackPos.coords.longitude,
+                    accuracy: fallbackPos.coords.accuracy,
+                    timestamp: fallbackPos.timestamp || Date.now(),
+                  });
+                },
+                (finalError) => {
+                  reject(new Error(this.formatGeolocationError(finalError)));
+                },
+                { enableHighAccuracy: false, timeout: 8000, maximumAge: 10000 }
+              );
+            } else {
+              // Permission denied (code 1) or other terminal error
+              reject(new Error(this.formatGeolocationError(highAccError)));
+            }
           },
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 5000 }
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 5000 }
         );
       });
     }
-    return {
-      latitude: 13.0368,
-      longitude: 80.2676,
-      accuracy: 25,
-      timestamp,
-    };
+    throw new Error('Geolocation is not supported by your browser or device environment.');
+  },
+
+  formatGeolocationError(error: GeolocationPositionError | any): string {
+    if (!error) return 'Unable to retrieve live device GPS coordinates.';
+    switch (error.code) {
+      case 1: // PERMISSION_DENIED
+        return 'Location access was denied. Please allow location permissions in your browser settings to use live GPS.';
+      case 2: // POSITION_UNAVAILABLE
+        return 'GPS position unavailable. Please check your device location settings or select a location manually.';
+      case 3: // TIMEOUT
+        return 'Location request timed out. Please check your connection/GPS and try again.';
+      default:
+        return error.message || 'Unable to retrieve live device GPS location.';
+    }
   },
 
   /**
@@ -284,8 +357,8 @@ export const locationService = {
   },
 
   /**
-   * Performs reverse geocoding via server endpoints or comprehensive neighborhood grid.
-   * Guarantees returning a human-readable locality (never raw coordinate digits).
+   * Performs reverse geocoding via server endpoints, Nominatim direct fallback, or neighborhood grid.
+   * Guarantees returning a human-readable locality and never corrupting coordinates.
    */
   async reverseGeocode(coords: LocationCoords): Promise<{ name: string; locality: string }> {
     const { latitude, longitude } = coords;
@@ -295,10 +368,12 @@ export const locationService = {
       const res = await apiClient.get('/location/reverse-geocode', {
         params: { lat: latitude, lng: longitude },
       });
-      if (res.data?.success && res.data.name) {
+      if (res.data?.success && res.data.name && res.data.name !== 'Unknown') {
+        let cleanName = res.data.name;
+        cleanName = cleanName.replace(/^(ward|zone)\s*\d+\s*[-–:,]?\s*/i, '').trim() || res.data.name;
         return {
-          name: res.data.name,
-          locality: res.data.locality || `${res.data.name}, Chennai`,
+          name: cleanName,
+          locality: res.data.locality || `${cleanName}, Chennai`,
         };
       }
     } catch (err) {
@@ -307,18 +382,56 @@ export const locationService = {
         const res2 = await apiClient.get('/clinics/reverse-geocode', {
           params: { latitude, longitude },
         });
-        if (res2.data?.success && res2.data.name) {
+        if (res2.data?.success && res2.data.name && res2.data.name !== 'Unknown') {
           return {
             name: res2.data.name,
             locality: res2.data.locality || `${res2.data.name}, Chennai`,
           };
         }
       } catch (e2) {
-        // Fall through to local neighborhood calculation
+        // Fall through to client direct lookup
       }
     }
 
-    // 2. High-precision nearest Chennai neighborhood centroid calculation
+    // 2. Direct browser OSM Nominatim lookup if backend is unreachable
+    try {
+      const cleanLocality = (str?: string): string | null => {
+        if (!str) return null;
+        let s = str.trim();
+        // Remove "Zone 11 " or "Ward 150 " prefixes while preserving the actual neighborhood/suburb name
+        s = s.replace(/^(ward|zone)\s*\d+\s*[-–:,]?\s*/i, '').trim();
+        if (!s || /^(ward|zone)\s*\d+$/i.test(s)) return null;
+        return s;
+      };
+
+      const nomRes = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=17&addressdetails=1`,
+        { headers: { Accept: 'application/json' } }
+      );
+      if (nomRes.ok) {
+        const data = await nomRes.json();
+        const addr = data.address || {};
+        const locality =
+          cleanLocality(addr.neighbourhood) ||
+          cleanLocality(addr.suburb) ||
+          cleanLocality(addr.residential) ||
+          cleanLocality(addr.town) ||
+          cleanLocality(addr.village) ||
+          cleanLocality(addr.city_district) ||
+          cleanLocality(addr.city);
+
+        if (locality) {
+          return {
+            name: locality,
+            locality: `${locality}, Chennai`,
+          };
+        }
+      }
+    } catch (e3) {
+      // Fall through to local neighborhood calculation
+    }
+
+    // 3. High-precision nearest Chennai neighborhood centroid calculation
     let closestNeighborhood = CHENNAI_NEIGHBORHOOD_CELLS[0];
     let minDistance = Infinity;
 
@@ -332,9 +445,16 @@ export const locationService = {
       }
     }
 
+    if (minDistance <= 15.0) {
+      return {
+        name: closestNeighborhood.name,
+        locality: `${closestNeighborhood.name}, Chennai`,
+      };
+    }
+
     return {
-      name: closestNeighborhood.name,
-      locality: `${closestNeighborhood.name}, Chennai`,
+      name: 'Current Location',
+      locality: 'Current Location',
     };
   },
 

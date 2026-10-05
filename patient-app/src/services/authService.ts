@@ -26,6 +26,22 @@ export interface AuthResponse {
   token: string;
 }
 
+export interface RegisterResult {
+  message: string;
+  requiresOtp: boolean;
+  patientId?: string;
+  email?: string;
+  phone?: string;
+  accountStatus?: string;
+}
+
+export interface VerifyOtpParams {
+  phoneOrEmail: string;
+  code: string;
+  email?: string;
+  phone?: string;
+}
+
 export const authService = {
   async login({ email, password }: LoginParams): Promise<AuthResponse> {
     if (!email || !password) {
@@ -51,7 +67,7 @@ export const authService = {
     }
   },
 
-  async register(params: RegisterParams): Promise<{ message: string; requiresOtp: boolean }> {
+  async register(params: RegisterParams): Promise<RegisterResult> {
     if (!params.name || !params.email || !params.phone || !params.password) {
       throw new Error('Please fill in all required registration fields.');
     }
@@ -68,8 +84,12 @@ export const authService = {
       });
 
       return {
-        message: response.data.message || 'OTP sent to your phone/email',
+        message: response.data.message || 'Verification code sent to your phone/email',
         requiresOtp: true,
+        patientId: response.data.patientId,
+        email: response.data.email || params.email.trim().toLowerCase(),
+        phone: response.data.phone || params.phone.trim(),
+        accountStatus: response.data.accountStatus || 'PENDING',
       };
     } catch (err: any) {
       console.error('Auth register error:', err.message);
@@ -77,15 +97,17 @@ export const authService = {
     }
   },
 
-  async verifyOtp(phoneOrEmail: string, code: string): Promise<AuthResponse> {
+  async verifyOtp(phoneOrEmail: string, code: string, options?: { email?: string; phone?: string }): Promise<AuthResponse> {
     if (!code || code.length < 4) {
-      throw new Error('Please enter a valid 4-digit OTP code.');
+      throw new Error('Please enter a valid verification code.');
     }
 
     try {
       const response = await apiClient.post('/auth/verify-otp', {
         phoneOrEmail: phoneOrEmail.trim(),
         code: code.trim(),
+        email: options?.email || (phoneOrEmail.includes('@') ? phoneOrEmail.trim() : undefined),
+        phone: options?.phone || (!phoneOrEmail.includes('@') ? phoneOrEmail.trim() : undefined),
       });
 
       const { user, token } = response.data;

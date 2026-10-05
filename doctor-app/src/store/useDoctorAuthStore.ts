@@ -4,7 +4,6 @@ import { Doctor, DoctorAvailabilityStatus, DoctorVerificationDocument } from '..
 import { authApi, DoctorLoginPayload, DoctorRegisterPayload } from '../api/authApi';
 import { doctorApi } from '../api/doctorApi';
 import { DOCTOR_AUTH_STORAGE_KEY } from '../api/apiClient';
-import { useDoctorAppStore } from './useDoctorAppStore';
 
 interface DoctorAuthState {
   doctor: Doctor | null;
@@ -205,7 +204,12 @@ export const useDoctorAuthStore = create<DoctorAuthState>((set, get) => ({
         error: null,
         riskEvaluation: null,
       });
-      useDoctorAppStore.getState().clearActiveClinic();
+      try {
+        const { useDoctorAppStore } = await import('./useDoctorAppStore');
+        useDoctorAppStore.getState().clearActiveClinic();
+      } catch {
+        // dynamic import cleanup fallback
+      }
     } catch (e: any) {
       console.warn('Logout notice:', e.message);
     }

@@ -2,8 +2,12 @@ import { Router, Request, Response } from 'express';
 import { queueManager } from '../services/queueManager';
 import { AppointmentModel, WalkInModel, DoctorModel } from '../database/models';
 import { emitBroadcast } from '../services/socketService';
+import { loadBalancerRouter } from './loadBalancer.routes';
 
 export const queueRouter = Router();
+
+// Mount Load Balancer Subroutes
+queueRouter.use('/load-balance', loadBalancerRouter);
 
 // GET /api/queue
 queueRouter.get('/', (req: Request, res: Response): void => {

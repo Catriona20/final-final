@@ -51,9 +51,19 @@ export const mapService = {
    * Uses standard keyless OpenStreetMap tiles with zero watermark or API key requirement.
    */
   getTileConfig(isDark: boolean): MapStyleConfig {
+    const geoapifyKey = process.env.EXPO_PUBLIC_GEOAPIFY_API_KEY;
+    if (geoapifyKey) {
+      return {
+        tileUrl: `https://maps.geoapify.com/v1/tile/${isDark ? 'dark-matter-purple-roads' : 'osm-bright'}/{z}/{x}/{y}.png?apiKey=${geoapifyKey}`,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://www.geoapify.com/">Geoapify</a>',
+        maxZoom: 20,
+        minZoom: 9,
+        backgroundColor: isDark ? '#06152F' : '#F8FAFC',
+      };
+    }
+
     if (isDark) {
       return {
-        // OpenStreetMap standard keyless tiles (styled with dark theme CSS filter in InteractiveMap)
         tileUrl: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
         maxZoom: 19,
@@ -62,7 +72,6 @@ export const mapService = {
       };
     }
 
-    // OpenStreetMap standard clean keyless tiles
     return {
       tileUrl: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',

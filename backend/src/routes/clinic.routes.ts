@@ -3,6 +3,8 @@ import { ClinicModel, DepartmentModel, DoctorModel } from '../database/models';
 import { mapRoutingBackendService, googleMapsBackendService, CHENNAI_GEOGRAPHIC_CELLS } from '../services/mapRoutingBackendService';
 import { chennaiClinicDiscoveryService } from '../services/chennaiClinicDiscoveryService';
 import { recommendationEngine } from '../services/recommendationEngine';
+import { authNotificationService } from '../services/authNotificationService';
+import { authOtpService } from '../services/authOtpService';
 
 export const clinicRouter = Router();
 
@@ -130,6 +132,7 @@ clinicRouter.get('/discovery', async (req: Request, res: Response): Promise<void
     res.status(200).json({
       success: true,
       count: enrichedClinics.length,
+      total: enrichedClinics.length,
       source: discovery.source,
       totalPlatform: discovery.totalPlatform,
       totalExternal: discovery.totalExternal,
@@ -186,12 +189,115 @@ clinicRouter.get('/:id', async (req: Request, res: Response): Promise<void> => {
 // GET /api/clinics/:id/doctors
 clinicRouter.get('/:id/doctors', async (req: Request, res: Response): Promise<void> => {
   try {
+    const clinic = await ClinicModel.getById(req.params.id);
+    if (clinic && (clinic.status === 'PENDING_REVIEW' || clinic.status === 'REJECTED')) {
+      res.status(403).json({
+        success: false,
+        error: `Access forbidden: Clinic ${clinic.name} is ${clinic.status}. Operational clinic access is denied until approved by administrator.`,
+        code: 'CLINIC_NOT_ACTIVE',
+        status: clinic.status,
+      });
+      return;
+    }
     const doctors = await DoctorModel.getByClinic(req.params.id);
     res.status(200).json({ success: true, doctors });
   } catch (err: any) {
     res.status(500).json({ success: false, error: 'Failed to fetch clinic doctors.' });
   }
 });
+
+// GET /api/clinics/:id/operational (Operational check)
+clinicRouter.get('/:id/operational', async (req: Request, res: Response): Promise<void> => {
+  try {
+    const clinic = await ClinicModel.getById(req.params.id);
+    if (!clinic) {
+      res.status(404).json({ success: false, error: 'Clinic not found.' });
+      return;
+    }
+    if (clinic.status === 'PENDING_REVIEW' || clinic.status === 'REJECTED') {
+      res.status(403).json({
+        success: false,
+        error: `Access forbidden: Clinic ${clinic.name} is ${clinic.status}. Operational clinic access is denied until approved by administrator.`,
+        code: 'CLINIC_NOT_ACTIVE',
+        status: clinic.status,
+      });
+      return;
+    }
+    res.status(200).json({ success: true, operational: true, clinic });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: 'Failed to verify operational clinic status.' });
+  }
+});
+
+// GET /api/clinics/verification/pending (Admin: Fetch pending clinics)
+clinicRouter.get('/verification/pending', async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const pendingClinics = await ClinicModel.getPendingVerifications();
+    res.status(200).json({
+      success: true,
+      count: pendingClinics.length,
+      clinics: pendingClinics,
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: 'Failed to fetch pending clinics.' });
+  }
+});
+
+// POST & PUT /api/clinics/:id/verify (Admin: Approve or Reject clinic)
+const handleClinicVerification = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { status = 'ACTIVE', rejectionReason } = req.body || {};
+    const clinic = await ClinicModel.getById(req.params.id);
+
+    if (!clinic) {
+      res.status(404).json({ success: false, error: 'Clinic not found.' });
+      return;
+    }
+
+    const updated = await ClinicModel.updateVerificationStatus(req.params.id, status, rejectionReason);
+    if (!updated) {
+      res.status(404).json({ success: false, error: 'Clinic not found.' });
+      return;
+    }
+
+    // Trigger auth-only email and SMS notifications (independent, non-blocking)
+    if (status === 'ACTIVE') {
+      if (updated.email) {
+        authNotificationService.sendClinicApprovalEmail(updated.email, updated.name).catch((err) =>
+          console.warn('Clinic approval email error:', err.message)
+        );
+      }
+      if (updated.phone) {
+        authNotificationService.sendClinicApprovalSms(updated.phone, updated.name).catch((err) =>
+          console.warn('Clinic approval SMS error:', err.message)
+        );
+      }
+    } else if (status === 'REJECTED') {
+      if (updated.email) {
+        authNotificationService.sendClinicRejectionEmail(updated.email, updated.name, rejectionReason).catch((err) =>
+          console.warn('Clinic rejection email error:', err.message)
+        );
+      }
+      if (updated.phone) {
+        authNotificationService.sendClinicRejectionSms(updated.phone, updated.name, rejectionReason).catch((err) =>
+          console.warn('Clinic rejection SMS error:', err.message)
+        );
+      }
+    }
+
+    emitBroadcast('clinic:verified', updated);
+
+    res.status(200).json({
+      success: true,
+      clinic: updated,
+      message: `Clinic ${updated.name} verification status set to ${status}.`,
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: 'Failed to update clinic verification.' });
+  }
+};
+clinicRouter.post('/:id/verify', handleClinicVerification);
+clinicRouter.put('/:id/verify', handleClinicVerification);
 
 import { emitBroadcast } from '../services/socketService';
 
@@ -203,7 +309,7 @@ const registerClinicHandler = async (req: Request, res: Response): Promise<void>
       address,
       latitude,
       longitude,
-      phone = '+91 44 2811 0000',
+      phone,
       email,
       category = 'Dental Care',
       departments = ['Dentistry'],
@@ -211,8 +317,25 @@ const registerClinicHandler = async (req: Request, res: Response): Promise<void>
       consultationFee = '₹400',
     } = req.body;
 
-    if (!name || !name.trim() || !address || !address.trim()) {
-      res.status(400).json({ success: false, error: 'Clinic name and address are required.' });
+    if (!name || !name.trim() || !address || !address.trim() || !email || !phone) {
+      res.status(400).json({ success: false, error: 'Clinic name, address, email, and phone number are required.' });
+      return;
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    const cleanPhone = phone.trim();
+
+    // Prevent duplicate email
+    const existingEmail = await ClinicModel.findByEmail(cleanEmail);
+    if (existingEmail) {
+      res.status(409).json({ success: false, error: 'A clinic with this email address already exists.' });
+      return;
+    }
+
+    // Prevent duplicate phone
+    const existingPhone = await ClinicModel.findByPhone(cleanPhone);
+    if (existingPhone) {
+      res.status(409).json({ success: false, error: 'A clinic with this phone number already exists.' });
       return;
     }
 
@@ -248,28 +371,50 @@ const registerClinicHandler = async (req: Request, res: Response): Promise<void>
       latitude: lat,
       longitude: lng,
       rating: 4.85,
-      reviews_count: 15,
+      reviews_count: 0,
       image: 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&q=80&w=600',
       category: category || 'Dentistry',
       doctors_count: 0,
       open_hours: openHours,
-      phone,
-      is_open: true,
-      is_popular: true,
+      phone: cleanPhone,
+      email: cleanEmail,
+      is_open: false,
+      is_popular: false,
       is_nearby: true,
       wait_time: '10 min',
       consultation_fee: consultationFee,
       departments: Array.isArray(departments) ? departments : [departments],
+      status: 'PENDING_REVIEW',
+      verification_status: 'PENDING_REVIEW',
+      email_verified: false,
+      phone_verified: false,
       created_at: new Date().toISOString(),
     });
+
+    // Generate Clinic Email & SMS OTPs
+    const emailOtpRes = await authOtpService.generateOtp('clinic_email', cleanEmail);
+    const phoneOtpRes = await authOtpService.generateOtp('clinic_sms', cleanPhone);
+
+    if (emailOtpRes.otp) {
+      await authNotificationService.sendClinicEmailOtp(cleanEmail, emailOtpRes.otp);
+    }
+    if (phoneOtpRes.otp) {
+      await authNotificationService.sendClinicSmsOtp(cleanPhone, phoneOtpRes.otp);
+    }
 
     // Broadcast real-time clinic creation event
     emitBroadcast('clinic:created', newClinic);
 
+    const isDev = process.env.NODE_ENV !== 'production';
     res.status(201).json({
       success: true,
-      message: 'Clinic registered successfully.',
+      message: 'Clinic registered successfully. Please verify your email and phone to submit for administrative approval.',
       clinic: newClinic,
+      clinicId: newClinic.id,
+      status: 'PENDING_REVIEW',
+      requiresEmailVerification: true,
+      requiresPhoneVerification: true,
+      ...(isDev ? { devEmailOtp: emailOtpRes.otp, devPhoneOtp: phoneOtpRes.otp } : {}),
     });
   } catch (err: any) {
     console.error('Error registering clinic:', err);

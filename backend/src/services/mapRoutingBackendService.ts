@@ -66,7 +66,7 @@ export const CHENNAI_GEOGRAPHIC_CELLS = [
   { name: 'Ramapuram', lat: 13.0315, lng: 80.1790 },
   { name: 'Manapakkam', lat: 13.0205, lng: 80.1635 },
   { name: 'Nandambakkam', lat: 13.0118, lng: 80.1680 },
-  { name: 'Mugalivakkam', lat: 13.0180, lng: 80.1480 },
+  { name: 'Mugalivakkam', lat: 13.0195, lng: 80.1620 },
   { name: 'Velachery', lat: 12.9815, lng: 80.2180 },
   { name: 'Madipakkam', lat: 12.9647, lng: 80.1961 },
   { name: 'Medavakkam', lat: 12.9185, lng: 80.1912 },
@@ -208,9 +208,9 @@ export const mapRoutingBackendService = {
    */
   normalizeQuery(query: string): { category: string; placesQuery: string; normalizedTerm: string; geoapifyCategory: string } {
     const clean = (query || '').trim().toLowerCase();
-    if (!clean || clean === 'all') {
+    if (!clean || clean === 'all' || clean === 'all clinics') {
       return {
-        category: 'General Medicine',
+        category: '',
         placesQuery: 'medical clinic OR hospital',
         normalizedTerm: 'all clinics',
         geoapifyCategory: 'healthcare.clinic',
@@ -239,7 +239,7 @@ export const mapRoutingBackendService = {
         if (kLower.length <= 4) {
           return cleanWords.includes(kLower) || clean === kLower;
         }
-        return clean.includes(kLower) || cleanWords.some((w) => w === kLower || (w.length > 4 && (w.includes(kLower) || kLower.includes(w))));
+        return clean.includes(kLower) || cleanWords.some((w) => w === kLower);
       });
       if (match) {
         return {
@@ -252,7 +252,7 @@ export const mapRoutingBackendService = {
     }
 
     return {
-      category: 'General Medicine',
+      category: '',
       placesQuery: `${clean} medical clinic OR hospital`,
       normalizedTerm: clean,
       geoapifyCategory: 'healthcare.clinic',
@@ -722,9 +722,77 @@ export const mapRoutingBackendService = {
 
   /**
    * Reverse-geocodes coordinates into a human-readable locality / neighborhood name.
+   * Prioritizes dynamic OpenStreetMap Nominatim / Geoapify lookup and falls back cleanly.
    */
   async reverseGeocode(lat: number, lng: number): Promise<{ name: string; locality: string }> {
-    // 1. Check closest known Chennai neighborhood centroid
+    const cleanLocality = (str?: string): string | null => {
+      if (!str) return null;
+      let s = str.trim();
+      // Remove "Zone 11 " or "Ward 150 " prefixes while preserving the actual neighborhood/suburb name
+      s = s.replace(/^(ward|zone)\s*\d+\s*[-–:,]?\s*/i, '').trim();
+      if (!s || /^(ward|zone)\s*\d+$/i.test(s)) return null;
+      return s;
+    };
+
+    // 1. Try dynamic reverse geocoding via OpenStreetMap Nominatim
+    try {
+      const response = await axios.get(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=17&addressdetails=1`,
+        {
+          headers: { 'User-Agent': 'MedLink-Healthcare-Platform/1.0' },
+          timeout: 3500,
+        }
+      );
+      if (response.data && response.data.address) {
+        const addr = response.data.address;
+        const locality =
+          cleanLocality(addr.neighbourhood) ||
+          cleanLocality(addr.suburb) ||
+          cleanLocality(addr.residential) ||
+          cleanLocality(addr.town) ||
+          cleanLocality(addr.village) ||
+          cleanLocality(addr.city_district) ||
+          cleanLocality(addr.city);
+
+        if (locality) {
+          const city = addr.city || addr.state_district || 'Chennai';
+          return {
+            name: locality,
+            locality: `${locality}, ${city}`,
+          };
+        }
+      }
+    } catch (e: any) {
+      // Gracefully continue to Geoapify / centroid calculation
+    }
+
+    // 2. Try Geoapify reverse geocoding if API key is present
+    if (config.geoapifyApiKey) {
+      try {
+        const response = await axios.get(
+          `https://api.geoapify.com/v1/geocode/reverse?lat=${lat}&lon=${lng}&apiKey=${config.geoapifyApiKey}`,
+          { timeout: 3500 }
+        );
+        if (response.data?.features?.length > 0) {
+          const props = response.data.features[0].properties;
+          const locality =
+            cleanLocality(props.neighbourhood) ||
+            cleanLocality(props.suburb) ||
+            cleanLocality(props.district) ||
+            cleanLocality(props.city);
+          if (locality) {
+            return {
+              name: locality,
+              locality: props.formatted || `${locality}, Chennai`,
+            };
+          }
+        }
+      } catch (err: any) {
+        // Fall through to centroid calculation
+      }
+    }
+
+    // 3. Fallback: High-precision Chennai neighborhood centroid calculation
     let closestCell = CHENNAI_GEOGRAPHIC_CELLS[0];
     let minDistance = Infinity;
 
@@ -736,39 +804,16 @@ export const mapRoutingBackendService = {
       }
     }
 
-    if (minDistance <= 3.5) {
+    if (minDistance <= 15.0) {
       return {
         name: closestCell.name,
         locality: `${closestCell.name}, Chennai`,
       };
     }
 
-    // 2. Query OpenStreetMap Nominatim for exact address if beyond neighborhood radius
-    try {
-      const response = await axios.get(
-        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=16&addressdetails=1`,
-        {
-          headers: { 'User-Agent': 'MedLink-Healthcare-Platform/1.0' },
-          timeout: 4000,
-        }
-      );
-      if (response.data && response.data.address) {
-        const addr = response.data.address;
-        const locality =
-          addr.suburb || addr.neighbourhood || addr.city_district || addr.residential || addr.city || addr.town || closestCell.name;
-        const city = addr.city || addr.state_district || 'Chennai';
-        return {
-          name: locality,
-          locality: `${locality}, ${city}`,
-        };
-      }
-    } catch (e: any) {
-      // Graceful fallback to nearest cell
-    }
-
     return {
-      name: closestCell.name,
-      locality: `${closestCell.name}, Chennai`,
+      name: 'Current Location',
+      locality: 'Current Location',
     };
   },
 

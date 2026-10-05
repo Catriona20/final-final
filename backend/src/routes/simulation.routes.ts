@@ -535,3 +535,18 @@ simulationRouter.get('/demo-counts', async (_req: Request, res: Response): Promi
   }
 });
 
+// POST /api/simulation/sync-additive-seed
+simulationRouter.post('/sync-additive-seed', async (_req: Request, res: Response): Promise<void> => {
+  try {
+    const { seedMoonDentalVillivakkam } = await import('../database/seedMoonDental');
+    const result = await seedMoonDentalVillivakkam();
+    res.status(200).json({
+      message: 'Additive seed for Moon Dental Clinic Villivakkam synced successfully.',
+      ...result,
+    });
+  } catch (err: any) {
+    console.error('Error syncing additive seed:', err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
